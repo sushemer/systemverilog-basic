@@ -1,0 +1,1 @@
+Se usaran los libros y los repositorios, princiaplemtene el de panchul e igual revisar el de vaskar
