@@ -1,8 +1,8 @@
--d C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_2_mux_and_decoder_composition\run\impl\gwsynthesis\fpga_project.vg
+-d C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_2_mux_and_decoder_composition\run\impl\gwsynthesis\fpga_project.vg
 -p GW1NR-9C-QFN88P-6
 -pn GW1NR-LV9QN88PC6/I5
 -cst C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.cst
--cfg C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_2_mux_and_decoder_composition\run\impl\pnr\device.cfg
+-cfg C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_2_mux_and_decoder_composition\run\impl\pnr\device.cfg
 -sdc C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.sdc
 -bit
 -tr

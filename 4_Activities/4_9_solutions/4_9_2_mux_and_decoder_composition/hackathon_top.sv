@@ -1,5 +1,3 @@
-// File: 4_Activities/4_02_mux_and_decoder_composition/hackathon_top.sv
-//
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Actividad 4.2 – Composición: decoder 2→4 + mux 4→1
 //
@@ -64,17 +62,6 @@ module hackathon_top
     // -------------------------------------------------------------------------
     // Decoder 2→4 "one-hot"
     // -------------------------------------------------------------------------
-    //
-    // Objetivo:
-    //   A partir de sel[1:0], generar un vector dec_out[3:0] con exactamente
-    //   un bit en 1:
-    //
-    //   sel = 2'b00 -> dec_out = 4'b0001  (canal 0 activo)
-    //   sel = 2'b01 -> dec_out = 4'b0010  (canal 1 activo)
-    //   sel = 2'b10 -> dec_out = 4'b0100  (canal 2 activo)
-    //   sel = 2'b11 -> dec_out = 4'b1000  (canal 3 activo)
-    //
-    // Recomendado: usar un bloque always_comb con case(sel).
 
     logic [3:0] dec_out;
 
@@ -83,65 +70,47 @@ module hackathon_top
         // Valor por defecto
         dec_out = 4'b0000;
 
-        // TODO: implementar el decoder 2→4 usando sel
-        // Ejemplo orientativo:
-        //
-        // case (sel)
-        //   2'b00: dec_out = 4'b0001;
-        //   2'b01: dec_out = 4'b0010;
-        //   2'b10: dec_out = 4'b0100;
-        //   2'b11: dec_out = 4'b1000;
-        //   default: dec_out = 4'b0000;
-        // endcase
+        // Decoder 2→4 estándar
+        case (sel)
+            2'b00: dec_out = 4'b0001; // canal 0
+            2'b01: dec_out = 4'b0010; // canal 1
+            2'b10: dec_out = 4'b0100; // canal 2
+            2'b11: dec_out = 4'b1000; // canal 3
+            default: dec_out = 4'b0000;
+        endcase
     end
 
     // -------------------------------------------------------------------------
     // Composición: mux 4→1 construido con decoder + AND + OR
     // -------------------------------------------------------------------------
-    //
-    // Idea:
-    //   - and_terms[i] = dec_out[i] & data[i]   para i = 0..3
-    //   - mux_y = OR de todos los and_terms
-    //
-    // Esto selecciona UNO de los bits data[3:0], según cuál salida del decoder
-    // está en 1.
-    //
-    // Ejemplo:
-    //   sel = 2'b10 -> dec_out = 4'b0100 -> and_terms[2] = data[2]
-    //   y los demás and_terms = 0. Entonces mux_y = data[2].
 
     logic [3:0] and_terms;
     logic       mux_y;
 
-    // TODO: implementar las ANDs
-    // assign and_terms[0] = ...;
-    // assign and_terms[1] = ...;
-    // assign and_terms[2] = ...;
-    // assign and_terms[3] = ...;
+    // AND de cada dato con su línea "one-hot"
+    assign and_terms[0] = dec_out[0] & data[0];
+    assign and_terms[1] = dec_out[1] & data[1];
+    assign and_terms[2] = dec_out[2] & data[2];
+    assign and_terms[3] = dec_out[3] & data[3];
 
-    // TODO: implementar la OR final del mux
-    // Puede ser con OR en cadena o usando reducción:
-    // assign mux_y = and_terms[0] | and_terms[1] | and_terms[2] | and_terms[3];
-    // o
-    // assign mux_y = |and_terms;
+    // OR final: selecciona el único dato que quedó “enmascarado”
+    assign mux_y = |and_terms;
+    // Equivalente a:
+    // assign mux_y = and_terms[0] | and_terms[1]
+    //              | and_terms[2] | and_terms[3];
 
     // -------------------------------------------------------------------------
     // Salidas a LEDs
     // -------------------------------------------------------------------------
-    //
-    // Sugerencia:
-    //   - led[3:0] muestran el decoder (one-hot).
-    //   - led[4]   muestra la salida del mux (mux_y).
-    //   - led[7:5] libres para extensiones.
 
     always_comb
     begin
         led = 8'b0000_0000;
 
-        led[3:0] = dec_out;  // Visualizar salidas del decoder
+        led[3:0] = dec_out;  // Visualizar salidas del decoder (one-hot)
         led[4]   = mux_y;    // Salida del mux 4→1
 
-        // Opcional: podrías usar led[5]..led[7] para depuración o extensiones.
+        // led[7:5] quedan libres para extensiones / debug.
     end
 
 endmodule

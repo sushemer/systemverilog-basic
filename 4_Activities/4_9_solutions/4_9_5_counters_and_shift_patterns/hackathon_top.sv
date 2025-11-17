@@ -6,10 +6,8 @@
 //   - Implementar al menos dos patrones en un vector de 8 LEDs:
 //       * Patrón 1: contador binario (free-running counter).
 //       * Patrón 2: bit que se desplaza (shift register / “running light”).
+//   - Extensión: patrón tipo "ping-pong" que rebota de un extremo a otro.
 //   - Seleccionar el patrón usando algunas teclas (key).
-//
-// NOTA: Este archivo es una PLANTILLA de actividad.
-//       Debes completar y/o modificar las secciones marcadas como TODO.
 //
 
 module hackathon_top
@@ -62,52 +60,78 @@ module hackathon_top
         else
             div_cnt <= div_cnt + 1'b1;
 
+    // Pulso de habilitación cuando el contador se desborda
     assign step_en = (div_cnt == '0);
 
-    // TODO (opcional):
-    // - Puedes cambiar W_DIV o la condición de step_en para acelerar o
-    //   desacelerar la animación.
+    // -------------------------------------------------------------------------
+    // Modo de visualización seleccionado por teclas
+    // -------------------------------------------------------------------------
+    //
+    //   key[1:0] → modo de patrón:
+    //     00: contador binario
+    //     01: desplazamiento circular
+    //     10: ping-pong (rebote)
+    //     11: mezcla XOR de contador y shift circular
+
+    logic [1:0] mode;
+    assign mode = key[1:0];
 
     // -------------------------------------------------------------------------
     // Patrones de LEDs
     // -------------------------------------------------------------------------
 
-    // Modo de visualización seleccionado por teclas:
-    //   key[1:0] → modo de patrón.
-    logic [1:0] mode;
-    assign mode = key[1:0];
-
     // Patrón 1: contador binario de 8 bits.
     logic [7:0] counter_pattern;
 
-    // Patrón 2: registro de desplazamiento (running light / KITT).
+    // Patrón 2: registro de desplazamiento circular (running light).
     logic [7:0] shift_pattern;
 
-    // (Opcional) Patrón 3: puedes crear un patrón "ping-pong" o mezcla.
-    // logic [7:0] pingpong_pattern;
+    // Patrón 3: ping-pong (bit que rebota entre extremos).
+    logic [7:0] pingpong_pattern;
+    logic       pingpong_dir; // 0 = hacia la izquierda, 1 = hacia la derecha
 
     // Inicialización y actualización de patrones
     always_ff @(posedge clock or posedge reset)
         if (reset)
         begin
-            counter_pattern <= 8'd0;
-            shift_pattern   <= 8'b0000_0001;  // Empieza con un solo bit encendido
-            // pingpong_pattern <= 8'b0000_0001;
+            counter_pattern  <= 8'd0;
+            shift_pattern    <= 8'b0000_0001;  // Empieza con un solo bit encendido
+            pingpong_pattern <= 8'b0000_0001;  // También inicia en el bit 0
+            pingpong_dir     <= 1'b0;         // 0 = moviéndose hacia la izquierda (hacia MSB)
         end
         else if (step_en)
         begin
             // Patrón 1: contador binario libre
             counter_pattern <= counter_pattern + 8'd1;
 
-            // Patrón 2: desplazamiento circular simple (ejemplo base)
-            // TODO: puedes cambiar esta lógica para:
-            //   - mover la luz sólo hacia un lado
-            //   - implementar un "ping-pong" (rebote)
-            //   - hacer un patrón más complejo
+            // Patrón 2: desplazamiento circular hacia la izquierda
             shift_pattern <= { shift_pattern[6:0], shift_pattern[7] };
 
-            // TODO (opcional): implementar aquí un tercer patrón,
-            // por ejemplo ping-pong, usando otra variable.
+            // Patrón 3: ping-pong (rebote entre 0000_0001 y 1000_0000)
+            if (!pingpong_dir)
+            begin
+                // Moviéndose hacia la izquierda (hacia el MSB)
+                if (pingpong_pattern == 8'b1000_0000)
+                begin
+                    // Al llegar al extremo izquierdo, cambiamos de dirección
+                    pingpong_dir     <= 1'b1;
+                    pingpong_pattern <= 8'b0100_0000;
+                end
+                else
+                    pingpong_pattern <= pingpong_pattern << 1;
+            end
+            else
+            begin
+                // Moviéndose hacia la derecha (hacia el LSB)
+                if (pingpong_pattern == 8'b0000_0001)
+                begin
+                    // Al llegar al extremo derecho, cambiamos de dirección
+                    pingpong_dir     <= 1'b0;
+                    pingpong_pattern <= 8'b0000_0010;
+                end
+                else
+                    pingpong_pattern <= pingpong_pattern >> 1;
+            end
         end
 
     // -------------------------------------------------------------------------
@@ -118,24 +142,16 @@ module hackathon_top
 
     always_comb
     begin
-        // Valor por defecto: contador binario
+        // Valor por defecto
         leds_next = counter_pattern;
 
         unique case (mode)
-            2'b00: leds_next = counter_pattern;           // Modo 0: contador
-            2'b01: leds_next = shift_pattern;             // Modo 1: running light
-            2'b10: leds_next = counter_pattern ^ shift_pattern;
-            // Modo 2: ejemplo → mezcla XOR de ambos patrones
-            2'b11: leds_next = ~counter_pattern;          // Modo 3: invertido
+            2'b00: leds_next = counter_pattern;                  // Modo 0: contador
+            2'b01: leds_next = shift_pattern;                    // Modo 1: circular
+            2'b10: leds_next = pingpong_pattern;                 // Modo 2: ping-pong
+            2'b11: leds_next = counter_pattern ^ shift_pattern;  // Modo 3: mezcla XOR
+            default: leds_next = counter_pattern;
         endcase
-
-        // TODO:
-        // - Puedes redefinir cada modo para que use patrones distintos.
-        // - Por ejemplo:
-        //     00: contador
-        //     01: running light
-        //     10: ping-pong
-        //     11: LEDs apagados o patrón especial
     end
 
     assign led = leds_next;

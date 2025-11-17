@@ -1,5 +1,3 @@
-<!-- File: 4_Activities/4_08_sensors_and_tm1638_integration/README.md -->
-
 # 4.8 – Integración de sensores y TM1638
 
 En esta actividad vas a **combinar sensores físicos** con el módulo **TM1638**:

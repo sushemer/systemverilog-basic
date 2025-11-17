@@ -1,15 +1,13 @@
-// File: 4_Activities/4_06_seven_segment_playground/hackathon_top.sv
-//
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Actividad 4.6 – Playground de display de 7 segmentos
 //
-// Idea general:
-//   - Usar el módulo seven_segment_display ya existente en el repo.
-//   - Jugar con distintos patrones usando los 8 dígitos del display.
-//   - Cambiar el contenido y los puntos decimales según teclas (key).
+// Modos:
+//   mode = key[1:0]
 //
-// NOTA: Esta es una PLANTILLA de actividad.
-//       Modifica y extiende la lógica marcada como TODO.
+//   00 → Contador hexadecimal libre en los 8 dígitos
+//   01 → Playground manual (key[7:4] en el dígito 0)
+//   10 → “Barra” / dígito 0xF que recorre los 8 dígitos (scroll)
+//   11 → Patrón fijo 0xDEAD_BEEF
 //
 
 module hackathon_top
@@ -41,13 +39,15 @@ module hackathon_top
     assign blue  = '0;
     // gpio se maneja desde el wrapper de la placa.
 
-    // Podemos usar los LEDs simplemente como indicador de modo.
-    // (Puedes cambiar esto si quieres que muestren otra cosa).
-    // mode = key[1:0]
+    // -------------------------------------------------------------------------
+    // Modo (para saber qué efecto está activo)
+    // -------------------------------------------------------------------------
+
     logic [1:0] mode;
     assign mode = key[1:0];
 
-    assign led = { 6'b0, mode };  // Solo para saber en qué modo estamos.
+    // Mostramos el modo en los LEDs [1:0] solo como indicación visual
+    assign led = { 6'b0, mode };
 
     // -------------------------------------------------------------------------
     // Divisor de frecuencia para animaciones lentas
@@ -89,15 +89,15 @@ module hackathon_top
     localparam int W_DIGITS = 8;
     localparam int W_NUM    = W_DIGITS * 4;  // 32 bits
 
-    logic [W_NUM-1:0]   number_reg;  // Contenido de los 8 dígitos
-    logic [W_DIGITS-1:0] dots_reg;   // Puntos decimales (uno por dígito)
+    logic [W_NUM-1:0]    number_reg;  // Contenido de los 8 dígitos
+    logic [W_DIGITS-1:0] dots_reg;    // Puntos decimales (uno por dígito)
+
+    // Índice de posición para animaciones de desplazamiento
+    logic [2:0] scroll_pos;
 
     // -------------------------------------------------------------------------
     // Lógica principal de playground
     // -------------------------------------------------------------------------
-
-    // (Opcional) Un índice de posición para animaciones de desplazamiento
-    logic [2:0] scroll_pos;
 
     always_ff @(posedge clock or posedge reset)
         if (reset)
@@ -108,9 +108,9 @@ module hackathon_top
         end
         else
         begin
-            // Ejemplo base: usar key[7:0] para controlar puntos decimales.
-            // Puedes cambiar esta lógica si quieres otra cosa.
-            dots_reg <= key;  // 1 = punto encendido en cada dígito
+            // Usamos key[7:0] como máscara de puntos decimales:
+            //   dots_reg[i] = 1 → enciende el punto en el dígito i.
+            dots_reg <= key;
 
             if (tick)
             begin
@@ -123,69 +123,51 @@ module hackathon_top
                     // ---------------------------------------------------------
                     2'b00:
                     begin
-                        // TODO: puedes cambiar la velocidad de suma,
-                        // o limitar el rango del contador.
                         number_reg <= number_reg + 32'd1;
                     end
 
                     // ---------------------------------------------------------
                     // Modo 1: playground manual
                     // ---------------------------------------------------------
-                    // Idea sugerida:
-                    //   - Mostrar en el dígito menos significativo (D0)
-                    //     el valor de key[7:4] como dígito HEX.
-                    //   - Dejar el resto de dígitos en cero o con un patrón fijo.
+                    // D0 (nibble [3:0]) = key[7:4]
+                    // El resto de dígitos se mantiene igual.
                     2'b01:
                     begin
-                        // Conserva el valor anterior de todos los dígitos
-                        // y solo actualiza D0.
                         number_reg[3:0] <= key[7:4];
-
-                        // TODO:
-                        // - Cambia aquí para copiar key[7:4] a otro dígito.
-                        // - O usa distintas combinaciones de teclas para llenar
-                        //   todos los dígitos con valores HEX.
+                        // Los demás nibbles conservan su valor anterior
                     end
 
                     // ---------------------------------------------------------
-                    // Modo 2: "barra" o dígito que se desplaza
+                    // Modo 2: “barra” / dígito 0xF que se desplaza
                     // ---------------------------------------------------------
-                    // Idea sugerida:
-                    //   - Mover un dígito "lleno" (por ejemplo 0xF)
-                    //     a lo largo de los 8 dígitos, usando scroll_pos.
+                    // Un solo nibble en 0xF recorre los 8 dígitos.
                     2'b10:
                     begin
-                        // Plantilla: todos los dígitos en 0
                         number_reg <= '0;
 
-                        // TODO:
-                        // - Usa scroll_pos para seleccionar qué nibble activar.
-                        //   Por ejemplo:
-                        //      case (scroll_pos)
-                        //        3'd0: number_reg[ 3: 0] = 4'hF;
-                        //        3'd1: number_reg[ 7: 4] = 4'hF;
-                        //        ...
-                        //      endcase
-                        //
-                        // - También puedes hacer un patrón simétrico
-                        //   (ej: desde los extremos hacia el centro).
+                        unique case (scroll_pos)
+                            3'd0: number_reg[ 3: 0] <= 4'hF;  // D0
+                            3'd1: number_reg[ 7: 4] <= 4'hF;  // D1
+                            3'd2: number_reg[11: 8] <= 4'hF;  // D2
+                            3'd3: number_reg[15:12] <= 4'hF;  // D3
+                            3'd4: number_reg[19:16] <= 4'hF;  // D4
+                            3'd5: number_reg[23:20] <= 4'hF;  // D5
+                            3'd6: number_reg[27:24] <= 4'hF;  // D6
+                            3'd7: number_reg[31:28] <= 4'hF;  // D7
+                            default: number_reg <= '0;
+                        endcase
                     end
 
                     // ---------------------------------------------------------
-                    // Modo 3: modo libre
+                    // Modo 3: patrón fijo – 0xDEAD_BEEF
                     // ---------------------------------------------------------
-                    // Espacio para que definas tu propio experimento:
-                    //   - Mostrar un patrón fijo (0xDEAD_BEEF, 0xC0FFEE, etc.).
-                    //   - Alternar entre dos palabras/patrones.
-                    //   - Hacer "scroll" de texto hexadecimal.
                     2'b11:
                     begin
-                        // TODO:
-                        // - Implementa aquí tu propio efecto.
-                        //   Por ejemplo:
-                        //     number_reg <= 32'hDEAD_BEEF;
-                        //
-                        // - O usa scroll_pos para desplazamiento de hex.
+                        number_reg <= 32'hDEAD_BEEF;
+                    end
+
+                    default:
+                    begin
                         number_reg <= number_reg;
                     end
                 endcase
@@ -202,12 +184,12 @@ module hackathon_top
     )
     i_7segment
     (
-        .clk      ( clock       ),
-        .rst      ( reset       ),
-        .number   ( number_reg  ),
-        .dots     ( dots_reg    ),
-        .abcdefgh ( abcdefgh    ),
-        .digit    ( digit       )
+        .clk      ( clock      ),
+        .rst      ( reset      ),
+        .number   ( number_reg ),
+        .dots     ( dots_reg   ),
+        .abcdefgh ( abcdefgh   ),
+        .digit    ( digit      )
     );
 
 endmodule

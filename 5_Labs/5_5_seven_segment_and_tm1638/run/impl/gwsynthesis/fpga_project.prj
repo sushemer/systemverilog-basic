@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gowin-synthesis-project>
+<Project>
+    <Version>beta</Version>
+    <Device id="GW1NR-9C" package="QFN88P" speed="6" partNumber="GW1NR-LV9QN88PC6/I5"/>
+    <FileList>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\5_Labs\5_5_seven_segment_and_tm1638\hackathon_top.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\gowin_rpll.v" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\audio_pwm.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\digilent_pmod_mic3_spi_receiver.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\hub75e_led_matrix.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\i2s_audio_out.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\imitate_reset_on_power_up.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver_alt.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver_new.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lcd_480_272.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lcd_480_272_ml6485.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lcd_800_480.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\sigma_delta_dac.v" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\slow_clk_gen.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_using_graphics.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_virtual_switches.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\vga.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\convert.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\counter_with_enable.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\seven_segment_display.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\shift_reg.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\strobe_gen.sv" type="verilog"/>
+        <File path="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\tb_lcd_display.sv" type="verilog"/>
+    </FileList>
+    <OptionList>
+        <Option type="disable_insert_pad" value="0"/>
+        <Option type="global_freq" value="50.000"/>
+        <Option type="looplimit" value="2000"/>
+        <Option type="output_file" value="C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\5_Labs\5_5_seven_segment_and_tm1638\run\impl\gwsynthesis\fpga_project.vg"/>
+        <Option type="print_all_synthesis_warning" value="0"/>
+        <Option type="ram_rw_check" value="0"/>
+        <Option type="top_module" value="board_specific_top"/>
+        <Option type="vcc" value="1.2"/>
+        <Option type="vccx" value="3.3"/>
+        <Option type="verilog_language" value="sysv-2017"/>
+        <Option type="vhdl_language" value="vhdl-1993"/>
+    </OptionList>
+</Project>

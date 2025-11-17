@@ -1,0 +1,15 @@
+-d C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\5_Labs\5_4_fsm_traffic_and_lock\run\impl\gwsynthesis\fpga_project.vg
+-p GW1NR-9C-QFN88P-6
+-pn GW1NR-LV9QN88PC6/I5
+-cst C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.cst
+-cfg C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\5_Labs\5_4_fsm_traffic_and_lock\run\impl\pnr\device.cfg
+-sdc C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.sdc
+-bit
+-tr
+-ph
+-timing
+-cst_error
+-convert_sdp32_36_to_sdp16_18
+-correct_hold 1
+-route_maxfan 23
+-global_freq 50.000

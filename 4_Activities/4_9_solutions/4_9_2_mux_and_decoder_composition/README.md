@@ -1,62 +1,91 @@
-<!-- File: 4_Activities/4_02_mux_and_decoder_composition/README.md -->
+# 4_9_2 – Mux 4→1 + Decoder 2→4 (composición)
 
-# 4.2 – Composición: decoder 2→4 + mux 4→1
+Actividad basada en `4_02_mux_and_decoder_composition`, pero ubicada en la carpeta de soluciones `4_9_solutions`.
 
-En esta actividad vas a **componer bloques combinacionales**:
+## Objetivo
 
-- Un **decoder 2→4** que genera una salida one-hot.
-- Un **multiplexor 4→1** construido a partir de ese decoder y compuertas `AND`/`OR`.
+Practicar la **composición de bloques combinacionales** construyendo un:
 
-La idea es ver cómo, a partir de bloques sencillos, se pueden construir funciones más complejas.
+- **Decoder 2→4 one-hot** a partir de 2 bits de selección.
+- **Multiplexor 4→1** usando:
+  - Salidas del decoder (one-hot)
+  - Compuertas AND
+  - Una OR final.
 
-Se usa la placa **Tang Nano 9K** con la configuración  
-`tang_nano_9k_lcd_480_272_tm1638_hackathon` y el módulo tope `hackathon_top`.
-
----
-
-## Objetivos
-
-1. Implementar un **decoder 2→4** con salidas one-hot usando `case` y `always_comb`.
-2. Construir un **mux 4→1** usando:
-   - salidas del decoder 2→4,
-   - compuertas `AND`,
-   - y una `OR` final.
-3. Visualizar tanto el decoder como la salida del mux en los LEDs de la placa.
+Además, visualizar el comportamiento en los LEDs de la placa.
 
 ---
 
-## Mapeo de señales (sugerido)
+## Mapeo de señales
 
-Entradas desde los botones `key`:
+### Entradas desde `key`
 
-- Selectores (para decoder y mux):
-  - `sel[1:0] = key[1:0]`
-- Datos del mux (4 canales de 1 bit):
-  - `data[3:0] = key[5:2]`
+- `sel[1:0] = key[1:0]`  
+  Bits de selección del canal del mux.
 
-Salidas a LEDs:
+- `data[3:0] = key[5:2]`  
+  Datos de entrada al mux (cada bit es un "canal").
 
-- `led[3:0]` → salidas del decoder (`dec_out[3:0]`), formato one-hot.
-- `led[4]`   → salida del mux 4→1 (`mux_y`).
-- `led[7:5]` → libres para extensiones o depuración.
+### Salidas hacia `led`
 
-El display de 7 segmentos y la LCD no se usan en esta actividad.
+- `led[3:0] = dec_out[3:0]`  
+  Muestran la salida del **decoder 2→4** (código one-hot).
+
+- `led[4] = mux_y`  
+  Muestra la salida del **mux 4→1**.
+
+- `led[7:5]`  
+  No se usan en esta solución (libres para extensiones o debug).
 
 ---
 
-## Descripción de la actividad
+## Diseño lógico
 
-### 1. Implementar el decoder 2→4 (one-hot)
+### 1. Decoder 2→4 one-hot
 
-En el archivo `hackathon_top.sv` encontrarás una plantilla con:
+A partir de `sel[1:0]` se genera `dec_out[3:0]`:
 
-```systemverilog
-logic [1:0] sel;
-logic [3:0] dec_out;
+- `sel = 2'b00 → dec_out = 4'b0001`
+- `sel = 2'b01 → dec_out = 4'b0010`
+- `sel = 2'b10 → dec_out = 4'b0100`
+- `sel = 2'b11 → dec_out = 4'b1000`
 
-always_comb
-begin
-    dec_out = 4'b0000;
+Esto se implementa con un `always_comb` y un `case(sel)`.
 
-    // TODO: implementar el decoder
-end
+### 2. Composición decoder + AND + OR (mux 4→1)
+
+Se construye el mux 4→1 así:
+
+- `and_terms[i] = dec_out[i] & data[i]` para `i = 0..3`
+- `mux_y = |and_terms;`  
+  (OR de todos los términos AND)
+
+De esta forma, solo **un** canal `data[i]` pasa a la salida, según qué bit de `dec_out` está en 1.
+
+---
+
+## Cómo probar en la placa
+
+1. Cargar el bitstream generado por esta actividad a la `Tang Nano 9K`.
+2. Usar los switches / teclas como sigue:
+   - Cambia `sel` con `key[1:0]` para elegir el canal (0–3).
+   - Cambia los valores de `data[3:0]` con `key[5:2]`.
+
+3. Observa los LEDs:
+   - `led[3:0]`: indican qué **canal está activo** según `sel` (one-hot).
+   - `led[4]`: muestra el bit seleccionado del vector `data`.
+
+Ejemplo rápido:
+
+- Si `data = 4'b1010` y `sel = 2'b10`:
+  - `dec_out = 4'b0100`
+  - Se selecciona `data[2]` → `mux_y = data[2] = 1`
+  - `led[2] = 1` (decoder) y `led[4] = 1` (salida del mux).
+
+---
+
+## Ideas de extensiones
+
+- Agregar una entrada de **enable** para el mux y apagar la salida cuando `EN = 0`.
+- Mostrar también `sel` y `data` en otros LEDs para debug visual.
+- Reescribir el mux 4→1 usando un `case(sel)` y comparar con la versión **decoder + AND + OR**.

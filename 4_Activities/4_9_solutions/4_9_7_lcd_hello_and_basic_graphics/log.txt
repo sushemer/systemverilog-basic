@@ -1,6 +1,6 @@
 *** GOWIN Tcl Command Line Console  *** 
 current device: GW1NR-9C  GW1NR-LV9QN88PC6/I5
-add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_7_lcd_hello_and_basic_graphics/hackathon_top.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_solutions/4_9_7_lcd_hello_and_basic_graphics/hackathon_top.sv"
 add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/board_specific_top.sv"
 add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/gowin_rpll.v"
 add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/audio_pwm.sv"
@@ -32,7 +32,7 @@ add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/
 add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/board_specific.sdc"
 GowinSynthesis start
 Running parser ...
-Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\hackathon_top.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\hackathon_top.sv'
 Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv'
 Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv":2)
 Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":1)
@@ -130,7 +130,7 @@ WARN  (EX2582) : Parameter 'COLOR_W' declared inside compilation unit '$unit__ha
 Compiling module 'board_specific_top'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":19)
 Compiling module 'imitate_reset_on_power_up'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\imitate_reset_on_power_up.sv":3)
 Compiling module 'slow_clk_gen(fast_clk_mhz=27,slow_clk_hz=1)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\slow_clk_gen.sv":5)
-Compiling module 'hackathon_top'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\hackathon_top.sv":13)
+Compiling module 'hackathon_top'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\hackathon_top.sv":18)
 Compiling module 'tm1638_board_controller(clk_mhz=27)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":20)
 Compiling module 'tm1638_sio(clk_mhz=27)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":299)
 Compiling module 'tm1638_registers'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv":15)
@@ -172,11 +172,11 @@ Running technical mapping ...
 [90%] Tech-Mapping Phase 4 completed
 WARN  (NL0002) : The module "slow_clk_gen" instantiated to "i_slow_clk_gen" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":225)
 WARN  (NL0002) : The module "tm1638_registers" instantiated to "i_tm1638_regs" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":147)
-[95%] Generate netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\gwsynthesis\fpga_project.vg" completed
-[100%] Generate report file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\gwsynthesis\fpga_project_syn.rpt.html" completed
+[95%] Generate netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\gwsynthesis\fpga_project.vg" completed
+[100%] Generate report file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\gwsynthesis\fpga_project_syn.rpt.html" completed
 GowinSynthesis finish
-Reading netlist file: "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\gwsynthesis\fpga_project.vg"
-Parsing netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\gwsynthesis\fpga_project.vg" completed
+Reading netlist file: "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\gwsynthesis\fpga_project.vg"
+Parsing netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\gwsynthesis\fpga_project.vg" completed
 Processing netlist completed
 Reading constraint file: "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.cst"
 Physical Constraint parsed completed
@@ -197,10 +197,10 @@ Bitstream generation in progress......
 Bitstream generation completed
 Running power analysis......
 [100%] Power analysis completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.power.html" completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.pin.html" completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.rpt.html" completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.rpt.txt" completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.tr.html" completed
-Mon Nov 17 12:58:42 2025
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.power.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.pin.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.rpt.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.rpt.txt" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_7_lcd_hello_and_basic_graphics\run\impl\pnr\fpga_project.tr.html" completed
+Mon Nov 17 14:07:44 2025
 

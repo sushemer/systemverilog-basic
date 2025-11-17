@@ -5,32 +5,32 @@
 1. PnR Messages
 
   <Report Title>: PnR Report
-  <Design File>: C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_6_seven_segment_playground\run\impl\gwsynthesis\fpga_project.vg
+  <Design File>: C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_6_seven_segment_playground\run\impl\gwsynthesis\fpga_project.vg
   <Physical Constraints File>: C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.cst
   <Timing Constraints File>: C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.sdc
   <Tool Version>: V1.9.10.03 Education (64-bit)
   <Part Number>: GW1NR-LV9QN88PC6/I5
   <Device>: GW1NR-9
   <Device Version>: C
-  <Created Time>:Mon Nov 17 12:52:30 2025
+  <Created Time>:Mon Nov 17 14:01:46 2025
 
 
 2. PnR Details
 
   Running placement:
-    Placement Phase 0: CPU time = 0h 0m 0.025s, Elapsed time = 0h 0m 0.025s
-    Placement Phase 1: CPU time = 0h 0m 0.055s, Elapsed time = 0h 0m 0.055s
-    Placement Phase 2: CPU time = 0h 0m 0.064s, Elapsed time = 0h 0m 0.064s
-    Placement Phase 3: CPU time = 0h 0m 0.47s, Elapsed time = 0h 0m 0.471s
-    Total Placement: CPU time = 0h 0m 0.614s, Elapsed time = 0h 0m 0.615s
+    Placement Phase 0: CPU time = 0h 0m 0.038s, Elapsed time = 0h 0m 0.038s
+    Placement Phase 1: CPU time = 0h 0m 0.065s, Elapsed time = 0h 0m 0.065s
+    Placement Phase 2: CPU time = 0h 0m 0.048s, Elapsed time = 0h 0m 0.048s
+    Placement Phase 3: CPU time = 0h 0m 0.52s, Elapsed time = 0h 0m 0.52s
+    Total Placement: CPU time = 0h 0m 0.671s, Elapsed time = 0h 0m 0.671s
  Running routing:
-    Routing Phase 0: CPU time = 0h 0m 0.001s, Elapsed time = 0h 0m 0s
-    Routing Phase 1: CPU time = 0h 0m 0.103s, Elapsed time = 0h 0m 0.103s
-    Routing Phase 2: CPU time = 0h 0m 0.17s, Elapsed time = 0h 0m 0.171s
+    Routing Phase 0: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s
+    Routing Phase 1: CPU time = 0h 0m 0.114s, Elapsed time = 0h 0m 0.114s
+    Routing Phase 2: CPU time = 0h 0m 0.204s, Elapsed time = 0h 0m 0.204s
     Routing Phase 3: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s
-    Total Routing: CPU time = 0h 0m 0.274s, Elapsed time = 0h 0m 0.274s
+    Total Routing: CPU time = 0h 0m 0.318s, Elapsed time = 0h 0m 0.318s
  Generate output files:
-    CPU time = 0h 0m 0.413s, Elapsed time = 0h 0m 0.413s
+    CPU time = 0h 0m 0.419s, Elapsed time = 0h 0m 0.419s
 
  Total Time and Memory Usage: CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s, Peak memory usage = 167MB
 
@@ -40,15 +40,15 @@
   --------------------------------------------------------------------------------
   Resources                   | Usage                               | Utilization
   --------------------------------------------------------------------------------
-  Logic                       | 456/8640                            |  6%
-    --LUT,ALU,ROM16           | 456(416 LUT, 40 ALU, 0 ROM16)       | -
+  Logic                       | 508/8640                            |  6%
+    --LUT,ALU,ROM16           | 508(468 LUT, 40 ALU, 0 ROM16)       | -
     --SSRAM(RAM16)            | 0                                   | -
-  Register                    | 301/6693                            |  5%
+  Register                    | 304/6693                            |  5%
     --Logic Register as Latch | 0/6480                              |  0%
-    --Logic Register as FF    | 299/6480                            |  5%
+    --Logic Register as FF    | 302/6480                            |  5%
     --I/O Register as Latch   | 0/213                               |  0%
     --I/O Register as FF      | 2/213                               |  <1%
-  CLS                         | 331/4320                            |  8%
+  CLS                         | 350/4320                            |  9%
   I/O Port                    | 52/71                               |  74%
   I/O Buf                     | 44                                  | -
     --Input Buf               | 3                                   | -

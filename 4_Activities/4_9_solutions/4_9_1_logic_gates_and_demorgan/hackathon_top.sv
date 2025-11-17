@@ -67,8 +67,6 @@ module hackathon_top
     //   - led[2] = A XOR B
     //   - led[3] = ~(A & B)
     //   - led[4] = (~A) | (~B)
-    //
-    // Por ahora dejamos señales intermedias; tú debes completar las asignaciones.
 
     logic and_ab;
     logic or_ab;
@@ -76,12 +74,12 @@ module hackathon_top
     logic demorgan_1;
     logic demorgan_2;
 
-    // TODO: implementar expresiones de la Tarea 1
-    // assign and_ab     = ...;
-    // assign or_ab      = ...;
-    // assign xor_ab     = ...;
-    // assign demorgan_1 = ...;  // ~(A & B)
-    // assign demorgan_2 = ...;  // (~A) | (~B)
+    // Implementación de la Tarea 1
+    assign and_ab     = A & B;
+    assign or_ab      = A | B;
+    assign xor_ab     = A ^ B;
+    assign demorgan_1 = ~(A & B);       // primera forma
+    assign demorgan_2 = (~A) | (~B);    // forma de De Morgan equivalente
 
     // -------------------------------------------------------------------------
     // Tarea 2: Funciones combinacionales con 3 entradas (A, B, C)
@@ -91,15 +89,24 @@ module hackathon_top
     //   - led[5] = “mayoría”: al menos dos entradas en 1.
     //   - led[6] = “exactamente una entrada en 1”.
     //
-    // Usa AND, OR y NOT para construir estas funciones.
+    // Usamos AND, OR y NOT para construir estas funciones.
 
     logic majority_abc;   // al menos dos entradas en 1
     logic exactly_one_abc;
 
-    // TODO: implementar expresiones de la Tarea 2
-    // Ejemplo de pista:
-    // majority_abc = (A & B) | (A & C) | (B & C);
-    // exactly_one_abc = ...;
+    // Mayoría: al menos dos de {A,B,C} son 1
+    // Pista: (A & B) | (A & C) | (B & C)
+    assign majority_abc =
+          (A & B)
+        | (A & C)
+        | (B & C);
+
+    // Exactamente una en 1:
+    //   100 + 010 + 001
+    assign exactly_one_abc =
+          ( A  & ~B & ~C)
+        | (~A &  B & ~C)
+        | (~A & ~B &  C);
 
     // -------------------------------------------------------------------------
     // Tarea 3: Entrada de habilitación EN
@@ -108,19 +115,12 @@ module hackathon_top
     // Requisito:
     //   - Si EN = 0 → todos los LEDs [6:0] deben estar en 0.
     //   - Si EN = 1 → mostrar los resultados de las tareas 1 y 2.
-    //   - led[7] puede indicar si EN está activo (por ejemplo, led[7] = EN).
-    //
-    // Sugerencia:
-    //   - Primero agrupa todas las señales lógicas sin EN.
-    //   - Luego usa EN para “enmascarar” las salidas.
+    //   - led[7] indica si EN está activo (led[7] = EN).
 
     logic [6:0] raw_leds;  // salidas lógicas sin habilitación
 
     always_comb
     begin
-        // Valores por defecto
-        raw_leds = 7'b0;
-
         // Mapear compuertas de la Tarea 1
         raw_leds[0] = and_ab;
         raw_leds[1] = or_ab;

@@ -1,5 +1,3 @@
-// File: 4_Activities/4_06_seven_segment_playground/hackathon_top.sv
-//
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Actividad 4.6 – Playground de display de 7 segmentos
 //

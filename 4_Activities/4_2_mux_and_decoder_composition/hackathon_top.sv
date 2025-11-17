@@ -1,5 +1,3 @@
-// File: 4_Activities/4_02_mux_and_decoder_composition/hackathon_top.sv
-//
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Actividad 4.2 – Composición: decoder 2→4 + mux 4→1
 //

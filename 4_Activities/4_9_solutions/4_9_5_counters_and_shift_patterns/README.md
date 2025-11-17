@@ -1,133 +1,38 @@
-# 4.5 – Contadores y patrones de desplazamiento en LEDs
+# 4_9_5 – Contadores y patrones de desplazamiento en LEDs
 
-En esta actividad vas a combinar **contadores** y **registros de desplazamiento** para generar diferentes patrones de luces en los LEDs de la Tang Nano 9K.
+Actividad basada en `4_05_counters_and_shift_patterns`, incluida en la carpeta de soluciones `4_9_solutions`.
 
-La idea es que, a partir del reloj principal de la FPGA, generes un “tick” más lento (`step_en`) y lo uses para avanzar uno o varios patrones:
+## Objetivo
 
-- **Patrón 1:** contador binario que recorre todos los valores de 8 bits.
-- **Patrón 2:** un bit encendido que se desplaza (running light / KITT).
-- **Patrones extra (opcionales):** rebote tipo “ping-pong”, mezclas, etc.
+Practicar:
 
-Luego, con algunas teclas (`key`), seleccionarás qué patrón se muestra en los LEDs.
-
----
-
-## Señales principales
-
-Entradas relevantes:
-
-- `clock`  → reloj principal (~27 MHz).
-- `reset`  → reset síncrono global.
-- `key[1:0]` → selección de modo de visualización.
-
-Salidas:
-
-- `led[7:0]` → patrón de 8 bits que se verá en la barra de LEDs.
-
-El archivo `hackathon_top.sv` ya:
-
-- Apaga el display de 7 segmentos y el LCD (no se usan en esta actividad).
-- Incluye un **divisor de frecuencia** básico que produce una señal `step_en` periódica.
-- Declara registros para:
-  - `counter_pattern` → contador binario 8 bits.
-  - `shift_pattern`   → registro de desplazamiento 8 bits.
-- Tiene un `case (mode)` que selecciona qué patrón va a `led`.
-
-Tu tarea es **completar y personalizar la lógica interna**.
+- Uso de un **divisor de frecuencia** para obtener un paso lento (`step_en`) a partir del reloj de la FPGA.
+- Implementación de **patrones secuenciales** en un vector de 8 LEDs:
+  - Contador binario (`free-running counter`).
+  - Registro de desplazamiento (“running light”).
+  - Patrón tipo **ping-pong** (bit que rebota entre extremos).
+- Selección de patrones mediante bits de entrada (`key`).
 
 ---
 
-## Objetivos de la actividad
+## Mapeo de señales
 
-1. Practicar el uso de **contadores** como divisores de frecuencia (prescalers).
-2. Implementar un **contador binario** libre y verlo en los LEDs.
-3. Implementar uno o varios **registros de desplazamiento** (patrones de movimiento).
-4. Seleccionar el patrón visible usando `key[1:0]`.
-5. Ajustar la velocidad del patrón para que sea cómoda a la vista.
+### Entradas
 
----
+- `clock`  
+  Reloj principal de la FPGA (~27 MHz en Tang Nano 9K).
 
-## Pasos sugeridos
+- `reset`  
+  Reset síncrono/asíncrono (según wrapper de la placa) para inicializar los contadores.
 
-### 1. Entender el divisor de frecuencia (`step_en`)
+- `key[1:0]`  
+  Selección de modo/patrón de LEDs:
 
-En el código se incluye:
+  ```
+  mode = key[1:0]
 
-- Un contador `div_cnt` de `W_DIV` bits.
-- `step_en` se activa cuando `div_cnt == 0`.
-
-Cada vez que `div_cnt` se desborda, `step_en` vale 1 durante un ciclo de reloj. Usa esa señal para actualizar tus patrones:
-
-```sv
-else if (step_en)
-begin
-    // actualizar patrones aquí
-end
-```
-
-# 4.5 – Contadores y patrones de desplazamiento en LEDs
-
-En esta actividad vas a combinar **contadores** y **registros de desplazamiento** para generar diferentes patrones de luces en los LEDs de la Tang Nano 9K.
-
-La idea es que, a partir del reloj principal de la FPGA, generes un “tick” más lento (`step_en`) y lo uses para avanzar uno o varios patrones:
-
-- **Patrón 1:** contador binario que recorre todos los valores de 8 bits.
-- **Patrón 2:** un bit encendido que se desplaza (running light / KITT).
-- **Patrones extra (opcionales):** rebote tipo “ping-pong”, mezclas, etc.
-
-Luego, con algunas teclas (`key`), seleccionarás qué patrón se muestra en los LEDs.
-
----
-
-## Señales principales
-
-Entradas relevantes:
-
-- `clock`  → reloj principal (~27 MHz).
-- `reset`  → reset síncrono global.
-- `key[1:0]` → selección de modo de visualización.
-
-Salidas:
-
-- `led[7:0]` → patrón de 8 bits que se verá en la barra de LEDs.
-
-El archivo `hackathon_top.sv` ya:
-
-- Apaga el display de 7 segmentos y el LCD (no se usan en esta actividad).
-- Incluye un **divisor de frecuencia** básico que produce una señal `step_en` periódica.
-- Declara registros para:
-  - `counter_pattern` → contador binario 8 bits.
-  - `shift_pattern`   → registro de desplazamiento 8 bits.
-- Tiene un `case (mode)` que selecciona qué patrón va a `led`.
-
-Tu tarea es **completar y personalizar la lógica interna**.
-
----
-
-## Objetivos de la actividad
-
-1. Practicar el uso de **contadores** como divisores de frecuencia (prescalers).
-2. Implementar un **contador binario** libre y verlo en los LEDs.
-3. Implementar uno o varios **registros de desplazamiento** (patrones de movimiento).
-4. Seleccionar el patrón visible usando `key[1:0]`.
-5. Ajustar la velocidad del patrón para que sea cómoda a la vista.
-
----
-
-## Pasos sugeridos
-
-### 1. Entender el divisor de frecuencia (`step_en`)
-
-En el código se incluye:
-
-- Un contador `div_cnt` de `W_DIV` bits.
-- `step_en` se activa cuando `div_cnt == 0`.
-
-Cada vez que `div_cnt` se desborda, `step_en` vale 1 durante un ciclo de reloj. Usa esa señal para actualizar tus patrones:
-
-```sv
-else if (step_en)
-begin
-    // actualizar patrones aquí
-end
-```
+  00 → contador binario
+  01 → desplazamiento circular
+  10 → ping-pong (rebote)
+  11 → mezcla XOR de contador y shift circular
+  ```

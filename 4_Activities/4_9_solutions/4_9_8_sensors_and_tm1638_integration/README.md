@@ -1,65 +1,42 @@
-<!-- File: 4_Activities/4_08_sensors_and_tm1638_integration/README.md -->
+# 4_9_8 – Integración de sensores + TM1638
 
-# 4.8 – Integración de sensores y TM1638
-
-En esta actividad vas a **combinar sensores físicos** con el módulo **TM1638**:
-
-- Leerás al menos **un sensor** (ultrasonido HC-SR04 y/o encoder rotatorio KY-040).
-- Mostrarás el valor en el **display de 7 segmentos** (TM1638).
-- Representarás el valor como una **barra** usando los **8 LEDs** del TM1638.
-- Usarás **teclas** para cambiar de modo / sensor / escala.
-
-La idea es juntar varias piezas que ya viste en los ejemplos: sensores, drivers y lógica combinacional/secuencial simple.
-
----
+Actividad basada en `4_8_sensors_and_tm1638_integration`, ubicada en `4_9_solutions/4_9_8_sensors_and_tm1638_integration`.
 
 ## Objetivo
 
-Al terminar la actividad deberías poder:
+Integrar **sensores físicos** con la tarjeta **TM1638**:
 
-- Instanciar uno o más módulos de sensor (ultrasonido, encoder).
-- Seleccionar qué valor mostrar usando teclas (`key`).
-- Actualizar el display de 7 segmentos con un número de 16 bits.
-- Dibujar una barra de nivel en los LEDs en función del valor leído.
-- Pensar en modos de operación (ej. “distancia”, “encoder”, “mix”).
-
----
-
-## Hardware asumido
-
-- **Placa:** Tang Nano 9K con configuración  
-  `tang_nano_9k_lcd_480_272_tm1638_hackathon`.
-- **TM1638** conectado (8 dígitos 7seg + 8 LEDs + teclas).
-- **GPIO [3:0]** usados como:
-  - `gpio[0]` → TRIG del HC-SR04.
-  - `gpio[1]` → ECHO del HC-SR04.
-  - `gpio[3]` → A (CLK) del KY-040.
-  - `gpio[2]` → B (DT) del KY-040.
-
-Si no tienes ambos sensores, puedes hacer la actividad solo con uno y adaptar la lógica de selección.
+- Leer **HC-SR04** (ultrasonido) y **KY-040** (encoder rotatorio).
+- Mostrar un valor numérico en el **display de 7 segmentos**.
+- Visualizar una **barra (bar graph)** en los **8 LEDs** del TM1638.
+- Cambiar el modo de visualización con las teclas (`key[1:0]`).
 
 ---
 
-## Archivos / módulos necesarios
+## Conexiones de sensores (GPIO)
 
-Asegúrate de que estos módulos estén incluidos en el proyecto:
+Se asume el siguiente mapeo en `gpio`:
 
-- `ultrasonic_distance_sensor.sv`  
-  (módulo para HC-SR04, usado ya en el ejemplo de ultrasonido).
-- `rotary_encoder.sv`
-- `sync_and_debounce.sv`
-- `sync_and_debounce_one.sv`
-- `seven_segment_display.sv`
-- `hackathon_top.sv` (este archivo de actividad).
+- **HC-SR04 (ultrasonido)**
+  - `gpio[0]` → `TRIG` (salida desde la FPGA hacia el sensor).
+  - `gpio[1]` → `ECHO` (entrada desde el sensor hacia la FPGA).
+
+- **KY-040 (encoder rotatorio)**
+  - `gpio[3]` → canal A (`CLK`).
+  - `gpio[2]` → canal B (`DT`).
+
+Los módulos utilizados:
+
+- `ultrasonic_distance_sensor`: entrega un valor relativo de distancia (`distance_rel : [15:0]`).
+- `sync_and_debounce`: sincroniza y limpia rebotes de las señales del encoder.
+- `rotary_encoder`: entrega un contador (`encoder_value : [15:0]`).
 
 ---
 
-## Qué hace la plantilla
+## Modos de operación (key[1:0])
 
-El archivo `hackathon_top.sv` ya incluye:
+Se usa `key[1:0]` como selector de modo:
 
-1. **Ultrasonido HC-SR04**
-
-   ```sv
-   ultrasonic_distance_sensor i_ultrasonic ( ... );
-   ```
+```sv
+mode = key[1:0];
+```

@@ -1,5 +1,3 @@
-// File: 4_Activities/4_03_priority_encoder_and_valid_flag/hackathon_top.sv
-//
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Actividad 4.3 – Priority encoder 3→2 + bandera "valid"
 //

@@ -9,7 +9,7 @@ set_option -verilog_std sysv2017
 
 set_option -use_mspi_as_gpio 1
 set_option -use_sspi_as_gpio 1
-add_file -type verilog c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_6_seven_segment_playground/hackathon_top.sv
+add_file -type verilog c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_solutions/4_9_6_seven_segment_playground/hackathon_top.sv
 add_file -type verilog c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/board_specific_top.sv
 add_file -type verilog c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/gowin_rpll.v
 add_file -type verilog c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/audio_pwm.sv

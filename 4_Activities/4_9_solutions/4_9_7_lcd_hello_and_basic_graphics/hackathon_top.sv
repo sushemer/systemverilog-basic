@@ -1,14 +1,19 @@
+// File: 4_9_solutions/4_9_7_lcd_hello_and_basic_graphics/hackathon_top.sv
+//
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Actividad 4.7 – LCD "HELLO" + gráficas básicas
 //
 // Idea general:
-//   - Usar las coordenadas (x, y) que vienen del controlador de LCD.
-//   - Pintar píxeles modificando red/green/blue según la región de la pantalla.
-//   - Dibujar un marco y reservar un área central para escribir "HELLO"
-//     con bloques (rectángulos).
+//   - Se dibuja un marco alrededor de la pantalla.
+//   - El fondo interno es un tono suave azul/gris.
+//   - Se reserva una banda central para la palabra "HELLO".
+//   - Cada letra (H, E, L, L, O) se forma con bloques (rectángulos).
+//   - En la parte inferior hay una barra de estado que cambia de color con key[0].
 //
-// NOTA: Esta es una PLANTILLA para la actividad.
-//       Hay varias secciones marcadas como TODO para que las completes.
+// Coordenadas:
+//   x: 0..479
+//   y: 0..271
+//
 
 module hackathon_top
 (
@@ -45,24 +50,19 @@ module hackathon_top
     // -------------------------------------------------------------------------
     // LEDs y display de 7 segmentos
     // -------------------------------------------------------------------------
-    // Por sencillez:
-    //   - Encendemos los LEDs según las teclas (para ver que responden).
-    //   - Mantendremos apagado el display de 7 segmentos.
-    // Puedes cambiar esto si quieres mostrar contadores u otra cosa.
 
-    assign led      = key;
-    assign abcdefgh = 8'h00;
+    assign led      = key;    // Solo reflejamos las teclas
+    assign abcdefgh = 8'h00;  // 7 segmentos apagado
     assign digit    = 8'h00;
+    // gpio lo maneja el wrapper
+    // (aquí no lo usamos de forma explícita)
 
     // -------------------------------------------------------------------------
     // Señales auxiliares para las letras "HELLO"
     // -------------------------------------------------------------------------
     //
-    // La idea es reservar una franja horizontal en el centro de la pantalla
-    // y dividirla en 5 "celdas", una por cada letra: H, E, L, L, O.
-    //
-    // En esta plantilla NO se implementan las letras; se deja como TODO
-    // para que tú definas las condiciones sobre (x,y).
+    // Reservamos una franja horizontal en el centro de la pantalla y
+    // la dividimos en 5 celdas de igual ancho para cada letra.
 
     logic in_H;
     logic in_E;
@@ -70,34 +70,51 @@ module hackathon_top
     logic in_L2;
     logic in_O;
 
-    // Constantes sugeridas para la banda de texto
+    // Banda vertical para el texto
     localparam int HELLO_TOP    = 80;   // y mínimo de la banda de texto
     localparam int HELLO_BOTTOM = 200;  // y máximo de la banda de texto
 
     // Ancho aproximado de cada celda de letra
     localparam int LETTER_W = 60;
 
-    // Posición X inicial del texto (ajusta a tu gusto)
+    // Posición X inicial del texto
     localparam int HELLO_X0 = 60;
+    localparam int HELLO_X1 = HELLO_X0 + 5*LETTER_W;
+
+    // Grosor de “línea” para trazos de las letras
+    localparam int STROKE       = 6;
+    localparam int HELLO_MID_Y  = (HELLO_TOP + HELLO_BOTTOM) / 2;
+    localparam int MID_Y_TOP    = HELLO_MID_Y - STROKE/2;
+    localparam int MID_Y_BOTTOM = HELLO_MID_Y + STROKE/2;
+
+    // Rangos en X para cada letra
+    localparam int H_X0  = HELLO_X0 + 0*LETTER_W;
+    localparam int H_X1  = H_X0 + LETTER_W;
+
+    localparam int E_X0  = HELLO_X0 + 1*LETTER_W;
+    localparam int E_X1  = E_X0 + LETTER_W;
+
+    localparam int L1_X0 = HELLO_X0 + 2*LETTER_W;
+    localparam int L1_X1 = L1_X0 + LETTER_W;
+
+    localparam int L2_X0 = HELLO_X0 + 3*LETTER_W;
+    localparam int L2_X1 = L2_X0 + LETTER_W;
+
+    localparam int O_X0  = HELLO_X0 + 4*LETTER_W;
+    localparam int O_X1  = O_X0 + LETTER_W;
 
     // -------------------------------------------------------------------------
     // Lógica de dibujo en el LCD
     // -------------------------------------------------------------------------
-    //
-    // Todo el dibujo se hace en este always_comb:
-    //   - Primero se inicializa fondo negro.
-    //   - Se dibuja un marco alrededor de la pantalla.
-    //   - Se reserva un "rectángulo" para la palabra HELLO.
-    //   - Dentro de ese rectángulo, deberás implementar las letras con bloques.
 
     always_comb
     begin
-        // Valores por defecto
+        // Fondo por defecto: negro
         red   = '0;
         green = '0;
         blue  = '0;
 
-        // Inicializar las banderas de letras en 0
+        // Inicializar banderas de letras
         in_H  = 1'b0;
         in_E  = 1'b0;
         in_L1 = 1'b0;
@@ -108,25 +125,22 @@ module hackathon_top
         // 1) Marco (borde) de la pantalla
         // ---------------------------------------------------------------------
         //
-        // Si el píxel está cerca de los bordes, pintamos un marco blanco.
+        // 4 píxeles de grosor alrededor de toda la pantalla.
 
         if (x < 4 || x >= SCREEN_W-4 || y < 4 || y >= SCREEN_H-4)
         begin
-            red   = 5'b11111;   // Blanco (máximo en los 3 canales)
+            // Marco blanco
+            red   = 5'b11111;
             green = 6'b111111;
             blue  = 5'b11111;
         end
 
         // ---------------------------------------------------------------------
-        // 2) Fondo dentro del marco
+        // 2) Interior de la pantalla (no borde)
         // ---------------------------------------------------------------------
-        //
-        // Solo si NO estamos en el borde, se puede sobreescribir el color
-        // dependiendo de las regiones que definamos.
-
         if (!(x < 4 || x >= SCREEN_W-4 || y < 4 || y >= SCREEN_H-4))
         begin
-            // Fondo base: un tono suave (gris azulado)
+            // Fondo base: gris-azulado suave
             red   = 5'd2;
             green = 6'd4;
             blue  = 5'd8;
@@ -135,86 +149,120 @@ module hackathon_top
             // 2.1) Franja central para la palabra HELLO
             // -----------------------------------------------------------------
             //
-            // Primero definimos un rectángulo "contenedor" donde irá la palabra.
-            // Lo pintaremos, por ejemplo, de un color más claro o diferente.
-            // Luego, encima, se dibujarán las letras.
-            //
-            // Banda de texto:
-            //    y entre HELLO_TOP y HELLO_BOTTOM
-            //    x desde HELLO_X0 hasta HELLO_X0 + 5*LETTER_W
+            // Banda:
+            //   y entre HELLO_TOP y HELLO_BOTTOM
+            //   x entre HELLO_X0 y HELLO_X1
 
-            if (   (y >= HELLO_TOP) && (y < HELLO_BOTTOM)
-                && (x >= HELLO_X0)  && (x < HELLO_X0 + 5*LETTER_W) )
+            if (   (y >= HELLO_TOP)   && (y < HELLO_BOTTOM)
+                && (x >= HELLO_X0)    && (x < HELLO_X1) )
             begin
-                // Color de fondo de la banda de texto (ej: celeste claro)
+                // Fondo de la banda de texto (celeste claro)
                 red   = 5'd4;
                 green = 6'd10;
                 blue  = 5'd15;
 
                 // -------------------------------------------------------------
-                // TODO: Implementar los trazos de cada letra
+                // Definición de trazos de cada letra con rectángulos
                 // -------------------------------------------------------------
-                //
-                // Sugerencia:
-                //   - Divide el eje X en 5 celdas:
-                //       H: [HELLO_X0 + 0*LETTER_W, HELLO_X0 + 1*LETTER_W)
-                //       E: [HELLO_X0 + 1*LETTER_W, HELLO_X0 + 2*LETTER_W)
-                //       L: [HELLO_X0 + 2*LETTER_W, HELLO_X0 + 3*LETTER_W)
-                //       L: [HELLO_X0 + 3*LETTER_W, HELLO_X0 + 4*LETTER_W)
-                //       O: [HELLO_X0 + 4*LETTER_W, HELLO_X0 + 5*LETTER_W)
-                //
-                //   - En cada celda, usa combinaciones de rectángulos
-                //     (condiciones sobre x,y) para formar letras de bloques.
-                //
-                // Ejemplo de idea para la letra H (NO está implementado):
-                //
-                //   localparam int H_X0 = HELLO_X0 + 0*LETTER_W;
-                //   localparam int H_X1 = H_X0 + LETTER_W;
-                //
-                //   wire in_H_left  = (x >= H_X0          ) && (x < H_X0 + 5)
-                //                   && (y >= HELLO_TOP    ) && (y < HELLO_BOTTOM);
-                //
-                //   wire in_H_right = (x >= H_X1 - 5      ) && (x < H_X1       )
-                //                   && (y >= HELLO_TOP    ) && (y < HELLO_BOTTOM);
-                //
-                //   wire in_H_mid   = (y >= (HELLO_TOP+HELLO_BOTTOM)/2 - 3)
-                //                   && (y <  (HELLO_TOP+HELLO_BOTTOM)/2 + 3)
-                //                   && (x >= H_X0 + 5) && (x < H_X1 - 5);
-                //
-                //   in_H = in_H_left || in_H_right || in_H_mid;
-                //
-                // Haz algo similar para E, L, L, O usando otros rangos de X.
 
-                // Por ahora, las banderas in_H, in_E, in_L1, in_L2, in_O
-                // siguen en 0, para que el diseño compile aun sin letras.
+                // -------------------------
+                // Letra H (columna 0)
+                // -------------------------
+                in_H =
+                    // Barra vertical izquierda
+                    (x >= H_X0 && x < H_X0 + STROKE &&
+                     y >= HELLO_TOP && y < HELLO_BOTTOM)
+                    ||
+                    // Barra vertical derecha
+                    (x >= H_X1 - STROKE && x < H_X1 &&
+                     y >= HELLO_TOP && y < HELLO_BOTTOM)
+                    ||
+                    // Barra horizontal central
+                    (y >= MID_Y_TOP && y < MID_Y_BOTTOM &&
+                     x >= H_X0 + STROKE && x < H_X1 - STROKE);
 
+                // -------------------------
+                // Letra E (columna 1)
+                // -------------------------
+                in_E =
+                    // Barra vertical izquierda
+                    (x >= E_X0 && x < E_X0 + STROKE &&
+                     y >= HELLO_TOP && y < HELLO_BOTTOM)
+                    ||
+                    // Barra horizontal superior
+                    (y >= HELLO_TOP && y < HELLO_TOP + STROKE &&
+                     x >= E_X0 && x < E_X1)
+                    ||
+                    // Barra horizontal central
+                    (y >= MID_Y_TOP && y < MID_Y_BOTTOM &&
+                     x >= E_X0 && x < E_X1)
+                    ||
+                    // Barra horizontal inferior
+                    (y >= HELLO_BOTTOM - STROKE && y < HELLO_BOTTOM &&
+                     x >= E_X0 && x < E_X1);
+
+                // -------------------------
+                // Letra L (primera L, columna 2)
+                // -------------------------
+                in_L1 =
+                    // Barra vertical izquierda
+                    (x >= L1_X0 && x < L1_X0 + STROKE &&
+                     y >= HELLO_TOP && y < HELLO_BOTTOM)
+                    ||
+                    // Barra horizontal inferior
+                    (y >= HELLO_BOTTOM - STROKE && y < HELLO_BOTTOM &&
+                     x >= L1_X0 && x < L1_X1);
+
+                // -------------------------
+                // Letra L (segunda L, columna 3)
+                // -------------------------
+                in_L2 =
+                    // Barra vertical izquierda
+                    (x >= L2_X0 && x < L2_X0 + STROKE &&
+                     y >= HELLO_TOP && y < HELLO_BOTTOM)
+                    ||
+                    // Barra horizontal inferior
+                    (y >= HELLO_BOTTOM - STROKE && y < HELLO_BOTTOM &&
+                     x >= L2_X0 && x < L2_X1);
+
+                // -------------------------
+                // Letra O (columna 4)
+                // -------------------------
+                in_O =
+                    // Borde superior
+                    (y >= HELLO_TOP && y < HELLO_TOP + STROKE &&
+                     x >= O_X0 && x < O_X1)
+                    ||
+                    // Borde inferior
+                    (y >= HELLO_BOTTOM - STROKE && y < HELLO_BOTTOM &&
+                     x >= O_X0 && x < O_X1)
+                    ||
+                    // Borde izquierdo
+                    (x >= O_X0 && x < O_X0 + STROKE &&
+                     y >= HELLO_TOP && y < HELLO_BOTTOM)
+                    ||
+                    // Borde derecho
+                    (x >= O_X1 - STROKE && x < O_X1 &&
+                     y >= HELLO_TOP && y < HELLO_BOTTOM);
             end
 
             // -----------------------------------------------------------------
             // 2.2) Color de las letras "HELLO"
             // -----------------------------------------------------------------
-            //
-            // Una vez que definas las regiones de cada letra (in_H, in_E, ...),
-            // usa este bloque para pintarlas de un color llamativo por encima
-            // del fondo de la banda.
-
             if (in_H || in_E || in_L1 || in_L2 || in_O)
             begin
-                // Color de las letras (por ejemplo, rojo brillante)
+                // Letras en rojo brillante
                 red   = 5'b11111;
                 green = 6'd0;
                 blue  = 5'd0;
             end
 
             // -----------------------------------------------------------------
-            // 2.3) Barra de estado (extra opcional)
+            // 2.3) Barra de estado inferior (extra)
             // -----------------------------------------------------------------
             //
-            // Como ejemplo extra, puedes usar una barra en la parte inferior
-            // que cambie de tamaño o color con las teclas.
-            //
-            // Debajo se deja una idea simple implementada: una barra fija
-            // cuyo color depende de key[0]. Puedes modificarla libremente.
+            // Barra en la parte inferior de la pantalla que cambia de color
+            // según key[0].
 
             if (y >= SCREEN_H - 30)
             begin

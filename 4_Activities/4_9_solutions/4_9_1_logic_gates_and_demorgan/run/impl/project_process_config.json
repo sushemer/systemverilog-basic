@@ -30,7 +30,7 @@
  "I2C_SLAVE_ADDR" : "00",
  "Implicit_Initial_Value_Support" : false,
  "IncludePath" : [
-   "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_1_logic_gates_and_demorgan",
+   "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_solutions/4_9_1_logic_gates_and_demorgan",
    "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon",
    "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals",
    "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/labs/common"

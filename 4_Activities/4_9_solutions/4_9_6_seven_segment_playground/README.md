@@ -1,60 +1,37 @@
-<!-- File: 4_Activities/4_06_seven_segment_playground/README.md -->
+# 4_9_6 – Seven Segment Playground
 
-# 4.6 – Playground de display de 7 segmentos
-
-En esta actividad vas a usar el módulo **`seven_segment_display`** ya disponible en el repositorio para experimentar con el display de 7 segmentos de la placa (8 dígitos).
-
-La idea es que este ejemplo funcione como un **“parque de juegos” (playground)** donde pruebes:
-
-- Contadores hexadecimales.
-- Actualización manual de dígitos.
-- Patrones que se desplazan de un lado a otro.
-- Uso de puntos decimales (`dots`) como indicadores extra.
-- Tus propios efectos visuales.
-
----
+Actividad basada en `4_06_seven_segment_playground`, incluida en la carpeta de soluciones `4_9_solutions`.
 
 ## Objetivo
 
-Al terminar esta actividad deberías ser capaz de:
+Jugar con el módulo `seven_segment_display` del repo para:
 
-- Entender cómo se representa un número con múltiples dígitos hex en `number`.
-- Usar las teclas (`key`) para seleccionar modos y modificar el contenido del display.
-- Implementar al menos **dos modos de visualización** distintos (idealmente tres o cuatro).
-- Ajustar la velocidad de animación con un divisor de frecuencia.
+- Mostrar distintos **patrones en los 8 dígitos** del display de 7 segmentos.
+- Cambiar contenido y **puntos decimales** usando las teclas (`key`).
+- Practicar:
+  - Manejo de números hexadecimales por nibbles.
+  - Animaciones con un **tick lento** generado desde el reloj principal.
+  - Distintos modos de operación controlados por `key`.
 
 ---
 
-## Señales y módulos clave
+## Mapeo de señales
 
-### Entradas y salidas relevantes
+### Entradas
 
-- `clock` → reloj principal (~27 MHz).
-- `reset` → reset síncrono.
-- `key[7:0]` → se usan como:
-  - `key[1:0]` → selección de **modo** (`mode`).
-  - `key[7:4]` → nibble manual para probar dígitos (sugerido).
-- `abcdefgh[7:0]` → segmentos del display (a–g + punto).
-- `digit[7:0]` → selección de dígito activo (multiplexado).
-- `led[7:0]` → puedes usarlos como indicador de modo o de estado.
+- `clock`  
+  Reloj principal de la FPGA (~27 MHz).
 
-### Módulo `seven_segment_display`
+- `reset`  
+  Reset del sistema.
 
-En el código se instancia:
+- `key[1:0]` → selección de modo:
 
-```sv
-localparam int W_DIGITS = 8;
-localparam int W_NUM    = W_DIGITS * 4;  // 32 bits
+  ```
+  mode = key[1:0]
 
-logic [W_NUM-1:0]   number_reg;
-logic [W_DIGITS-1:0] dots_reg;
-
-seven_segment_display #(.w_digit(W_DIGITS)) i_7segment (
-    .clk      ( clock      ),
-    .rst      ( reset      ),
-    .number   ( number_reg ),
-    .dots     ( dots_reg   ),
-    .abcdefgh ( abcdefgh   ),
-    .digit    ( digit      )
-);
-```
+  00 → Contador hexadecimal libre
+  01 → Playground manual (key[7:4] en D0)
+  10 → “Barra” / dígito 0xF que recorre los 8 dígitos
+  11 → Patrón fijo 0xDEAD_BEEF
+  ```

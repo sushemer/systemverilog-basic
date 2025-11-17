@@ -1,10 +1,10 @@
 *** GOWIN Tcl Command Line Console  *** 
 current device: GW1NR-9C  GW1NR-LV9QN88PC6/I5
-add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_8_sensors_and_tm1638_integration/hackathon_top.sv"
-add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_8_sensors_and_tm1638_integration/rotary_encoder.sv"
-add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_8_sensors_and_tm1638_integration/sync_and_debounce.sv"
-add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_8_sensors_and_tm1638_integration/sync_and_debounce_one.sv"
-add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_8_sensors_and_tm1638_integration/ultrasonic_distance_sensor.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_solutions/4_9_8_sensors_and_tm1638_integration/hackathon_top.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_solutions/4_9_8_sensors_and_tm1638_integration/rotary_encoder.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_solutions/4_9_8_sensors_and_tm1638_integration/sync_and_debounce.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_solutions/4_9_8_sensors_and_tm1638_integration/sync_and_debounce_one.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_solutions/4_9_8_sensors_and_tm1638_integration/ultrasonic_distance_sensor.sv"
 add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/board_specific_top.sv"
 add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/gowin_rpll.v"
 add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/audio_pwm.sv"
@@ -36,19 +36,19 @@ add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/
 add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/board_specific.sdc"
 GowinSynthesis start
 Running parser ...
-Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\hackathon_top.sv'
-Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\rotary_encoder.sv'
-Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\rotary_encoder.sv":1)
-Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\rotary_encoder.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\rotary_encoder.sv":1)
-Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce.sv'
-Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce.sv":1)
-Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce.sv":1)
-Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv'
-Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv":1)
-Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv":1)
-Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv'
-Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":1)
-Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":1)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\hackathon_top.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\rotary_encoder.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\rotary_encoder.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\rotary_encoder.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\rotary_encoder.sv":1)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce.sv":1)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv":1)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":1)
 Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv'
 Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv":2)
 Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":1)
@@ -146,13 +146,15 @@ WARN  (EX2582) : Parameter 'COLOR_W' declared inside compilation unit '$unit__ha
 Compiling module 'board_specific_top'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":19)
 Compiling module 'imitate_reset_on_power_up'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\imitate_reset_on_power_up.sv":3)
 Compiling module 'slow_clk_gen(fast_clk_mhz=27,slow_clk_hz=1)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\slow_clk_gen.sv":5)
-Compiling module 'hackathon_top'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\hackathon_top.sv":20)
-Compiling module 'ultrasonic_distance_sensor(clk_frequency=27000000,relative_distance_width=16)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":9)
-WARN  (EX3791) : Expression size 24 truncated to fit in target size 23("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":82)
-WARN  (EX3791) : Expression size 21 truncated to fit in target size 20("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":125)
-Compiling module 'sync_and_debounce(w=2)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce.sv":3)
-Compiling module 'sync_and_debounce_one'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv":3)
-Compiling module 'rotary_encoder'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\rotary_encoder.sv":8)
+Compiling module 'hackathon_top'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\hackathon_top.sv":15)
+Compiling module 'ultrasonic_distance_sensor(clk_frequency=27000000,relative_distance_width=16)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":9)
+WARN  (EX3791) : Expression size 24 truncated to fit in target size 23("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":82)
+WARN  (EX3791) : Expression size 21 truncated to fit in target size 20("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\ultrasonic_distance_sensor.sv":125)
+Compiling module 'sync_and_debounce(w=2)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce.sv":3)
+Compiling module 'sync_and_debounce_one'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\sync_and_debounce_one.sv":3)
+Compiling module 'rotary_encoder'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\rotary_encoder.sv":8)
+WARN  (EX2420) : Latch inferred for net 'level[2]'; We do not recommend the use of latches in FPGA designs, as they may lead to timing problems("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\hackathon_top.sv":158)
+WARN  (EX3101) : 'level' inside always_comb block does not represent combinational logic("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\hackathon_top.sv":158)
 Compiling module 'seven_segment_display(w_digit=8)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\seven_segment_display.sv":5)
 Compiling module 'tm1638_board_controller(clk_mhz=27)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":20)
 Compiling module 'tm1638_sio(clk_mhz=27)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":299)
@@ -174,8 +176,6 @@ WARN  (CV0016) : Input UART_RX is unused("C:\Users\SUSHEMER\OneDrive\Documentos\
 WARN  (CV0016) : Input FLASH_MISO is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":107)
 WARN  (CV0017) : Inout TF_MISO is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":80)
 WARN  (CV0017) : Inout SMALL_LCD_RESETN is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":92)
-WARN  (CV0017) : Inout SMALL_LCD_CS is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":93)
-WARN  (CV0017) : Inout SMALL_LCD_RS is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":94)
 Running device independent optimization ...
 [10%] Optimizing Phase 0 completed
 [15%] Optimizing Phase 1 completed
@@ -191,16 +191,12 @@ Running technical mapping ...
 [75%] Tech-Mapping Phase 2 completed
 [80%] Tech-Mapping Phase 3 completed
 [90%] Tech-Mapping Phase 4 completed
-WARN  (NL0002) : The module "rotary_encoder" instantiated to "i_rotary_encoder" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\hackathon_top.sv":124)
-WARN  (NL0002) : The module "sync_and_debounce" instantiated to "i_sync_and_debounce" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\hackathon_top.sv":113)
-WARN  (NL0002) : The module "sync_and_debounce_one" instantiated to "gen_sync_and_debounce[0].i_sync_and_debounce_one" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce.sv":28)
-WARN  (NL0002) : The module "sync_and_debounce_one" instantiated to "gen_sync_and_debounce[1].i_sync_and_debounce_one" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\sync_and_debounce.sv":28)
 WARN  (NL0002) : The module "slow_clk_gen" instantiated to "i_slow_clk_gen" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":225)
-[95%] Generate netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\gwsynthesis\fpga_project.vg" completed
-[100%] Generate report file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\gwsynthesis\fpga_project_syn.rpt.html" completed
+[95%] Generate netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\gwsynthesis\fpga_project.vg" completed
+[100%] Generate report file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\gwsynthesis\fpga_project_syn.rpt.html" completed
 GowinSynthesis finish
-Reading netlist file: "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\gwsynthesis\fpga_project.vg"
-Parsing netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\gwsynthesis\fpga_project.vg" completed
+Reading netlist file: "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\gwsynthesis\fpga_project.vg"
+Parsing netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\gwsynthesis\fpga_project.vg" completed
 Processing netlist completed
 Reading constraint file: "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.cst"
 Physical Constraint parsed completed
@@ -221,10 +217,10 @@ Bitstream generation in progress......
 Bitstream generation completed
 Running power analysis......
 [100%] Power analysis completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.power.html" completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.pin.html" completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.rpt.html" completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.rpt.txt" completed
-Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.tr.html" completed
-Mon Nov 17 13:12:54 2025
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.power.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.pin.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.rpt.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.rpt.txt" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_9_solutions\4_9_8_sensors_and_tm1638_integration\run\impl\pnr\fpga_project.tr.html" completed
+Mon Nov 17 14:11:44 2025
 
