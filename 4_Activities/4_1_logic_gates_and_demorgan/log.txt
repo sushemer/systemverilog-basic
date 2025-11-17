@@ -1,0 +1,207 @@
+*** GOWIN Tcl Command Line Console  *** 
+current device: GW1NR-9C  GW1NR-LV9QN88PC6/I5
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/4_Activities/4_1_logic_gates_and_demorgan/hackathon_top.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/board_specific_top.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/gowin_rpll.v"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/audio_pwm.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/digilent_pmod_mic3_spi_receiver.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/dvi.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/hub75e_led_matrix.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/i2s_audio_out.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/imitate_reset_on_power_up.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/inmp441_mic_i2s_receiver.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/inmp441_mic_i2s_receiver_alt.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/inmp441_mic_i2s_receiver_new.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/lcd_480_272.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/lcd_480_272_ml6485.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/lcd_800_480.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/sigma_delta_dac.v"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/slow_clk_gen.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/tm1638_board.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/tm1638_registers.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/tm1638_using_graphics.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/tm1638_virtual_switches.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/peripherals/vga.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/labs/common/convert.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/labs/common/counter_with_enable.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/labs/common/seven_segment_display.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/labs/common/shift_reg.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/labs/common/strobe_gen.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/labs/common/tb_lcd_display.sv"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/board_specific.cst"
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/board_specific.sdc"
+GowinSynthesis start
+Running parser ...
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\hackathon_top.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv":2)
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":1)
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lab_specific_board_config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":2)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":2)
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\swap_bits.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific_top.sv":2)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\gowin_rpll.v'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\audio_pwm.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\digilent_pmod_mic3_spi_receiver.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\digilent_pmod_mic3_spi_receiver.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\digilent_pmod_mic3_spi_receiver.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\digilent_pmod_mic3_spi_receiver.sv":1)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi.sv":1)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\hub75e_led_matrix.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\i2s_audio_out.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\imitate_reset_on_power_up.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\imitate_reset_on_power_up.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\imitate_reset_on_power_up.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\imitate_reset_on_power_up.sv":1)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver.sv":3)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver_alt.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver_alt.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver_alt.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver_alt.sv":1)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver_new.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lcd_480_272.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lcd_480_272_ml6485.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lcd_800_480.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\sigma_delta_dac.v'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\slow_clk_gen.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\slow_clk_gen.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\slow_clk_gen.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\slow_clk_gen.sv":3)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":17)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":17)
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lab_specific_board_config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":18)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":18)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv":12)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv":12)
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lab_specific_board_config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv":13)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv":13)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_using_graphics.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_using_graphics.sv":5)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_using_graphics.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_using_graphics.sv":5)
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lab_specific_board_config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_using_graphics.sv":6)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_using_graphics.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_using_graphics.sv":6)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_virtual_switches.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_virtual_switches.sv":1)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_virtual_switches.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_virtual_switches.sv":1)
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lab_specific_board_config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_virtual_switches.sv":2)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_virtual_switches.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_virtual_switches.sv":2)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\vga.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\vga.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\vga.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\vga.sv":3)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\convert.sv'
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\counter_with_enable.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\counter_with_enable.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\counter_with_enable.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\counter_with_enable.sv":3)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\seven_segment_display.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\seven_segment_display.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\seven_segment_display.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\seven_segment_display.sv":3)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\shift_reg.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\shift_reg.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\shift_reg.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\shift_reg.sv":3)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\strobe_gen.sv'
+Analyzing included file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\config.svh'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\strobe_gen.sv":3)
+Back to file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\strobe_gen.sv'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\strobe_gen.sv":3)
+Analyzing Verilog file 'C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\labs\common\tb_lcd_display.sv'
+WARN  (EX2582) : Parameter 'SCREEN_H_RES' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":4)
+WARN  (EX2582) : Parameter 'SCREEN_V_RES' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":5)
+WARN  (EX2582) : Parameter 'HSYNC_PULSE' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":7)
+WARN  (EX2582) : Parameter 'H_FRONT_PORCH' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":8)
+WARN  (EX2582) : Parameter 'H_BACK_PORCH' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":9)
+WARN  (EX2582) : Parameter 'H_BORDER' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":10)
+WARN  (EX2582) : Parameter 'VSYNC_PULSE' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":12)
+WARN  (EX2582) : Parameter 'V_FRONT_PORCH' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":13)
+WARN  (EX2582) : Parameter 'V_BACK_PORCH' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":14)
+WARN  (EX2582) : Parameter 'V_BORDER' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":15)
+WARN  (EX2582) : Parameter 'HSYNC_START' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":18)
+WARN  (EX2582) : Parameter 'HSYNC_END' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":19)
+WARN  (EX2582) : Parameter 'H_TOTAL' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":20)
+WARN  (EX2582) : Parameter 'VSYNC_START' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":23)
+WARN  (EX2582) : Parameter 'VSYNC_END' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":24)
+WARN  (EX2582) : Parameter 'V_TOTAL' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":25)
+WARN  (EX2582) : Parameter 'X_POS_W' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":27)
+WARN  (EX2582) : Parameter 'Y_POS_W' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":28)
+WARN  (EX2582) : Parameter 'HS_W' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":30)
+WARN  (EX2582) : Parameter 'VS_W' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":31)
+WARN  (EX2582) : Parameter 'COLOR_W' declared inside compilation unit '$unit__hackathon_top_sv' shall be treated as localparam("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\dvi_config.svh":33)
+Compiling module 'board_specific_top'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":19)
+Compiling module 'imitate_reset_on_power_up'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\imitate_reset_on_power_up.sv":3)
+Compiling module 'slow_clk_gen(fast_clk_mhz=27,slow_clk_hz=1)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\slow_clk_gen.sv":5)
+Compiling module 'hackathon_top'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\hackathon_top.sv":5)
+Compiling module 'tm1638_board_controller(clk_mhz=27)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":20)
+Compiling module 'tm1638_sio(clk_mhz=27)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":299)
+Compiling module 'tm1638_registers'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_registers.sv":15)
+WARN  (EX3791) : Expression size 21 truncated to fit in target size 20("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":185)
+WARN  (EX3791) : Expression size 7 truncated to fit in target size 6("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":189)
+Compiling module 'Gowin_rPLL'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\gowin_rpll.v":9)
+Compiling module 'lcd_480_272'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\lcd_480_272.sv":3)
+Compiling module 'inmp441_mic_i2s_receiver(clk_mhz=27)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\inmp441_mic_i2s_receiver.sv":5)
+Compiling module 'i2s_audio_out(clk_mhz=27)'("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\i2s_audio_out.sv":6)
+WARN  (EX1998) : Net 'sound[15]' does not have a driver("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":163)
+NOTE  (EX0101) : Current top module is "board_specific_top"
+WARN  (EX0211) : The output port "UART_TX" of module "board_specific_top" has no driver, assigning undriven bits to Z, simulation mismatch possible("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":71)
+WARN  (EX0211) : The output port "FLASH_CLK" of module "board_specific_top" has no driver, assigning undriven bits to Z, simulation mismatch possible("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":104)
+WARN  (EX0211) : The output port "FLASH_CSB" of module "board_specific_top" has no driver, assigning undriven bits to Z, simulation mismatch possible("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":105)
+WARN  (EX0211) : The output port "FLASH_MOSI" of module "board_specific_top" has no driver, assigning undriven bits to Z, simulation mismatch possible("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":106)
+[5%] Running netlist conversion ...
+WARN  (CV0016) : Input UART_RX is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":70)
+WARN  (CV0016) : Input FLASH_MISO is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":107)
+WARN  (CV0017) : Inout TF_MISO is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":80)
+WARN  (CV0017) : Inout SMALL_LCD_CLK is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":91)
+WARN  (CV0017) : Inout SMALL_LCD_RESETN is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":92)
+WARN  (CV0017) : Inout SMALL_LCD_CS is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":93)
+WARN  (CV0017) : Inout SMALL_LCD_RS is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":94)
+WARN  (CV0017) : Inout SMALL_LCD_DATA is unused("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":95)
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+WARN  (NL0002) : The module "hackathon_top" instantiated to "i_hackathon_top" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":260)
+WARN  (NL0002) : The module "slow_clk_gen" instantiated to "i_slow_clk_gen" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\..\tang_nano_9k_lcd_480_272_tm1638\board_specific_top.sv":225)
+WARN  (NL0002) : The module "tm1638_registers" instantiated to "i_tm1638_regs" is swept in optimizing("C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\peripherals\tm1638_board.sv":147)
+[95%] Generate netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\gwsynthesis\fpga_project.vg" completed
+[100%] Generate report file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\gwsynthesis\fpga_project_syn.rpt.html" completed
+GowinSynthesis finish
+Reading netlist file: "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\gwsynthesis\fpga_project.vg"
+Parsing netlist file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\gwsynthesis\fpga_project.vg" completed
+Processing netlist completed
+Reading constraint file: "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\boards\tang_nano_9k_lcd_480_272_tm1638_hackathon\board_specific.cst"
+Physical Constraint parsed completed
+Running placement......
+[10%] Placement Phase 0 completed
+[20%] Placement Phase 1 completed
+[30%] Placement Phase 2 completed
+[50%] Placement Phase 3 completed
+Running routing......
+[60%] Routing Phase 0 completed
+[70%] Routing Phase 1 completed
+[80%] Routing Phase 2 completed
+[90%] Routing Phase 3 completed
+Running timing analysis......
+[95%] Timing analysis completed
+Placement and routing completed
+Bitstream generation in progress......
+Bitstream generation completed
+Running power analysis......
+[100%] Power analysis completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\pnr\fpga_project.power.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\pnr\fpga_project.pin.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\pnr\fpga_project.rpt.html" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\pnr\fpga_project.rpt.txt" completed
+Generate file "C:\Users\SUSHEMER\OneDrive\Documentos\GitHub\systemverilog-basic\4_Activities\4_1_logic_gates_and_demorgan\run\impl\pnr\fpga_project.tr.html" completed
+Mon Nov 17 11:48:05 2025
+
