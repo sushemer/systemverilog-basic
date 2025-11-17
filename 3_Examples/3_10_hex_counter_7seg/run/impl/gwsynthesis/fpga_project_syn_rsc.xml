@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="board_specific_top" Lut="8" T_Register="326(0)" T_Alu="47(0)" T_Lut="563(8)">
+ <SubModule name="i_reset_on_power_up" Register="1" T_Register="1(1)"/>
+ <SubModule name="i_hackathon_top" Register="96" Alu="31" Lut="218" T_Register="150(96)" T_Alu="31(31)" T_Lut="297(218)">
+  <SubModule name="i_7segment" Register="54" Lut="79" T_Register="54(54)" T_Lut="79(79)"/>
+ </SubModule>
+ <SubModule name="i_tm1638" Register="49" Lut="143" T_Register="125(49)" T_Lut="175(143)">
+  <SubModule name="tm1638_sio" Register="20" Lut="32" T_Register="20(20)" T_Lut="32(32)"/>
+  <SubModule name="i_tm1638_regs" Register="56" T_Register="56(56)"/>
+ </SubModule>
+ <SubModule name="i_Gowin_rPLL"/>
+ <SubModule name="i_lcd" Register="32" Lut="79" T_Register="32(32)" T_Lut="79(79)"/>
+ <SubModule name="i_microphone" Register="10" Alu="8" Lut="4" T_Register="10(10)" T_Alu="8(8)" T_Lut="4(4)"/>
+ <SubModule name="inst_audio_out_alt" Register="8" Alu="8" T_Register="8(8)" T_Alu="8(8)"/>
+</Module>

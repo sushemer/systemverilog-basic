@@ -105,15 +105,6 @@ module hackathon_top
     // ------------------------------------------------------------------------
     // Mostrar entradas y salidas en los LEDs
     // ------------------------------------------------------------------------
-    //
-    // led[0] = d0
-    // led[1] = d1
-    // led[2] = sel
-    // led[3] = y_if
-    // led[4] = y_tern
-    // led[5] = y_case
-    // led[6] = y_gate
-    // led[7] = 0
 
     assign led[0] = d0;
     assign led[1] = d1;

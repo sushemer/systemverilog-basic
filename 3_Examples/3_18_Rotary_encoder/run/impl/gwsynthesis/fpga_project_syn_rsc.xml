@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="board_specific_top" Lut="8" T_Register="252(0)" T_Alu="46(0)" T_Lut="365(8)">
+ <SubModule name="i_reset_on_power_up" Register="1" T_Register="1(1)"/>
+ <SubModule name="i_hackathon_top" Lut="23" T_Register="79(0)" T_Alu="30(0)" T_Lut="105(23)">
+  <SubModule name="i_sync_and_debounce" T_Register="24(0)" T_Alu="14(0)" T_Lut="11(0)">
+   <SubModule name="gen_sync_and_debounce[0].i_sync_and_debounce_one" Register="12" Alu="7" Lut="5" T_Register="12(12)" T_Alu="7(7)" T_Lut="5(5)"/>
+   <SubModule name="gen_sync_and_debounce[1].i_sync_and_debounce_one" Register="12" Alu="7" Lut="6" T_Register="12(12)" T_Alu="7(7)" T_Lut="6(6)"/>
+  </SubModule>
+  <SubModule name="i_rotary_encoder" Register="17" Alu="16" Lut="1" T_Register="17(17)" T_Alu="16(16)" T_Lut="1(1)"/>
+  <SubModule name="i_7segment" Register="38" Lut="70" T_Register="38(38)" T_Lut="70(70)"/>
+ </SubModule>
+ <SubModule name="i_tm1638" Register="47" Lut="141" T_Register="122(47)" T_Lut="173(141)">
+  <SubModule name="tm1638_sio" Register="19" Lut="32" T_Register="19(19)" T_Lut="32(32)"/>
+  <SubModule name="i_tm1638_regs" Register="56" T_Register="56(56)"/>
+ </SubModule>
+ <SubModule name="i_Gowin_rPLL"/>
+ <SubModule name="i_lcd" Register="32" Lut="75" T_Register="32(32)" T_Lut="75(75)"/>
+ <SubModule name="i_microphone" Register="10" Alu="8" Lut="4" T_Register="10(10)" T_Alu="8(8)" T_Lut="4(4)"/>
+ <SubModule name="inst_audio_out_alt" Register="8" Alu="8" T_Register="8(8)" T_Alu="8(8)"/>
+</Module>
