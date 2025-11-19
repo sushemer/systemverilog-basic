@@ -2,7 +2,7 @@
 
 La **Tang Nano 9K** es la placa FPGA principal utilizada en este repositorio.  
 Aquí se documenta cómo se usa dentro del proyecto y dónde encontrar la información clave para trabajar con ella.
-
+![alt text](Mult/image.png)
 ---
 
 ## Rol en el repositorio

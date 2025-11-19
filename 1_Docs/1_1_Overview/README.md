@@ -1,73 +1,94 @@
 # 1.1 Overview · Cómo usar la documentación
 
-Este documento ofrece una visión general de la carpeta `1_docs` y de cómo la documentación se relaciona con el resto del repositorio (`2_devices`, `3_examples`, `4_activities`, `5_labs`, `6_implementation`).
+Este documento ofrece una visión general de la carpeta `1_docs` y explica cómo se relaciona con el resto del repositorio (`2_devices`, `3_examples`, `4_activities`, `5_labs`, `6_implementation`).
 
 El objetivo es responder a tres preguntas:
+
 - ¿Por dónde empezar?
 - ¿Cuándo consultar teoría?
-- ¿Cómo conectar la documentación con ejemplos, actividades y laboratorios?
+- ¿Cómo conectar la documentación con ejemplos, actividades, labs e implementaciones?
 
 ---
 
-## Flujo sugerido de aprendizaje
+## 1. Flujo sugerido de aprendizaje
 
 Un recorrido típico usando la documentación es el siguiente:
 
-1. **Leer este Overview**  
-   Para entender cómo se conectan Docs, Devices, Examples, Activities, Labs e Implementation.
+1. **Leer este Overview (`1_1_Overview`)**  
+   Para entender el propósito del repositorio, a quién va dirigido y qué resultados se esperan.
 
-2. **Revisar el README principal del repositorio (`/README.md`)**  
-   Para conocer:
-   - El contexto académico.
-   - El objetivo general del proyecto.
-   - La estructura global de carpetas.
+2. **Revisar la teoría que haga falta (`1_2_*`)**  
+   Solo lo necesario para la práctica que vas a hacer (lógica combinacional, FSM, contadores, PWM, etc.).
 
-3. **Configurar el entorno de trabajo**  
-   Siguiendo las guías de `1_3_Install/`:
-   - Elegir el sistema operativo (Windows o Linux).
-   - Instalar las herramientas indicadas.
-   - Ejecutar la prueba básica (“smoke test”).
+3. **Seguir las guías de instalación y entorno (`1_3_install`)**  
+   Para dejar listo VS Code, Git, Gowin y la clonación del repositorio.
 
-4. **Consultar teoría a medida que avanza**  
-   En `1_2_Theory/`, solo para los temas necesarios en cada momento:
-   - Por ejemplo, antes de un contador: `registers_and_clock.md` y `timing_and_dividers.md`.
-   - Antes de una FSM: `finite_state_machines.md`.
-   - Antes de usar un periférico específico: archivo correspondiente (7 segmentos, LCD, HC-SR04, etc.).
+4. **Usar los how-to cuando te atores (`1_5_howto`)**  
+   - Conexiones de hardware (`1_5_1_connections`).
+   - Flujo de código (`1_5_2_code_flow`).
+   - Cómo correr scripts (`1_5_3_how_to_run`).
+   - Errores típicos y precauciones (`1_5_4_troubleshooting_and_pitfalls`).
 
-5. **Pasar a Examples / Activities / Labs**  
-   - Cada archivo de teoría indica, cuando aplica, ejemplos y actividades relacionadas.
-   - El objetivo es alternar entre:
-     - Leer lo justo de teoría.
-     - Ver un ejemplo funcionando.
-     - Practicar en una actividad o laboratorio.
-
-6. **Integrar en Implementation**  
-   Una vez dominados varios bloques (contadores, FSM, PWM, sensores, actuadores),  
-   la documentación sirve como referencia rápida al trabajar en los mini-proyectos de `6_implementation`.
+5. **Trabajar sobre `4_activities`, `5_labs` y `6_implementation`**  
+   Usando la documentación de `1_docs` como apoyo cuando haga falta.
 
 ---
 
-## Cómo se conecta con otras carpetas
+## 2. Relación con el resto del repositorio
+
+A alto nivel:
+
+- `1_docs/`  
+  Explica conceptos, flujo de trabajo, instalación y errores comunes.  
+  No contiene el código de las prácticas principales, sino el soporte teórico y práctico.
 
 - `2_devices/`  
-  Usa la teoría de relojes, entradas/salidas y periféricos descrita en `1_2_Theory/` para documentar pines, wiring y constraints.
+  Describe la Tang Nano 9K y los periféricos usados.  
+  Se consulta cuando hay dudas sobre pines, voltajes o conexiones físicas.
 
 - `3_examples/`  
-  Implementa en código los conceptos explicados de forma breve en `1_2_Theory/`.  
-  La documentación sirve como apoyo para entender **qué** se quiere demostrar.
+  Ofrece ejemplos de referencia (gráficos, sonido, integraciones más complejas).  
+  Sirve para estudiar diseños más grandes y ver cómo se estructuran.
 
 - `4_activities/`  
-  Toma los ejemplos y los convierte en ejercicios guiados.  
-  La teoría de `1_docs` ayuda a resolver dudas mientras se completan los pasos y checklists.
+  Agrupa ejercicios cortos, cada uno centrado en un concepto concreto.  
+  La documentación ayuda a recordar teoría mientras se completan los `TODO`.
 
 - `5_labs/`  
-  Reúne varios conceptos en prácticas más completas.  
-  La documentación apoya en el repaso rápido de temas (FSM, PWM, timers, periféricos).
+  Reúne prácticas más completas, integrando varios conceptos.  
+  La documentación se usa como guía rápida para repasar temas al diseñar y depurar.
 
 - `6_implementation/`  
-  Utiliza todo lo anterior para construir mini-proyectos.  
-  La documentación sirve como referencia para ajustar detalles de diseño y justificación técnica.
+  Contendrá mini–proyectos que combinan todo lo anterior.  
+  La documentación sirve como referencia para justificar decisiones de diseño y estructura.
 
 ---
 
+## 3. Cuándo leer qué
 
+- **Antes de tocar código**:  
+  - Lea `1_1_1_Purpose`, `1_1_2_Audience` y `1_1_3_Results` para tener claro el objetivo.
+  - Revise rápidamente `1_1_4_Map` para ubicarse en el repositorio.
+
+- **Cuando esté preparando su máquina**:  
+  - Use `1_3_install` (Windows o Linux) para configurar VS Code, Git y Gowin.
+
+- **Cuando un ejercicio no se entienda bien**:  
+  - Vea los resúmenes teóricos en `1_2_*` y a los how-to de `1_5_*`.
+
+- **Cuando algo no funcione**:  
+  - Revise `1_5_3_how_to_run` (por si es un tema de scripts).
+  - Revise `1_5_4_troubleshooting_and_pitfalls` (errores típicos y precauciones).
+
+---
+
+## 4. Resumen
+
+- `1_docs` es el **manual** que acompaña a las carpetas de código y hardware.
+- Esta subcarpeta `1_1_Overview` explica:
+  - Para qué existe el repositorio.
+  - Para quién está pensado.
+  - Qué resultados se esperan.
+  - Cómo se conectan documentación, ejemplos, activities, labs e implementations.
+
+Una vez que tenga clara esta estructura, puede moverse con más seguridad por el resto del proyecto.

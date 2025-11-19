@@ -1,23 +1,25 @@
-# Results of using the documentation
+# 1.1.3 Results – ¿Qué vas a poder hacer al terminar?
 
-Al utilizar la carpeta `1_docs` junto con el resto del repositorio, se espera que la persona usuaria pueda:
+Al trabajar con este repositorio, debería ser capaz de:
 
-- **Comprender la estructura general** del repositorio y ubicar rápidamente:
-  - Dónde está la teoría.
-  - Dónde están los ejemplos.
-  - Dónde se encuentran las actividades, laboratorios y mini-proyectos.
+- Escribir y entender módulos de SystemVerilog con entradas/salidas claramente definidas.
+- Implementar y depurar lógica combinacional (compuertas, mux/decoder, comparadores sencillos).
+- Diseñar máquinas de estados simples (semáforos, secuencias, candados, menús básicos).
+- Implementar contadores, divisores de frecuencia y PWM básicos para controlar LEDs, servos u otros actuadores.
+- Integrar periféricos externos como:
+  - Módulo **TM1638** (7 segmentos + LEDs + teclas).
+  - Sensor ultrasónico **HC-SR04**.
+  - Encoders rotatorios y potenciómetros (vía ADC externo).
+  - Display LCD **480×272** (controlado desde el top de la tarjeta).
 
-- **Configurar y verificar** el entorno de trabajo:
-  - Instalar las herramientas necesarias.
-  - Ejecutar una prueba básica (smoke test) para confirmar que la placa y el flujo de trabajo funcionan.
 
-- **Encontrar teoría aplicada por tema**:
-  - Identificar el archivo de teoría asociado a cada concepto (módulos, FSM, PWM, periféricos, etc.).
-  - Apoyarse en esa teoría al momento de revisar Examples, Activities y Labs.
+Además, conseguirá:
 
-- **Seguir una ruta de aprendizaje clara**:
-  - Empezar por los fundamentos.
-  - Avanzar hacia ejercicios guiados.
-  - Llegar a prácticas más completas y mini-proyectos.
+- Familiarizarse con un flujo de trabajo típico:
+  - Editor (VS Code).
+  - Control de versiones (Git).
+  - Scripts de síntesis y programación para Gowin.
+- Leer, entender y modificar ejemplos existentes, en lugar de empezar siempre desde cero.
+- Entender mejor qué hace la herramienta de síntesis y cómo interpretar errores y advertencias frecuentes.
 
-En conjunto, estos resultados facilitan tanto el trabajo individual como el uso del repositorio en cursos, talleres y proyectos de laboratorio.
+---

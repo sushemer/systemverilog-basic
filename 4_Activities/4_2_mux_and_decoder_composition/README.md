@@ -1,5 +1,3 @@
-<!-- File: 4_Activities/4_02_mux_and_decoder_composition/README.md -->
-
 # 4.2 – Composición: decoder 2→4 + mux 4→1
 
 En esta actividad vas a **componer bloques combinacionales**:
@@ -50,7 +48,7 @@ El display de 7 segmentos y la LCD no se usan en esta actividad.
 
 En el archivo `hackathon_top.sv` encontrarás una plantilla con:
 
-```systemverilog
+```sv
 logic [1:0] sel;
 logic [3:0] dec_out;
 
@@ -60,3 +58,4 @@ begin
 
     // TODO: implementar el decoder
 end
+```

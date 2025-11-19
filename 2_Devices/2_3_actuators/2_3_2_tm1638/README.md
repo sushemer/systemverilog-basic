@@ -1,5 +1,6 @@
 
 # 2.3.2 TM1638 · Módulo 7 segmentos + LEDs + teclas
+![alt text](Mult/image.png)
 
 El módulo **TM1638** integra en una sola tarjeta:
 
@@ -106,11 +107,3 @@ Ideas típicas:
 Los nombres exactos de Examples/Activities/Labs se definirán según la organización de las carpetas.
 
 ---
-
-## Checklist de uso rápido
-
-Antes de usar TM1638 en un proyecto:
-
--  Conectar `TM_DIO`, `TM_CLK`, `TM_STB` a pines libres de la FPGA.
--  Compartir **GND** entre la Tang Nano 9K y el módulo TM1638.
--  Mapear los pines en el archivo `.cst`.

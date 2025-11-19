@@ -1,7 +1,6 @@
 # Ultrasonic HC-SR04 basics
 
-Este documento explica el funcionamiento básico del sensor ultrasónico **HC-SR04**  
-y cómo se integra con la FPGA en este repositorio.
+Este documento explica el funcionamiento básico del sensor ultrasónico **HC-SR04**  y cómo se integra con la FPGA en este repositorio.
 
 ---
 

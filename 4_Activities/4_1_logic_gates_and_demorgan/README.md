@@ -1,10 +1,8 @@
 # 4.1 – Compuertas lógicas, De Morgan y funciones combinacionales
 
-En esta actividad trabajarás con compuertas lógicas básicas,  
-verificarás una ley de De Morgan y diseñarás funciones combinacionales sencillas.
+En esta actividad trabajarás con compuertas lógicas básicas,  verificarás una ley de De Morgan y diseñarás funciones combinacionales sencillas.
 
-Se usa la placa **Tang Nano 9K** con el wrapper `hackathon_top`  
-para la configuración `tang_nano_9k_lcd_480_272_tm1638_hackathon`.
+Se usa la placa **Tang Nano 9K** con el wrapper `hackathon_top`  para la configuración `tang_nano_9k_lcd_480_272_tm1638_hackathon`.
 
 ---
 
@@ -74,17 +72,6 @@ El display de 7 segmentos y la LCD no se usan en esta actividad.
    - Si `EN = 0` → `led[6:0] = 0`.
    - Si `EN = 1` → `led[6:0]` muestren las funciones de las Tareas 1 y 2.
 3. Usa `led[7]` como indicador de que `EN` está activo (por ejemplo `led[7] = EN`).
-
----
-
-## Checklist rápido
-
-- [ ] Las compuertas AND, OR, XOR y De Morgan funcionan según la tabla de verdad.
-- [ ] `led[3]` y `led[4]` siempre coinciden.
-- [ ] La función “mayoría” se enciende solo cuando al menos dos entradas son 1.
-- [ ] La función “exactamente una en 1” se enciende solo cuando una única entrada es 1.
-- [ ] Cuando `EN = 0` todos los LEDs `[6:0]` están apagados.
-- [ ] Cuando `EN = 1` las salidas vuelven a funcionar normalmente.
 
 ---
 

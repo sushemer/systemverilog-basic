@@ -9,8 +9,6 @@
 //     * Display de 7 segmentos (valor numérico).
 //     * Pantalla LCD como una barra horizontal verde cuyo ancho depende de pot_value.
 //
-// Si más adelante conectas un ADC real que entregue un bus de 8 bits,
-// bastará con reemplazar pot_value = key por pot_value = adc_data.
 
 module hackathon_top
 (

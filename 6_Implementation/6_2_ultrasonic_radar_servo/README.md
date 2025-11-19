@@ -1,10 +1,5 @@
 # 6.2 – Servo-scanned Ultrasonic Radar
 
-**Tipo:** propuesta de mini-proyecto  
-**Idea:** un “radar” sencillo que barre un arco con un servo, mide distancias con HC-SR04 y muestra los resultados en pantalla.
-
----
-
 ## Objetivo
 
 Diseñar un sistema que:
@@ -33,16 +28,11 @@ Diseñar un sistema que:
   - GND común con FPGA.
   - Señal PWM desde la FPGA (pulso de 1–2 ms, periodo de ≈20 ms).
 - **LCD**:
-  - Opción original: LCD 16×2 (HD44780 en modo 4 bits o vía PCF8574 I²C).
-  - Opción adaptada a tu repositorio: usar la LCD 480×272 para dibujar texto y barras.
+  - Usa LCD 480×272 para dibujar texto y barras.
 - Botones o encoder para:
   - Cambiar modo (scan / pausa).
   - Ajustar umbral de detección.
   - Reanudar barrido.
-
-> Si no cuentas con servo o LCD 16×2, puedes:
-> - Simular el ángulo con un contador (como si fuera la posición del servo).
-> - Usar solo la LCD 480×272 y el TM1638 para la parte visual.
 
 ---
 
@@ -94,41 +84,11 @@ Diseñar un sistema que:
 
 ### 4. Visualización
 
-#### Opción LCD 16×2
+#### LCD 480×272
 
-- Línea 1: `ANG=XXX  DIST=YYY`
-- Línea 2: barra de caracteres llenos/vacíos representando distancia.
-
-#### Opción LCD 480×272 (adaptada al repo)
-
-- Fondo con marco simple (similar a actividades de LCD).
-- Zona de texto con:
-  - Ángulo.
-  - Distancia.
-  - Estado (SCAN / PAUSE / DETECTED).
+- Fondo con marco simple.
 - Zona gráfica:
   - Pequeño arco donde un punto indica el ángulo actual.
   - Color o grosor diferente si hay detección.
 
 ---
-
-## Contenido de la carpeta (sugerido)
-
-- `hackathon_top.sv`  
-  Top-level que integra:
-  - Módulo de PWM para servo.
-  - Módulo `ultrasonic_distance_sensor`.
-  - Lógica de FSM de barrido.
-  - Lógica de visualización (LCD / TM1638).
-- `README.md`  
-  Este archivo.
-- Módulos auxiliares:
-  - Por ejemplo, `servo_pwm.sv`, si decides separarlo.
-
----
-
-## Extensiones posibles
-
-- Guardar un “mapa polar” simplificado en RAM (ángulo vs distancia) y recorrerlo en la pantalla.
-- Permitir cambiar el rango del barrido (ej. 45°–135°).
-- Añadir un modo manual donde el usuario controla el ángulo con el encoder.

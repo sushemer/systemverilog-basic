@@ -30,30 +30,6 @@ Al finalizar el ejemplo, la persona usuaria podrá:
 
 ---
 
-## Archivos del ejemplo
-
-En esta carpeta se utilizan, al menos:
-
-- `hackathon_top.sv`  
-  Módulo tope sintetizable para la Tang Nano 9K (configuración `tang_nano_9k_lcd_480_272_tm1638_hackathon`).  
-  Contiene:
-  - Declaración de puertos estándar (clock, reset, `key[7:0]`, `led[7:0]`, etc.).
-  - Lógica del mux 2:1 implementada de cuatro maneras.
-  - Asignación de las señales a los LEDs de la placa.
-
-- `README.md`  
-  Este archivo, con la descripción y guía de uso del ejemplo.
-
-Opcionalmente (según tu repo):
-
-- Scripts de automatización:
-  - `01_clean.bash`
-  - `02_simulate_rtl.bash`
-  - `03_synthesize_for_fpga.bash`
-  - `04_configure_fpga.bash`
-
----
-
 ## Señales y pines
 
 En el código SystemVerilog se utilizan los vectores:
@@ -99,38 +75,12 @@ Si todas las implementaciones son correctas, los LEDs 3, 4, 5 y 6 **siempre debe
    - Diferencia entre lógica combinacional y secuencial (`Combinational vs Sequential`).
    - Opcional: un apartado de multiplexores si existe en tu repo (`Multiplexers`).
 
-2. **Abrir el proyecto en Gowin / flujo de scripts**
-
-   Opción A – Gowin IDE:
-
-   - Crear o abrir un proyecto para la Tang Nano 9K.
-   - Añadir el archivo `hackathon_top.sv`.
-   - Configurar el módulo top como `hackathon_top`.
-   - Asegurarse de que la board seleccionada corresponde a la configuración
-     `tang_nano_9k_lcd_480_272_tm1638_hackathon` (o la equivalente en tu entorno).
-
-   Opción B – Scripts `.bash` (si los tienes configurados):
-
-   - Desde la carpeta del ejemplo:
-
-     ```bash
-     bash 01_clean.bash
-     bash 03_synthesize_for_fpga.bash
-     bash 04_configure_fpga.bash
-     ```
-
-3. **Verificar constraints**
-
-   - Confirmar que el archivo de constraints de tu placa (CST/SDC) mapea correctamente:
-     - `key[0]`, `key[1]`, `key[7]` a entradas físicas accesibles (switches/botones).
-     - `led[7:0]` a los LEDs que vas a observar.
-
-4. **Sintetizar y programar**
+2. **Sintetizar y programar**
 
    - Ejecutar síntesis, place & route y generación del bitstream.
    - Programar la FPGA con el bitstream generado.
 
-5. **Probar en la placa**
+3. **Probar en la placa**
 
    - Probar varias combinaciones de `d0`, `d1` y `sel`:
 
@@ -161,7 +111,4 @@ Si todas las implementaciones son correctas, los LEDs 3, 4, 5 y 6 **siempre debe
   - Multiplexores y otras funciones combinacionales.
 
 - **Ejemplos relacionados:**
-  - `3.1 AND / OR / NOT / XOR + Leyes de De Morgan`  
-    (introduce compuertas básicas y equivalencias lógicas).
-  - Posibles futuros ejemplos:
-    - `3
+  - `3.1 AND / OR / NOT / XOR + Leyes de De Morgan`.

@@ -17,30 +17,6 @@ Al finalizar el ejemplo, la persona usuaria podrá:
 - Crear una tabla de **patrones de segmentos** para mostrar letras.
 - Ajustar la frecuencia de refresco hasta que las letras se vean “continuas”.
 
----
-
-## Archivos del ejemplo
-
-En esta carpeta se utilizan, al menos:
-
-- `hackathon_top.sv`  
-  Módulo tope sintetizable para la Tang Nano 9K en configuración  
-  `tang_nano_9k_lcd_480_272_tm1638_hackathon`.  
-  Contiene:
-  - Un divisor de frecuencia (`cnt` + `enable`).
-  - Un registro de corrimiento de 4 bits (`shift_reg`) para seleccionar el dígito.
-  - La codificación de letras (`F`, `P`, `G`, `A`, `space`) en 7 segmentos.
-  - El mapeo de `letter` → `abcdefgh` y `shift_reg` → `digit`.
-
-- `README.md`  
-  Este archivo con la explicación del ejemplo.
-
-Además, se puede usar una imagen o herramienta tipo **`seven_segment_font_editor`**
-para diseñar los patrones de segmentos (`a,b,c,d,e,f,g,h`) para otras letras o números.
-## Editor de fuente para 7 segmentos
-
-En esta práctica usamos el siguiente mapa de segmentos (generado con *seven_segment_font_editor*):
-
 ![Mapa de segmentos](Mult/seven_segment_font_editor.jpg)
 
 ---

@@ -140,11 +140,4 @@ module hackathon_top
         digit = 8'b0000_0001;  // one-hot: solo un dígito activo
     end
 
-    // ------------------------------------------------------------------------
-    // Ejercicios sugeridos en README:
-    //  - Hacer que el valor avance automáticamente 0→F usando un contador.
-    //  - Mostrar el mismo valor en varios dígitos a la vez.
-    //  - Probar diferentes encodings para letras personalizadas.
-    // ------------------------------------------------------------------------
-
 endmodule

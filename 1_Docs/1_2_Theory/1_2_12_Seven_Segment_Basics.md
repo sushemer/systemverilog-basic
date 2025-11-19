@@ -1,7 +1,6 @@
 # Seven-segment display basics
 
-Este documento explica los conceptos básicos de los **displays de 7 segmentos**  
-y cómo se usan en los ejemplos y labs de este repositorio.
+Este documento explica los conceptos básicos de los **displays de 7 segmentos** y cómo se usan en los ejemplos y labs de este repositorio.
 
 ---
 
@@ -67,7 +66,7 @@ En SystemVerilog se puede representar con un bus:
 
 Ejemplo de decodificador simple (idealizado):
 
-```systemverilog
+```sv
 module seven_seg_decoder (
     input  logic [3:0] hex,    // valor 0–15
     output logic [6:0] seg     // segmentos a-g
@@ -89,3 +88,51 @@ module seven_seg_decoder (
     end
 endmodule
 ```
+
+
+---
+
+## Displays de varios dígitos y multiplexado
+
+Muchos módulos utilizan **varios dígitos** de 7 segmentos (por ejemplo, 4 u 8).  
+Para ahorrar pines, se suele usar **multiplexado**:
+
+- Todas las líneas de segmentos (`a`–`g`, `dp`) se comparten entre los dígitos.
+- Cada dígito tiene una línea de **habilitación** (`digit_enable[n:0]`).
+- El sistema:
+  - Enciende el primer dígito (`digit_enable[0]`) y pone los segmentos del valor deseado.
+  - Luego, muy rápido, apaga ese dígito, enciende el siguiente (`digit_enable[1]`), y actualiza los segmentos.
+  - Repite el proceso para todos los dígitos en bucle.
+
+Si la frecuencia de multiplexado es suficientemente alta:
+
+- El ojo humano percibe que todos los dígitos están encendidos **al mismo tiempo**.
+- No se nota parpadeo.
+
+En este repositorio, el manejo de multiplexado está encapsulado en módulos como:
+
+- `seven_segment_display.sv`
+- Drivers internos usados por el TM1638.
+
+---
+
+## Relación con otros archivos y labs
+
+Conceptos relacionados:
+
+- `1_2_5_Registers_and_Clock.md`  
+  → reloj y registros que controlan el multiplexado.
+- `1_2_6_Timing_and_Dividers.md`  
+  → divisores de frecuencia usados para refrescar los dígitos sin flicker.
+- `1_2_10_PWM_Basics.md`  
+  → en algunos casos, se combina PWM con 7 segmentos para control de brillo.
+
+En las actividades y labs:
+
+- Se usan displays de 7 segmentos “sueltos” o integrados en módulos como el **TM1638**.
+- Se practican:
+  - Decodificación de valores binarios/hex a segmentos.
+  - Multiplexado de varios dígitos.
+  - Representación de contadores, temporizadores o estados en la pantalla.
+
+Este archivo proporciona la base conceptual para entender esos ejercicios.

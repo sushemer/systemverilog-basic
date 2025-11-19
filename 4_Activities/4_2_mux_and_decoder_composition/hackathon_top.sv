@@ -139,7 +139,7 @@ module hackathon_top
         led[3:0] = dec_out;  // Visualizar salidas del decoder
         led[4]   = mux_y;    // Salida del mux 4→1
 
-        // Opcional: podrías usar led[5]..led[7] para depuración o extensiones.
+        // Opcional: podría usar led[5]..led[7] para depuración o extensiones.
     end
 
 endmodule

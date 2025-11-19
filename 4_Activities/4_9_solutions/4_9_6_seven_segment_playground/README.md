@@ -27,7 +27,7 @@ Jugar con el módulo `seven_segment_display` del repo para:
 
 - `key[1:0]` → selección de modo:
 
-  ```
+  ```sv
   mode = key[1:0]
 
   00 → Contador hexadecimal libre

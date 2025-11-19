@@ -5,7 +5,6 @@
 // - Usar el reloj principal de la Tang Nano 9K para incrementar un contador grande.
 // - Mostrar los bits más significativos del contador en los LEDs, de modo que
 //   parpadeen a distintas frecuencias (efecto de “correr” en binario).
-// - (Opcional) Variante donde el conteo avanza sólo cuando se presiona una tecla.
 
 module hackathon_top
 (

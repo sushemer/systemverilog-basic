@@ -1,4 +1,7 @@
 `include "config.svh"
+// --------------------------------------------------------------------
+// realizado por Mr Panchul en basic graphics
+// --------------------------------------------------------------------
 
 module sync_and_debounce
 # (

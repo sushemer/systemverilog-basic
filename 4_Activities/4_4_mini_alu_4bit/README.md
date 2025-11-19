@@ -1,5 +1,3 @@
-<!-- File: 4_Activities/4_04_mini_alu_4bit/README.md -->
-
 # 4.4 – Mini ALU de 4 bits (suma, resta y lógica)
 
 En esta actividad vas a construir una **mini ALU de 4 bits** capaz de hacer operaciones aritméticas y lógicas simples sobre dos operandos A y B.
@@ -43,7 +41,7 @@ Salidas a LEDs:
 - `led[5]`   → `zero`
 - `led[7:6]` → `op[1:0]` (para ver qué operación está seleccionada)
 
-> Si tu wrapper no tiene `sw`, puedes adaptar A y B a `key` u otro periférico (TM1638, etc.).
+> Si su wrapper no tiene `sw`, puede adaptar A y B a `key` u otro periférico (TM1638, etc.).
 
 ---
 

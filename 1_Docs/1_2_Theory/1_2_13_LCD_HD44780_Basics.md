@@ -1,8 +1,6 @@
 # LCD HD44780 basics
 
-Este documento introduce los conceptos básicos de los **LCD de caracteres**  
-basados en el controlador **HD44780** (típicamente 16x2, 20x4, etc.),  
-tal como se usan en este repositorio.
+Este documento introduce los conceptos básicos de los **LCD de caracteres**   basados en el controlador **HD44780** (típicamente 16x2, 20x4, etc.),   tal como se usan en este repositorio.
 
 ---
 

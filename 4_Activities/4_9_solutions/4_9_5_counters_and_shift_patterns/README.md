@@ -28,7 +28,7 @@ Practicar:
 - `key[1:0]`  
   Selección de modo/patrón de LEDs:
 
-  ```
+  ```sv
   mode = key[1:0]
 
   00 → contador binario

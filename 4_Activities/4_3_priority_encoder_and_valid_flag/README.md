@@ -1,5 +1,3 @@
-<!-- File: 4_Activities/4_03_priority_encoder_and_valid_flag/README.md -->
-
 # 4.3 – Priority encoder 3→2 con bandera de “valid”
 
 En esta actividad vas a implementar un **codificador con prioridad (priority encoder)**:
@@ -76,7 +74,7 @@ Observa:
 
 En `hackathon_top.sv` encontrarás:
 
-```systemverilog
+```sv
 logic [2:0] req;
 logic [1:0] idx;
 logic       valid;
@@ -90,3 +88,4 @@ begin
 
     // TODO: lógica de prioridad
 end
+```

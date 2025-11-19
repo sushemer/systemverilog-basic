@@ -1,4 +1,5 @@
 # 2.3.1 Seven Segment · Displays de 7 segmentos
+![alt text](Mult/image.png)
 
 Los **displays de 7 segmentos** se utilizan para mostrar números (0–9, 0–F) y algunas letras simples.  
 En este repositorio se usan principalmente para:

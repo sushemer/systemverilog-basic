@@ -1,7 +1,7 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Ejemplo 3.1: compuertas lógicas básicas + verificación de una ley de De Morgan.
 //
-// Este módulo está pensado como "top" mínimo para la Tang Nano 9K:
+// Este módulo está pensado como "top":
 // - Usa 2 entradas digitales (key[1:0]) como señales A y B.
 // - Usa 5 LEDs (led[4:0]) para mostrar resultados de AND, OR, XOR y De Morgan.
 // - No utiliza reloj ni lógica secuencial; todo es puramente combinacional.

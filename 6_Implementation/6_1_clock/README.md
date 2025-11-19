@@ -1,10 +1,5 @@
 # 6.1 – Clock (digital 12/24 h)
 
-**Tipo:** propuesta de mini-proyecto  
-**Idea:** un reloj digital completo usando 7 segmentos o TM1638, con ajuste de hora y formato.
-
----
-
 ## Objetivo
 
 Implementar un **reloj digital** que:
@@ -36,8 +31,8 @@ Implementar un **reloj digital** que:
 - **Entradas:**
   - 3–4 botones (por ejemplo):
     - `BTN_MODE` → cambiar entre 12/24 h u otros modos.
-    - `BTN_UP`   → incrementar minutos (según paso seleccionado).
-    - `BTN_DOWN` → decrementar minutos (opcional).
+    - `BTN_UP`   → incrementar minutos.
+    - `BTN_DOWN` → decrementar minutos.
     - `BTN_STEP` → seleccionar paso (±1 / ±5 / ±10).
   - **o** un encoder rotatorio (valor de minutos) + botón de click.
 - Protoboard / jumpers según conexión.
@@ -69,7 +64,7 @@ Implementar un **reloj digital** que:
 - `min` : 0–59  
 - `hour`:  
   - 0–23 en modo 24 h,  
-  - 1–12 en modo 12 h (si implementas este formato con AM/PM).
+  - 1–12 en modo 12 h (AM/PM).
 
 Rollover encadenado:
 
@@ -96,33 +91,12 @@ Rollover encadenado:
     - 0 → 12 (AM),
     - 13 → 1 PM,
     - etc.
-- Opcional: mostrar AM/PM en LEDs o puntos decimales.
 
 ### 5. Visualización en display
 
 - Para **4 dígitos**:
   - HH:MM (sin segundos).
   - Mostrar `hour` y `min` con dos dígitos cada uno.
-- Si usas **TM1638**:
-  - Puedes mostrar también segundos en otros dígitos.
-  - Usar LEDs como indicadores:
-    - Modo 12/24 h.
-    - Paso de ajuste actual.
 
 ---
 
-## Contenido de la carpeta (sugerido)
-
-- `hackathon_top.sv`  
-  Top-level del proyecto.
-- `README.md`  
-  Este archivo.
-- Eventuales módulos auxiliares (debounce, edge detector, etc.) si no se reutilizan directamente desde otras carpetas.
-
----
-
-## Extensiones posibles
-
-- Implementar alarma simple (hora de alarma + LED de alarma).
-- Añadir “blinking” de los dígitos que se están ajustando.
-- Usar encoder para ajustar tanto horas como minutos con un pequeño menú.

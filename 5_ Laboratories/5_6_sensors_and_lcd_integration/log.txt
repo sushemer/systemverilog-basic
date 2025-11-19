@@ -1,0 +1,9 @@
+*** GOWIN Tcl Command Line Console  *** 
+current device: GW1NR-9C  GW1NR-LV9QN88PC6/I5
+add new file: "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/5_"
+add new file: "Laboratories/5_6_sensors_and_lcd_integration/hackathon_top.sv"
+unable to add file "c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/5_", already in project
+
+    while executing
+"add_file -type verilog c:/Users/SUSHEMER/OneDrive/Documentos/GitHub/systemverilog-basic/5_ Laboratories/5_6_sensors_and_lcd_integration/rotary_encoder..."
+    (file "fpga_project.tcl" line 13)

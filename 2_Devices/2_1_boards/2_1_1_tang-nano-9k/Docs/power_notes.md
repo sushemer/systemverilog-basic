@@ -52,22 +52,17 @@ Muchos módulos comerciales (HC-SR04, servos, algunos LCD, etc.) trabajan a **5 
 
 - **Hacia la FPGA (entrada)**:
   - Nunca conectar directamente una salida de **5 V** a un pin de IO de la Tang Nano 9K.
-  - Usar **divisores resistivos** o **conversores de nivel** (ver `2_4_Common/level_shifting.md`).
+  - Usar **divisores resistivos** o **conversores de nivel**.
 
 - **Desde la FPGA (salida)**:
   - Una salida a 3.3 V suele ser interpretada como “alto lógico” por la mayoría de módulos de 5 V, pero se recomienda revisar el datasheet.
 
-Ejemplos típicos:
+Ejemplo:
 
 - `HC-SR04`:
   - `VCC` a 5 V.
   - `TRIG` puede manejarse con 3.3 V desde la FPGA.
   - `ECHO` debe reducirse de 5 V a 3.3 V (divisor resistivo o level shifter).
-
-- `Servo SG90`:
-  - Alimentación a 5 V (fuente separada de suficiente corriente).
-  - Señal de PWM desde la FPGA a 3.3 V (suele ser aceptada).
-  - GND del servo y de la FPGA unidos.
 
 ---
 
@@ -81,13 +76,3 @@ Ejemplos típicos:
 Los LEDs integrados de la placa suelen tener resistencias ya incluidas o un diseño pensado para uso directo, pero los LEDs externos deben llevar su propia resistencia limitadora.
 
 ---
-
-## 6. Pines de 1.8 V (no usados)
-
-En el archivo de constraints original hay pines comentados como:
-
-```
-# IO_LOC "GPIO_1_8_V_UNUSED[0]" 85;
-# IO_LOC "GPIO_1_8_V_UNUSED[1]" 84;
-...
-```

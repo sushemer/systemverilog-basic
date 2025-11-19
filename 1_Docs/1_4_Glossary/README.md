@@ -20,8 +20,7 @@ Este glosario está pensado para:
 
 El enfoque es:
 
-- Definiciones **cortas y claras** en español.
-- Término en **inglés** (tal como se usa en código y datasheets).
+- Definiciones **cortas y claras**.
 - Contexto concreto dentro de este repositorio cuando aplique.
 
 ---

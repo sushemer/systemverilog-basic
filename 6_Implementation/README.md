@@ -14,7 +14,6 @@ Esta carpeta reúne **propuestas de implementación** que integran varios temas 
 
 ## 6.1 Clock
 
-**Carpeta sugerida:** `6_1_clock`  
 
 Un reloj digital en displays de 7 segmentos (o TM1638) con:
 
@@ -31,7 +30,6 @@ Un reloj digital en displays de 7 segmentos (o TM1638) con:
 
 ## 6.2 Servo-scanned ultrasonic radar
 
-**Carpeta sugerida:** `6_2_servo_scanned_ultrasonic_radar`  
 
 Un “radar” simple que:
 
@@ -46,4 +44,3 @@ Un “radar” simple que:
   - por tiempo (timeout) o
   - cuando el usuario lo indique (botón/encoder).
 
-> Si no cuentas con una LCD 16×2, el concepto puede adaptarse a la **LCD 480×272** del repositorio.

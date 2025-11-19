@@ -1,33 +1,32 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // 3.18: Rotary encoder (KY-040) + TM1638 + LCD helper
 //
-// Este ejemplo usa un encoder rotatorio tipo KY-040 conectado a gpio[3:2]:
-//   - gpio[3] = CLK (A)
-//   - gpio[2] = DT  (B)
+// Ejemplo de uso de un encoder rotatorio tipo KY-040 conectado a gpio[3:2]:
+//   - gpio[3] = CLK (canal A)
+//   - gpio[2] = DT  (canal B)
 //
 // El valor decodificado se muestra:
 //   - En el display de 7 segmentos (TM1638) como número.
-//   - Como “umbral” horizontal en la LCD: si x > value, se pinta azul.
+//   - En los LEDs (8 LSB) como apoyo visual.
+//   - Como “umbral” vertical en la LCD: para columnas con x > value, se pinta azul.
 //
-// Los módulos auxiliares sync_and_debounce y rotary_encoder
-// van en archivos separados (ver más abajo).
+// Los módulos auxiliares sync_and_debounce y rotary_encoder se reutilizan sin
+// modificaciones.
 
 module hackathon_top
 (
     input  logic       clock,
-    input  logic       slow_clock,
+    input  logic       slow_clock,   // no usado en este ejemplo
     input  logic       reset,
 
-    input  logic [7:0] key,
+    input  logic [7:0] key,          // reservado para ejercicios
     output logic [7:0] led,
 
-    // A dynamic seven-segment display
-
+    // Display de 7 segmentos (TM1638)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // LCD screen interface
-
+    // Interfaz de la LCD
     input  logic [8:0] x,
     input  logic [8:0] y,
 
@@ -38,67 +37,95 @@ module hackathon_top
     inout  logic [3:0] gpio
 );
 
-    // Ky-040 pin marking:
+    // --------------------------------------------------------------------
+    // Encoder KY-040 en gpio[3:2]
+    // --------------------------------------------------------------------
     //
-    // CLK - A
-    // DT  - B
+    // Marcado típico en el módulo:
+    //   CLK - canal A
+    //   DT  - canal B
+    //
+    // Primero se sincroniza y aplica debouncing a las señales del encoder.
 
-    wire a, b;
+    logic a;
+    logic b;
 
-    sync_and_debounce # (.w (2))
-    i_sync_and_debounce
-    (
-        .clk      ( clock      ),
-        .reset    ( reset      ),
-        .sw_in    ( gpio[3:2]  ),
-        .sw_out   ( { b, a }   )
+    sync_and_debounce #(
+        .w (2)
+    ) i_sync_and_debounce (
+        .clk   (clock),
+        .reset (reset),
+        .sw_in (gpio[3:2]),
+        .sw_out({b, a})
     );
 
-    wire [15:0] value;
+    // --------------------------------------------------------------------
+    // Decodificador de encoder rotatorio
+    // --------------------------------------------------------------------
+    //
+    // El módulo rotary_encoder entrega un valor de 16 bits (value) que se
+    // incrementa o decrementa según el giro del encoder.
 
-    rotary_encoder i_rotary_encoder
-    (
-        .clk      ( clock ),
-        .reset    ( reset ),
-        .a        ( a     ),
-        .b        ( b     ),
-        .value    ( value )
+    logic [15:0] value;
+
+    rotary_encoder i_rotary_encoder (
+        .clk   (clock),
+        .reset (reset),
+        .a     (a),
+        .b     (b),
+        .value (value)
     );
 
-    seven_segment_display
-    # (.w_digit (8))
-    i_7segment
-    (
-        .clk      ( clock       ),
-        .rst      ( reset       ),
-        .number   ( 32'(value)  ),
-        .dots     ( '0          ),
-        .abcdefgh ( abcdefgh    ),
-        .digit    ( digit       )
+    // --------------------------------------------------------------------
+    // Visualización en display TM1638 (7 segmentos) y LEDs
+    // --------------------------------------------------------------------
+
+    seven_segment_display #(
+        .w_digit (8)   // 8 dígitos en el módulo de la tarjeta hackathon
+    ) i_7segment (
+        .clk      (clock),
+        .rst      (reset),
+        .number   (32'(value)),      // se extiende internamente a 32 bits
+        .dots     ('0),
+        .abcdefgh (abcdefgh),
+        .digit    (digit)
     );
 
-    // Opcional: usa los LEDs como debug del valor (8 LSB)
+    // LEDs: muestran los 8 bits menos significativos del valor del encoder.
     assign led = value[7:0];
 
-    // Exercise 1: Use rotary encoder to draw something on the screen
+    // --------------------------------------------------------------------
+    // Lógica de video: umbral vertical controlado por el encoder
+    // --------------------------------------------------------------------
+    //
+    // Para todas las coordenadas con x > value[8:0], se pinta azul.
+    // A medida que se gira el encoder, se desplaza el "umbral" vertical.
+    // La intensidad de azul varía ligeramente con x (demo visual simple).
 
-    // START_SOLUTION
+    always_comb begin
+        // Fondo negro
+        red   = 5'd0;
+        green = 6'd0;
+        blue  = 5'd0;
 
-    always_comb
-    begin
-        red   = 0;
-        green = 0;
-        blue  = 0;
-
-        // Para todas las coordenadas con x > value, pinta azul.
-        // A medida que giras el encoder, se mueve el "umbral" horizontal.
-        if (x > value[8:0])
-            blue = x[4:0];
+        // Región a la derecha del umbral: azul
+        if (x > value[8:0]) begin
+            red   = 5'd0;
+            green = 6'd0;
+            blue  = x[4:0];   // intensidad de azul basada en x (solo efecto visual)
+        end
     end
 
-    // END_SOLUTION
-
-    // Exercise 2: Conecta dos rotary encoders a distintos GPIO
-    // y usa uno para X y otro para Y.
+    // --------------------------------------------------------------------
+    // Ideas de ejercicios adicionales
+    // --------------------------------------------------------------------
+    //
+    // - Ejercicio 1:
+    //   Usar el valor del encoder para controlar la posición de un rectángulo
+    //   en la LCD (similar a 3.14, pero con posición definida por value).
+    //
+    // - Ejercicio 2:
+    //   Conectar dos encoders a distintos GPIO y usar uno para desplazar en X
+    //   y otro para desplazar en Y una figura dibujada en la pantalla.
 
 endmodule

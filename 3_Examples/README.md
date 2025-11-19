@@ -1,249 +1,267 @@
-# 3. Examples
+# 3. Examples · Ejemplos
 
-This folder contains **short, self-contained SystemVerilog examples** for the  
-**Tang Nano 9K + LCD 480×272 + TM1638 (hackathon board)**.
+Esta carpeta contiene **ejemplos cortos y autocontenidos en SystemVerilog** para la combinación:
 
-Each example focuses on 1–2 core ideas (gates, muxes, counters, displays, sensors…)  
-and is meant to be:
+> Tang Nano 9K + LCD 480×272 + TM1638 (placa “hackathon”).
 
-- Small enough to read in one sitting.
-- Easy to synthesize and try on the board.
-- A bridge between the theory docs and the Activities/Labs.
+Cada ejemplo se enfoca en 1–2 ideas centrales (compuertas, muxes, contadores, displays, sensores, etc.) y está pensado para ser:
 
-Most examples use `hackathon_top` (or `lab_top`) as the top module and the board wrapper in  
-`boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/`.
+- Lo bastante pequeño como para leerse en una sola sesión.
+- Fácil de sintetizar y probar directamente en la placa.
+- Un puente entre la teoría (`1_docs`) y las carpetas de **Activities** (`4_activities`) y **Labs** (`5_labs`).
+
+La mayoría de los ejemplos usan `hackathon_top` (o `lab_top`) como módulo de nivel superior, junto con el wrapper de tarjeta en:
+
+`boards/tang_nano_9k_lcd_480_272_tm1638_hackathon/`
 
 ---
 
 ## 3.1 `3_1_and_or_not_xor_demorgan`
 
-**Topic:** basic logic gates + De Morgan’s law.  
-**What it does:**
+**Tema:** compuertas lógicas básicas + leyes de De Morgan.  
+**Qué hace:**
 
-- Reads two inputs `A`, `B` from `key[1:0]`.
-- Drives several LEDs with `A & B`, `A | B`, `A ^ B`.
-- Shows `~(A & B)` and `(~A) | (~B)` on two LEDs so you can **visually confirm** that both expressions always match (De Morgan).
+- Lee dos entradas `A`, `B` desde `key[1:0]`.
+- Calcula `A & B`, `A | B`, `A ^ B` y los muestra en varios LEDs.
+- Muestra `~(A & B)` y `(~A) | (~B)` en dos LEDs para que se pueda **verificar visualmente** que ambas expresiones coinciden siempre (ley de De Morgan).
 
 ---
 
 ## 3.2 `3_2_mux_2to1`
 
-**Topic:** 2:1 multiplexer in different coding styles.  
-**What it does:**
+**Tema:** multiplexor 2:1 en distintos estilos de codificación.  
+**Qué hace:**
 
-- Uses `key` bits as data inputs and select.
-- Implements a 2:1 mux with:
+- Usa bits de `key` como entradas de datos y señal de selección.
+- Implementa un mux 2:1 con:
   - `if/else`
-  - conditional `?:`
+  - operador condicional `?:`
   - `case`
-- Shows the selected input on an LED, and also demonstrates using `sel` to index a small vector.
+- Muestra la entrada seleccionada en un LED y también demuestra cómo usar `sel` para indexar un pequeño vector.
 
 ---
 
 ## 3.3 `3_3_decoder_2to4`
 
-**Topic:** 2→4 decoder (one-hot) in multiple implementations.  
-**What it does:**
+**Tema:** decodificador 2→4 (one-hot) en varias versiones.  
+**Qué hace:**
 
-- Takes a 2-bit input from keys or switches.
-- Generates a **one-hot** 4-bit output:
-  - A direct sum-of-products version.
-  - A `case`-based version.
-  - A shift-based version (`4'b0001 << in`).
-  - An indexed version that sets `out[in] = 1`.
-- Maps all outputs to LEDs so you can test inputs `00..11`.
+- Toma una entrada de 2 bits desde teclas o switches.
+- Genera una salida **one-hot** de 4 bits usando:
+  - Suma de productos directa.
+  - Un `case` clásico.
+  - Un corrimiento (`4'b0001 << in`).
+  - Una asignación indexada (`out[in] = 1`).
+- Mapea todas las salidas a LEDs para probar fácilmente los casos `00..11`.
 
 ---
 
 ## 3.4 `3_4_priority_encoder`
 
-**Topic:** 3-input priority encoder (several styles).  
-**What it does:**
+**Tema:** codificador de prioridad de 3 entradas.  
+**Qué hace:**
 
-- Reads a 3-bit input vector from keys/switches.
-- Encodes the **highest-priority ‘1’** into 2 bits:
-  - Chained `if/else`.
-  - `casez` with don’t-care bits.
-  - Combination of priority arbiter + normal encoder.
-  - Loop-based implementation.
-- All encoder outputs are packed into LEDs for visual comparison.
+- Lee un vector de 3 bits desde las teclas/switches.
+- Codifica el **‘1’ de mayor prioridad** en 2 bits usando:
+  - `if/else` encadenados.
+  - `casez` con bits don’t-care.
+  - Separación en “árbitro de prioridad” + codificador normal.
+  - Implementación basada en bucle.
+- Empaqueta todas las salidas en los LEDs para comparar las distintas implementaciones.
 
 ---
 
 ## 3.5 `3_5_comparator_4bit`
 
-**Topic:** 4-bit magnitude comparator.  
-**What it does:**
+**Tema:** comparador de magnitud de 4 bits.  
+**Qué hace:**
 
-- Uses switches/keys to set 4-bit values `A` and `B`.
-- Compares them and lights LEDs to indicate:
+- Usa switches/teclas para definir dos valores de 4 bits `A` y `B`.
+- Los compara y enciende LEDs para indicar:
   - `A < B`
   - `A == B`
   - `A > B`
-- Illustrates relational operators and basic combinational design.
+- Ilustra el uso de operadores relacionales y el diseño combinacional básico.
 
 ---
 
-## `3_6_adder_subtractor_4bit`
+## 3.6 `3_6_adder_subtractor_3bit`
 
-**Topic:** 4-bit adder/subtractor with mode select.  
-**What it does:**
+**Tema:** sumador/restador de 3 bits con bit de modo (A ± B).  
+**Qué hace:**
 
-- Reads 4-bit operands `A` and `B` from switches/keys.
-- A mode bit selects between **addition** and **subtraction**.
-- Displays the result (and optionally carry/borrow flags) on LEDs.
-- Reinforces two’s complement and arithmetic with simple logic.
+- Lee dos operandos de 3 bits `A`, `B` desde `key[5:0]` y un bit de modo desde `key[7]`.
+- Implementa dos variantes:
+  - Implementación directa con operadores `+` y `-`.
+  - Implementación unificada usando complemento a dos:
+
+    `res = A + (B XOR M) + M`, donde `M = mode`.
+
+- Muestra el resultado de 4 bits (3 bits de suma/resta + bit extra de carry/borrow) en grupos de LEDs para comparar ambas aproximaciones.
 
 ---
 
-## `3_7_binary_counter`
+## 3.7 `3_7_binary_counter`
 
-**Topic:** binary counters and clock division.  
-**What it does:**
+**Tema:** contadores binarios y división de reloj.  
+**Qué hace:**
 
-- Implements a **free-running counter** that increments every clock cycle.
-- Uses upper bits to blink LEDs at human-visible rates.
-- Optional variant: a **key-controlled counter** that increments on button presses (edge detection).
+- Implementa un **contador libre** que se incrementa en cada ciclo de reloj.
+- Usa los bits más altos para hacer parpadear LEDs a frecuencias visibles.
+- Variante opcional: contador controlado por tecla, que incrementa solo al detectar flancos (edge detection).
 
 ---
 
 ## 3.8 `3_8_shift_register`
 
-**Topic:** shift register + simple LED animations.  
-**What it does:**
+**Tema:** registro de desplazamiento + animaciones simples en LEDs.  
+**Qué hace:**
 
-- Implements a shift register feeding an LED bar.
-- Periodically shifts bits to create a moving “light” (KITT-style).
-- You can modify the direction, add looping, and use keys to reset or change behaviour.
+- Implementa un registro de desplazamiento conectado a una barra de LEDs.
+- Desplaza periódicamente los bits para crear una “luz en movimiento” (estilo KITT).
+- Se puede modificar para cambiar la dirección, hacer que el patrón rebote o usar teclas para reiniciar/cambiar el comportamiento.
 
 ---
 
 ## 3.9 `3_9_seven_segment_letter`
 
-**Topic:** letters on a single 7-segment digit.  
-**What it does:**
+**Tema:** letras en un solo dígito de 7 segmentos.  
+**Qué hace:**
 
-- Defines segment encodings for letters like `F`, `P`, `G`, `A` and a blank.
-- Moves a one-hot pattern across digits and selects the letter to draw.
-- Displays a short word like “FPGA” by scanning the digits fast enough.
+- Define codificaciones de segmentos para letras como `F`, `P`, `G`, `A` y un estado en blanco.
+- Recorre los dígitos con un patrón one-hot y selecciona qué letra mostrar.
+- Permite mostrar una palabra corta como “FPGA” escaneando los dígitos lo bastante rápido.
 
-> The individual letter encodings can be adjusted using an external “seven segment font editor” image/tool.
+Las codificaciones de letras pueden ajustarse tomando como referencia alguna imagen o herramienta externa de “seven segment font editor”.
 
 ---
 
 ## 3.10 `3_10_hex_counter_7seg`
 
-**Topic:** hex counter on 7-segment display with adjustable speed.  
-**What it does:**
+**Tema:** contador hexadecimal en display de 7 segmentos con velocidad ajustable.  
+**Qué hace:**
 
-- Creates a programmable timer (`period`) that defines the counting speed.
-- Uses keys to **increase/decrease** the speed.
-- Maintains a 32-bit counter and feeds it to a multi-digit 7-segment module.
-- Shows the count in **hexadecimal** across digits.
+- Crea un temporizador programable (`period`) que define la velocidad de conteo.
+- Usa teclas para **aumentar/disminuir** la velocidad.
+- Mantiene un contador de 32 bits y lo envía a un módulo multi-dígito de 7 segmentos.
+- Muestra el conteo en **hexadecimal** a lo largo de los distintos dígitos.
 
 ---
 
 ## 3.11 `3_11_seven_segment_basics`
 
-**Topic:** 7-segment “hello world” and calibration.  
-**What it does:**
+**Tema:** “hola mundo” del display de 7 segmentos.  
+**Qué hace:**
 
-- Drives `abcdefgh` and per-digit `digit` lines directly.
-- Lets you turn segments on/off manually (via constants or switches) to:
-  - Confirm wiring (which bit controls which segment).
-  - Confirm whether the display is common-anode or common-cathode.
-- A good starting point before more advanced 7-segment examples.
+- Controla directamente las líneas `abcdefgh` y `digit` sin usar drivers avanzados.
+- Permite encender/apagar segmentos manualmente (mediante constantes o switches) para:
+  - Confirmar el wiring (qué bit controla qué segmento).
+  - Determinar si el display es common-anode o common-cathode.
+- Es el punto de partida antes de usar módulos como `seven_segment_display`.
 
 ---
 
-## 3.12 `3_12_seven_segment_hex_counter`
+## 3.12 `3_12_seven_segment_hex_counter_multiplexed`
 
-**Topic:** multi-digit hex counter using `seven_segment_display.sv`.  
-**What it does:**
+**Tema:** contador HEX de 32 bits con multiplexado manual en 7 segmentos.  
+**Qué hace:**
 
-- Uses the common `seven_segment_display` module from `labs/common/`.
-- Packs a wider number (e.g. 32 bits) into `w_digit * 4` hex digits.
-- Shows a free-running counter or system status value across multiple digits.
-- Demonstrates **multiplexing** and reusable display modules.
+- Implementa un contador de 32 bits (`hex_counter`).
+- En cada instante, activa solo un dígito (máscara one-hot en `digit`) y le envía un nibble del contador.
+- Recorre rápidamente los 8 dígitos del TM1638 para mostrar el valor completo en HEX.
+- Separa la lógica en:
+  - Contador lento (incrementa el valor).
+  - Lógica de refresco rápido del display (selección de dígito).
+  - Decodificación HEX → segmentos.
 
 ---
 
 ## 3.13 `3_13_lcd_basic_shapes`
 
-**Topic:** first steps with the LCD graphics interface.  
-**What it does:**
+**Tema:** primeros pasos con la LCD (figuras estáticas).  
+**Qué hace:**
 
-- Uses `x`, `y` coordinates from the LCD controller.
-- Draws simple shapes (rectangles/areas) by checking coordinate ranges:
-  - Example: a solid rectangle in a fixed region of the screen.
-- Shows how to map boolean expressions on `(x, y)` to `red/green/blue` outputs.
+- Usa las coordenadas `x`, `y` que entrega el controlador de la LCD (0–479, 0–271).
+- Define un fondo negro y dibuja:
+  - Una barra vertical roja.
+  - Una barra horizontal verde.
+  - Un rectángulo amarillo centrado.
+- Todo se realiza con lógica combinacional que compara rangos de `x` y `y` y asigna los valores de `red`, `green`, `blue`.
 
 ---
 
-## 3.14 `3_14_lcd_moving_shapes`
+## 3.14 `3_14_lcd_moving_rectangle`
 
-**Topic:** moving graphics on LCD (animation + keys).  
-**What it does:**
+**Tema:** rectángulo en movimiento sobre la LCD.  
+**Qué hace:**
 
-- Generates a **strobe** at a low frequency to animate motion.
-- Uses internal registers (`dx`, `dy`…) that are updated either:
-  - Periodically (auto-move), or
-  - Via keys (move left/right/up/down).
-- Adds shapes whose positions depend on these offsets, creating simple animations.
+- Extiende el ejemplo estático anterior (`3_13`) añadiendo:
+  - Un módulo `strobe_gen` que genera un pulso lento (~30 Hz).
+  - Un contador que, al recibir cada pulso, actualiza la posición horizontal del rectángulo.
+- Muestra la posición del rectángulo:
+  - Numéricamente en el display de 7 segmentos.
+  - En binario en los LEDs.
+  - Gráficamente en la LCD como un rectángulo rojo que se desplaza.
 
 ---
 
 ## 3.15 `3_15_pot_read_demo`
 
-**Topic:** reading a potentiometer via ADC and mapping to LEDs.  
-**What it does:**
+**Tema:** demo de lectura de “potenciómetro” y representación en múltiples salidas (simulado).  
+**Qué hace:**
 
-- Uses an external ADC (SPI/I²C, depending on board) to sample a pot.
-- Scales the result to 8 bits and uses it as a **bar graph** on LEDs.
-- Optional: show the numeric value on a 7-segment display.
-- Good intro to **mixed-signal** workflows: analog input → digital value → visualization.
-
-*(If you removed this example in your local repo, you can skip it or use it as a template for a future “pot bar meter” example.)*
+- Usa `key[7:0]` como **potenciómetro simulado** (valor de 0–255).
+- Interpreta ese valor como si viniera de un ADC externo.
+- Muestra el valor:
+  - En LEDs (patrón binario).
+  - En el display de 7 segmentos (número).
+  - En la LCD como una **barra horizontal** cuya longitud es proporcional al valor.
+- Es una base para, más adelante, reemplazar `key` por un ADC real.
 
 ---
 
 ## 3.16 `3_16_tm1638_quickstart`
 
-**Topic:** TM1638 basics (keys + 7-segment + LEDs).  
-**What it does:**
+**Tema:** “hola mundo” con el módulo TM1638.  
+**Qué hace:**
 
-- Talks to a TM1638 module over its 3-wire interface (CLK/DIO/STB).
-- Displays a number on the 7-segment digits.
-- Reads keys and uses them to increment/reset the number and/or toggle on-board LEDs.
-- Serves as a minimal “hello world” for the TM1638 peripheral.
+- Verifica el funcionamiento básico del TM1638 en la configuración de hackathon:
+  - Lectura de teclas (`key[7:0]`).
+  - Encendido de LEDs (`led[7:0]`).
+  - Visualización de un valor en el display de 7 segmentos mediante `seven_segment_display`.
+- Permite comprobar rápidamente que la comunicación con el TM1638 y el wiring están correctos antes de usarlo en ejemplos más complejos.
 
 ---
 
 ## 3.17 `3_17_ultrasonic_hcsr04_measure_demo`
 
-**Topic:** ultrasonic distance measurement with HC-SR04.  
-**What it does:**
+**Tema:** medición de distancia con sensor ultrasónico HC-SR04.  
+**Qué hace:**
 
-- Instantiates `ultrasonic_distance_sensor` (from peripherals) with:
-  - `trig` and `echo` on GPIO pins.
-  - A relative distance output.
-- Shows the measured distance on 7-segment display.
-- Optionally draws a horizontal bar on the LCD whose length depends on the measured distance (e.g. “near” = short bar, “far” = long bar).
-
-> Make sure `ultrasonic_distance_sensor.sv` is included in the project/synthesis file list.
+- Instancia el módulo `ultrasonic_distance_sensor` (en `peripherals/`), conectando:
+  - `trig` y `echo` a pines `gpio`.
+  - Un ancho de pulso medido que se traduce en una **distancia relativa** (`relative_distance`).
+- Muestra la distancia:
+  - En el display de 7 segmentos (valor numérico).
+  - Opcionalmente en la LCD como una barra o región cuya longitud depende de la distancia medida.
+- Demuestra el flujo completo: pulso de trigger → eco medido → valor digital → visualización.
 
 ---
 
 ## 3.18 `3_18_rotary_encoder`
 
-**Topic:** rotary encoder (KY-040) + 7-segment + LCD.  
-**What it does:**
+**Tema:** encoder rotatorio (KY-040) + TM1638 + ayuda visual en la LCD.  
+**Qué hace:**
 
-- Uses `sync_and_debounce` to clean the raw `A/B` signals from the encoder (on `gpio[3:2]`).
-- Instantiates `rotary_encoder` to convert quadrature pulses into a signed 16-bit `value`.
-- Shows `value` on the 7-segment display.
-- Uses `value` to modulate something on the LCD (e.g. a bar or color region), so turning the knob has a **visual effect** on screen.
+- Conecta un encoder KY-040 a `gpio[3:2]`:
+  - `gpio[3]` = CLK (fase A).
+  - `gpio[2]` = DT  (fase B).
+- Usa `sync_and_debounce` para sincronizar y filtrar las señales del encoder.
+- Usa `rotary_encoder` para convertir los pulsos en un valor entero `value`.
+- Muestra `value`:
+  - En el display de 7 segmentos (TM1638).
+  - En los LEDs (8 bits menos significativos).
+  - En la LCD como un “umbral” vertical: para `x > value`, la región se pinta en azul.
+- Sirve como base para controles interactivos (menús, ajustes de parámetros, etc.) usando el encoder como entrada principal.
 
 ---
-
-

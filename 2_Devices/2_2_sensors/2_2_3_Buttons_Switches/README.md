@@ -1,4 +1,5 @@
 # 2.2.3 Buttons & Switches · Botones y switches
+![alt text](Mult/image.png)
 
 Esta carpeta documenta el uso de **entradas digitales simples**:
 
@@ -125,14 +126,3 @@ Algunas ideas típicas:
 Los nombres exactos de Examples/Activities/Labs pueden ajustarse cuando se definan las carpetas correspondientes.
 
 ---
-
-## Checklist de uso rápido
-
-Antes de usar botones/switches en un proyecto:
-
-- [ ] Verificar si la placa ya incluye resistencias de pull-up/pull-down.
-- [ ] Conectar correctamente:
-      - Señal ↔ botón ↔ GND o VCC (según el esquema elegido).
-- [ ] Mapear los pines en el archivo `.cst`.
-- [ ] Añadir debouncing (por hardware o por lógica digital).
-- [ ] Probar con un ejemplo mínimo (por ejemplo, encender un LED durante la pulsación o en cada clic).

@@ -1,24 +1,22 @@
-# Audience of the documentation
+# 1.1.2 Audience – ¿Para quién es este repositorio?
 
-La documentación en `1_docs` está pensada para:
+Este material está pensado principalmente para:
 
-- Estudiantes de ingeniería o áreas afines que inician en:
-  - Verilog/SystemVerilog.
-  - Diseño digital con FPGA.
-  - Uso de la placa Tang Nano 9K y periféricos básicos.
+- Estudiantes de ingeniería (o carreras afines) que cursan una materia de **Electrónica Digital, Microcontroladores, Sistemas Digitales o Lógica Programable** y quieren practicar con una FPGA real.
+- Personas con experiencia básica en programación (C, Python, etc.) que desean dar el salto a **diseño digital con HDL (SystemVerilog)**.
+- Instructores que necesitan un conjunto de **ejemplos y prácticas reutilizables** para cursos cortos, talleres o clubes de diseño digital.
 
-- Personas desarrolladoras de software que desean:
-  - Entender cómo se describe hardware con un HDL.
-  - Conectar su experiencia en programación con proyectos en FPGA.
+Se asume que la persona que lo usa:
 
-- Integrantes de laboratorios, clubes o talleres que:
-  - Necesitan un material de referencia práctico para prácticas guiadas.
-  - Buscan una estructura clara para documentar sus propias actividades.
+- Tiene nociones básicas de lógica digital (AND, OR, NOT, flip-flops, contadores).
+- Puede instalar software en Windows o Linux (VS Code, Git, Gowin IDE, etc.).
+- Está dispuesta a leer y modificar código, correr scripts y revisar mensajes de error de síntesis.
 
-Además, la documentación busca ser útil para:
+Este repositorio **no** está pensado como un libro de teoría pura, sino como un complemento práctico:
 
-- Quienes dan seguimiento al proyecto en ciclos posteriores (futuras generaciones).
-- Quienes deseen extender el repositorio con nuevos ejemplos, actividades, labs o dispositivos, manteniendo el mismo estilo de organización.
+- No reemplaza un curso completo de Electrónica Digital, pero ayuda a conectar la teoría con la práctica.
+- No pretende cubrir todo SystemVerilog, sino un subconjunto útil para diseñar y depurar módulos de complejidad baja a media: contadores, FSM, decodificadores, interfaces con sensores, drivers de display, etc.
 
-El nivel de detalle está pensado para que la documentación sea accesible a quienes están empezando,  
-pero lo suficientemente estructurada para que también resulte útil a personas con más experiencia que requieren una referencia rápida.
+En resumen, está dirigido a quien quiera **aprender haciendo**, aprovechando una plataforma concreta (Tang Nano 9K + periféricos) y un flujo de trabajo (VS Code + Git + scripts + Gowin).
+
+---

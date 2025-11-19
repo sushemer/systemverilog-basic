@@ -1,5 +1,6 @@
 
 # 2.2.2 Rotary Encoder · Perilla digital
+![alt text](Mult/image.png)
 
 El **rotary encoder** es una “perilla digital” que genera dos señales en cuadratura (`A` y `B`) al girar, y en muchos módulos también incluye un botón (`SW`).
 
@@ -102,10 +103,3 @@ Los nombres exactos de Examples/Activities/Labs pueden ajustarse cuando se defin
 
 ---
 
-## Checklist de uso rápido
-
-Antes de usar el rotary encoder en un proyecto:
-
-- [ ] Confirmar el nivel de voltaje del módulo y su compatibilidad con 3.3 V.
-- [ ] Conectar `ENC_A`, `ENC_B` (y `ENC_SW` si se usa) a pines de entrada en la FPGA.
-- [ ] Mapear esos pines en el archivo `.cst`.

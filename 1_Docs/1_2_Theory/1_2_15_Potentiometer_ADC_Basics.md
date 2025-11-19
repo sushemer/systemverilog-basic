@@ -1,7 +1,6 @@
 # Potentiometer + ADC basics
 
-Este documento explica el uso combinado de un **potenciómetro** con un **ADC**  
-para obtener un valor digital ajustable desde la FPGA.
+Este documento explica el uso combinado de un **potenciómetro** con un **ADC**  para obtener un valor digital ajustable desde la FPGA.
 
 ---
 

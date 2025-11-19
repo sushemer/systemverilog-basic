@@ -57,7 +57,7 @@ module hackathon_top
     // Contador de posición horizontal del rectángulo
     // --------------------------------------------------------------------
     //
-    // counter se incrementa cuando llega pulse, y se reinicia
+    // rect_offset se incrementa cuando llega pulse, y se reinicia
     // cuando llega al límite. Eso hace que el rectángulo “recorra”
     // parte de la pantalla de izquierda a derecha y vuelva a empezar.
 
@@ -103,7 +103,7 @@ module hackathon_top
     //
     // Dibujamos:
     // - Fondo negro.
-    // - Una barra horizontal verde fija.
+    // - Una barra horizontal verde fija (opcional, se puede extender).
     // - Un rectángulo rojo que se mueve horizontalmente.
     //
     // El rectángulo rojo “viaja” sumando rect_offset a su posición base.

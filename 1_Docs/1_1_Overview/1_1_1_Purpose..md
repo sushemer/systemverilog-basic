@@ -1,13 +1,25 @@
-# Purpose of the documentation
+# 1.1.1 Purpose – ¿Para qué existe este repositorio?
 
-La documentación de `1_docs` existe para acompañar el uso del repositorio de manera ordenada y práctica.  
-Su propósito principal es:
+Este repositorio recopila ejemplos, actividades y prácticas guiadas para aprender **SystemVerilog** usando la placa **Tang Nano 9K** y un conjunto de periféricos concretos:
 
-- **Orientar** a la persona usuaria sobre cómo está organizado el repositorio y por dónde empezar.
-- **Conectar** los conceptos teóricos con los ejemplos, actividades, laboratorios y mini-proyectos.
-- **Guiar** la instalación y verificación del entorno de trabajo.
-- **Unificar** el uso de términos, siglas y nombres de periféricos a lo largo de todo el repositorio.
-- **Respaldar** el trabajo académico del proyecto, dejando una base clara y reusable para futuras generaciones.
+- Módulo **TM1638** (display de 7 segmentos + LEDs + teclas).
+- Sensor ultrasónico **HC-SR04**.
+- Encoders rotatorios (KY-040).
+- Potenciómetros (vía ADC externo).
+- Pantalla **LCD 480×272**.
 
-La documentación no intenta cubrir todo el lenguaje ni todos los casos posibles.  
-Está pensada para servir como apoyo directo al trabajo práctico con la Tang Nano 9K y los recursos del repositorio.
+Su propósito principal es ofrecer un recorrido estructurado que vaya desde:
+
+- Compuertas lógicas y módulos combinacionales sencillos.
+- Contadores, máquinas de estados (FSM) y PWM básicos.
+- Integración con periféricos reales (sensores, displays, módulos externos).
+- Mini–proyectos finales que conectan todo lo anterior.
+
+Este repositorio está organizado para que puedas:
+
+- Reforzar la teoría con ejercicios pequeños y progresivos.
+- Conectar código de SystemVerilog con hardware real desde el inicio.
+- Reutilizar bloques (drivers, contadores, filtros, FSM, etc.) en distintas **activities**, **labs** e **implementations**.
+- Pasar de “probar cosas sueltas” a construir soluciones completas sobre una sola plataforma (Tang Nano 9K + periféricos).
+
+---

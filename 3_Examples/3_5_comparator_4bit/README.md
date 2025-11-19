@@ -1,8 +1,6 @@
 # 3.5 Comparador de 4 bits (A vs B)
 
-Este ejemplo muestra un **comparador de 4 bits** implementado de dos maneras
-en SystemVerilog y permite verificar en hardware si un valor `A` es menor,
-igual o mayor que otro valor `B`, usando los botones/teclas de la Tang Nano 9K.
+Este ejemplo muestra un **comparador de 4 bits** implementado de dos maneras en SystemVerilog y permite verificar en hardware si un valor `A` es menor, igual o mayor que otro valor `B`, usando los botones/teclas de la Tang Nano 9K.
 
 La idea es:
 
@@ -29,40 +27,6 @@ Al finalizar el ejemplo, la persona usuaria podrá:
 - Ver la diferencia entre una descripción de alto nivel (`==`, `>`, `<`) y
   una implementación **estructural por bits**.
 - Verificar que ambas implementaciones entregan el mismo resultado.
-
----
-
-## Archivos del ejemplo
-
-En esta carpeta se utilizan, al menos:
-
-- `hackathon_top.sv`  
-  Módulo tope sintetizable para la Tang Nano 9K en configuración  
-  `tang_nano_9k_lcd_480_272_tm1638_hackathon`.  
-  Contiene:
-  - Declaración de puertos estándar (`clock`, `reset`, `key[7:0]`, `led[7:0]`, etc.).
-  - Cálculo de `A` y `B` a partir de `key`:
-    - `A = key[3:0]`
-    - `B = key[7:4]`
-  - Implementación 0 (alto nivel) del comparador:
-    - `eq0 = (A == B)`
-    - `gt0 = (A >  B)`
-    - `lt0 = (A <  B)`
-  - Implementación 1 (bit a bit, cascada):
-    - Revisión de bits de mayor a menor (`A[3]` vs `B[3]`, luego `A[2]`, etc.).
-    - Señales `eq1`, `gt1`, `lt1`.
-  - Mapeo de las 6 señales a los LEDs.
-
-- `README.md`  
-  Este archivo, con la explicación del ejemplo.
-
-Opcionalmente, según tu estructura de repo:
-
-- Scripts de automatización:
-  - `01_clean.bash`
-  - `02_simulate_rtl.bash`
-  - `03_synthesize_for_fpga.bash`
-  - `04_configure_fpga.bash`
 
 ---
 

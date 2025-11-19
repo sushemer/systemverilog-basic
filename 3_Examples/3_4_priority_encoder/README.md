@@ -47,37 +47,6 @@ Todas las implementaciones reciben el mismo vector `in` y generan un código de 
 
 ---
 
-## Archivos del ejemplo
-
-En esta carpeta se utilizan:
-
-- `hackathon_top.sv`  
-  Módulo tope sintetizable para la Tang Nano 9K en configuración  
-  `tang_nano_9k_lcd_480_272_tm1638_hackathon`.  
-  Incluye:
-  - Puertos estándar (`clock`, `slow_clock`, `reset`, `key[7:0]`, `led[7:0]`, etc.).
-  - Declaración de `in[2:0]` a partir de `key[2:0]`.
-  - Cuatro implementaciones internas del priority encoder:
-    - `enc0`: if/else.
-    - `enc1`: casez.
-    - `enc2`: árbitro + encoder.
-    - `enc3`: for-loop.
-  - Empaquetado de todas las salidas en el vector `led`.
-
-- `README.md`  
-  Este archivo, con la explicación del ejemplo.
-
-Opcional (según tu repo):
-
-- Scripts para automatizar el flujo:
-
-  - `01_clean.bash`
-  - `02_simulate_rtl.bash` (si tienes testbench)
-  - `03_synthesize_for_fpga.bash`
-  - `04_configure_fpga.bash`
-
----
-
 ## Señales y mapeo a LEDs
 
 En el código se usa:

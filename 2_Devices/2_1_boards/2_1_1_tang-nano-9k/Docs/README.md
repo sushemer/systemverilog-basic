@@ -27,14 +27,6 @@ Archivos principales:
     - Importancia del GND común.
   - Advertencias para evitar daños a la placa o a los periféricos.
 
-- `programming.md`  
-  - Guía breve para programar la Tang Nano 9K con Gowin IDE:
-    - Selección del dispositivo.
-    - Asociación del archivo de constraints `tang-nano-9k.cst`.
-    - Flujo básico: síntesis → implementación → bitstream → programación.
-  - Puede incluir notas rápidas de solución de problemas frecuentes.
-
-Según se avance en el proyecto, se pueden añadir otros archivos de apoyo (por ejemplo, notas sobre reloj, bancos de IO, o ejemplos de wiring recomendados).
 
 ---
 
@@ -44,8 +36,6 @@ Según se avance en el proyecto, se pueden añadir otros archivos de apoyo (por 
   - Revisar `pinout.md` para saber qué pines usar.
   - Revisar `power_notes.md` para confirmar compatibilidad de voltajes.
 
-- Antes de programar la placa por primera vez:
-  - Consultar `programming.md` para seguir el flujo resumido de Gowin IDE.
 
 - Al crear nuevos Examples, Activities o Labs:
   - Verificar que los pines elegidos coinciden con lo documentado aquí y con el archivo `constr/tang-nano-9k.cst`.
@@ -75,6 +65,6 @@ entonces:
 
 1. Actualizar el archivo de constraints si es necesario.
 2. Documentar el cambio en `pinout.md` y/o `power_notes.md`.
-3. Añadir una breve nota en `programming.md` si el flujo cambia (por ejemplo, uso de otra herramienta de programación).
 
 La idea es que cualquier estudiante o persona nueva pueda entender cómo usar la placa leyendo solo estos archivos.
+

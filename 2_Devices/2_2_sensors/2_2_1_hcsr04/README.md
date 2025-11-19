@@ -1,4 +1,5 @@
 # 2.2.1 HC-SR04 · Sensor ultrasónico de distancia
+![alt text](Mult/image.png)
 
 El **HC-SR04** es un sensor que mide distancia usando ultrasonido.  
 Funciona enviando un pulso de sonido de alta frecuencia y midiendo el tiempo que tarda en regresar el eco.

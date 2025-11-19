@@ -1,7 +1,6 @@
 # ADC basics
 
-Este documento presenta los conceptos generales de un **convertidor analógico–digital (ADC)**,  
-sin centrarse en un modelo específico.  
+Este documento presenta los conceptos generales de un **convertidor analógico–digital (ADC)**,  sin centrarse en un modelo específico.  
 
 El objetivo es entender:
 

@@ -31,35 +31,6 @@ Al finalizar el ejemplo, la persona usuaria podrá:
 
 ---
 
-## Archivos del ejemplo
-
-En esta carpeta se utilizan, al menos:
-
-- `hackathon_top.sv`  
-  Módulo tope sintetizable para la Tang Nano 9K (configuración  
-  `tang_nano_9k_lcd_480_272_tm1638_hackathon`).  
-  Contiene:
-  - Declaración de puertos estándar (clock, reset, `key[7:0]`, `led[7:0]`, etc.).
-  - Cuatro implementaciones internas de un decoder 2→4:
-    - Con AND/NOT.
-    - Con `case`.
-    - Con desplazamiento (`<<`).
-    - Con indexado (`dec3[in] = 1`).
-  - Conexión de la versión “canónica” (`dec3`) a los LEDs.
-
-- `README.md`  
-  Este archivo, con la descripción del ejemplo.
-
-Opcionalmente (si los usas en el repo):
-
-- Scripts de automatización:
-  - `01_clean.bash`
-  - `02_simulate_rtl.bash`
-  - `03_synthesize_for_fpga.bash`
-  - `04_configure_fpga.bash`
-
----
-
 ## Señales y pines
 
 En el código SystemVerilog se usan:

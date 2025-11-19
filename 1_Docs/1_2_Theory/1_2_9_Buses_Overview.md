@@ -29,7 +29,7 @@ Ejemplos de este repositorio:
 
 - Conexión a displays de 7 segmentos:
   - `seg[6:0]` → 7 líneas para segmentos.
-  - `en_digit[n:0]` → líneas de habilitación de dígitos.
+  - `digit[7:0]` (o similar) → líneas de habilitación de dígitos.
 - Conexión a LEDs:
   - `led[7:0]`.
 
@@ -51,7 +51,7 @@ Cuando:
 
 - Se incrementa el número de periféricos.
 - Se quiere ahorrar pines de FPGA.
-- Se usan dispositivos comerciales (sensores, ADC, expansores, etc.).
+- Se usan dispositivos comerciales (sensores, ADC, expansores, etc.),
 
 es común recurrir a buses **seriales**, donde la información se envía bit por bit usando menos líneas.
 
@@ -77,7 +77,7 @@ Flujo simplificado:
 
 1. La FPGA (master) baja `CS` del dispositivo con el que quiere hablar.
 2. Genera pulsos de `SCK`.
-3. En cada pulso envía un bit por `MOSI` y recibe un bit por `MISO` (cuando aplica).
+3. En cada pulso envía un bit por `MOSI` y puede recibir un bit por `MISO`.
 4. Cuando termina la transacción, sube `CS`.
 
 Usos típicos en este repositorio:
@@ -104,14 +104,6 @@ Flujo simplificado:
 3. El dispositivo responde con un bit de **ACK/NACK**.
 4. Se envían o reciben uno o más bytes de datos.
 5. El master genera una **condición de stop**.
-
-Usos típicos en este repositorio:
-
-- Módulos como:
-  - Algunos ADC (por ejemplo, ADS1115).
-  - Expanders tipo PCF8574 para teclas/LEDs/LCD.
-- Interfaz con periféricos que usan I²C como estándar.
-
 ---
 
 ## Relación con la FPGA en este proyecto
@@ -136,11 +128,11 @@ La lógica concreta para cada dispositivo (tiempos, comandos, direcciones) se de
 
 Los buses interactúan con varios conceptos vistos antes:
 
-- **FSM**:  
+- **FSM**:
   - Muchas implementaciones de SPI/I²C usan una máquina de estados para recorrer las fases del protocolo.
-- **Timing y divisores**:  
-  - La frecuencia de `SCK` o `SCL` suele ser mucho menor que la frecuencia de `clk`, por lo que se usan contadores para generar ticks de comunicación.
-- **Registros**:  
+- **Timing y divisores**:
+  - La frecuencia de `SCK` o `SCL` suele ser menor que la frecuencia de `clk`, por lo que se usan contadores para generar “ticks” de comunicación.
+- **Registros**:
   - Los datos que se envían o reciben pasan por registros de desplazamiento internos.
 
 ---
@@ -156,6 +148,12 @@ Archivos de teoría relacionados:
 
 Examples / Activities / Labs donde suelen aparecer buses:
 
-- `pot_read_demo` (cuando se usa ADC por SPI o I²C).
+- Lectura de potenciómetro con ADC externo (SPI o I²C).
 - Actividades con PCF8574 (expansor I²C).
-- Labs de integración con LCD vía I²C o TM1638 (aunque TM1638 tiene su propio protocolo sencillo, conceptualmente se parece a un bus serial).
+- Labs de integración con LCD vía I²C o módulos como TM1638
+  (aunque TM1638 tiene su propio protocolo, conceptualmente se parece a un bus serial).
+
+En todos estos casos, la idea central es la misma:
+
+- Compartir pocas líneas físicas para comunicar varios bits de información.
+- Coordinar la secuencia mediante relojes, FSM y registros dentro de la FPGA.

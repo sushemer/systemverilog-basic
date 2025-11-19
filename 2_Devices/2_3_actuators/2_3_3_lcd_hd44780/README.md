@@ -1,4 +1,5 @@
 # 2.3.3 LCD 16x2 · Display de texto
+![alt text](Mult/image.png)
 
 El **LCD 16x2** es un display de texto de **2 filas** por **16 caracteres**.  
 Normalmente está basado en el controlador **HD44780** o compatible.
@@ -39,9 +40,6 @@ En ese caso:
 
 - Se usan solo `SCL` y `SDA` hacia el backpack.
 - Internamente el backpack maneja `RS`, `EN` y `D[3:0]`.
-
-> La elección de modo (4 bits o I²C) depende del hardware disponible.  
-> La asignación exacta de pines se documenta en `pinout.md` y en el archivo `.cst`.
 
 ---
 
@@ -127,12 +125,3 @@ Los nombres exactos de Examples/Activities/Labs se definirán más adelante.
 
 ---
 
-## Checklist de uso rápido
-
-Antes de usar el LCD 16x2 en un proyecto:
-
-- Confirmar el tipo de módulo (directo o con backpack).
-- Conectar correctamente:
-      - Alimentación (VCC, GND).
-      - Contraste (VO).
-      - Señales lógicas (RS, EN, D[3:0] o SCL/SDA).
