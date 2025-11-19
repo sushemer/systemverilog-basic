@@ -89,3 +89,100 @@ begin
     // TODO: lógica de prioridad
 end
 ```
+
+req se toma directamente de `key[2:0]`.
+
+`idx` y `valid` se inicializan con valores por defecto (sin petición activa).
+
+## 2. Implementar la lógica del priority encoder
+
+Dentro del `always_comb` se debe completar la lógica de prioridad usando una cadena de `if / else if`, siguiendo el orden:
+
+- Primero se verifica `req[2]`.
+- Si `req[2]` no está activo, se verifica `req[1]`.
+- Si tampoco está activo, se verifica `req[0]`.
+- Si ninguna entrada está activa, se mantienen los valores por defecto (`idx = 0`, `valid = 0`).
+
+La estructura general recomendada:
+
+```sv
+always_comb begin
+    idx   = 2'd0;
+    valid = 1'b0;
+
+    if (req[2]) begin
+        idx   = 2'd2;
+        valid = 1'b1;
+    end
+    else if (req[1]) begin
+        idx   = 2'd1;
+        valid = 1'b1;
+    end
+    else if (req[0]) begin
+        idx   = 2'd0;
+        valid = 1'b1;
+    end
+    // Si req = 3'b000, se conservan los valores por defecto
+end
+```
+
+Con este patrón:
+
+- La primera condición verdadera define qué entrada gana.  
+- `valid` se pone en `1` siempre que exista al menos una petición.  
+- Si todas las condiciones son falsas, `valid` se mantiene en `0`.
+
+Luego, típicamente se asigna:
+
+- `assign led[2:0] = req;`  
+- `assign led[4:3] = idx;`  
+- `assign led[7]   = valid;`  
+
+---
+
+## 3. Pruebas sugeridas
+
+Para verificar que el diseño cumple con la tabla de verdad:
+
+- Se fuerza `req` mediante `key[2:0]` en todas sus combinaciones de `000` a `111`.
+- Se observa en la placa:
+  - `led[2:0]` mostrando el patrón actual de `req`.
+  - `led[4:3]` mostrando el código `idx`.
+  - `led[7]` encendiéndose solo cuando `valid = 1`.
+
+Casos clave:
+
+- `req = 3'b001`  
+  → Se espera: `idx = 2'd0`, `valid = 1`.
+
+- `req = 3'b010`  
+  → Se espera: `idx = 2'd1`, `valid = 1`.
+
+- `req = 3'b011` (entradas 1 y 0 activas)  
+  → Debe ganar la de mayor prioridad (`req[1]`):  
+  `idx = 2'd1`, `valid = 1`.
+
+- `req = 3'b100`  
+  → Se espera: `idx = 2'd2`, `valid = 1`.
+
+- `req = 3'b111` (todas activas)  
+  → Debe ganar `req[2]`:  
+  `idx = 2'd2`, `valid = 1`.
+
+- `req = 3'b000`  
+  → Se espera: `valid = 0` y `idx` en su valor por defecto (por ejemplo `0`).
+
+Si todos estos casos se observan correctamente en los LEDs, el priority encoder está funcionando según lo esperado.
+
+---
+
+## 4. Extensiones opcionales
+
+Si se desea experimentar más a partir de esta actividad, se pueden realizar, por ejemplo, las siguientes extensiones:
+
+- Usar `led[6:5]` para mostrar directamente `idx[1:0]` (dejando `led[4:3]` para otra variante del encoder).
+- Implementar una versión alternativa del priority encoder usando `casez` y valores `x/z` para manejar “don’t care”, y comparar que la salida coincide con la versión de `if / else if`.
+- Añadir comentarios en `hackathon_top.sv` con una pequeña tabla de verdad que documente, para cada combinación de `req`, el valor esperado de `idx` y `valid`.
+- Extender el concepto a un priority encoder de más bits (por ejemplo 4→2 o 8→3) y analizar cómo cambia la estructura del código.
+
+Con esta actividad se introduce un patrón muy común en diseños digitales: resolver conflictos de prioridad entre varias peticiones, generando un índice ganador y una bandera que indica si el sistema tiene trabajo pendiente.

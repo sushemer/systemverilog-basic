@@ -4,6 +4,8 @@ Repositorio académico para aprender y practicar **Verilog/SystemVerilog** utili
 
 Su propósito es ofrecer un camino estructurado desde los **fundamentos** hasta **mini-proyectos integradores**, con ejemplos reproducibles, actividades guiadas, laboratorios y criterios de evaluación claros.
 
+> Nota: gran parte de la base técnica (soporte de tarjetas, periféricos, scripts y algunos labs) se adapta del trabajo de **Yuri Panchul** y de repositorios educativos públicos. En este proyecto solo se reorganizan, documentan y contextualizan para uso académico en la UABC.
+
 ---
 
 ## Contexto académico
@@ -30,7 +32,7 @@ El repositorio existe para acelerar el aprendizaje **práctico** de Verilog/Syst
   - Módulos y puertos.
   - Diferencias entre lógica **combinacional** y **secuencial**.
   - Máquinas de estados finitos (FSM).
-  - Divisores de reloj y PWM.
+  - Divisores de reloj, contadores y PWM.
 - **Observar** los conceptos en funcionamiento mediante ejemplos mínimos.
 - **Practicar** con actividades guiadas (checklist + evidencias).
 - **Integrar** sensores y actuadores en laboratorios y mini-proyectos evaluables.
@@ -59,84 +61,149 @@ No se requiere experiencia profunda en electrónica, pero se recomienda:
   - Utilizar la línea de comandos a nivel básico.
   - Manejar **Git** para clonar y actualizar repositorios.
 
-Estas recomendaciones facilitan el avance, pero el material está pensado para acompañar a quienes aún se encuentran en proceso de aprender.
+Estas recomendaciones facilitan el avance, pero el material está diseñado para acompañar también a personas que aún se encuentran en proceso de aprender estos temas.
 
 ---
 
 ## Estructura del repositorio
 
-La organización general es la siguiente:
+La organización general es la siguiente (los nombres exactos pueden variar ligeramente según la versión del repo):
 
-- **1. Docs/**  
+- **1_Docs/**  
   Documentación conceptual y operativa:
-  - Overview del proyecto y contexto.
+  - Descripción general del proyecto y contexto.
   - Teoría breve por tema.
   - Guías de instalación (Windows/Linux).
   - Glosario de términos.
   - Referencias y enlaces externos.
 
-- **2. Devices/**  
+- **2_Devices/**  
   Información sobre hardware:
-  - Placas (Tang Nano 9K).
-  - Sensores (HC-SR04, potenciómetro vía ADC, encoder, etc.).
-  - Actuadores (7-segmentos, TM1638, LCD, servo, buzzer).
+  - Placas (especialmente **Tang Nano 9K**).
+  - Sensores (HC-SR04, encoder rotatorio, etc.).
+  - Actuadores (display de 7 segmentos, TM1638, LCD, buzzer, etc.).
   - Notas de seguridad eléctrica y archivos de constraints.
 
-- **3. Examples/**  
-  Ejemplos mínimos y autocontenidos para un concepto específico  
-  (compilar, programar y observar).
+- **3_Examples/**  
+  Ejemplos mínimos y autocontenidos para un concepto específico:  
+  cada ejemplo se puede compilar, programar y observar de manera directa.
 
-- **4. Activities/**  
+- **4_Activities/**  
   Actividades guiadas con:
   - Objetivo claro.
   - Pasos sugeridos.
   - Checklist y evidencias mínimas.
 
-- **5. Labs/**  
+- **5_Labs/**  
   Prácticas estructuradas por nivel (básico, intermedio, avanzado),  
-  con procedimientos más completos y rúbricas de evaluación.
+  con procedimientos más completos y, cuando aplica, rúbricas de evaluación.
 
-- **6. Implementation/**  
+- **6_Implementation/**  
   Mini-proyectos integradores (por ejemplo, reloj digital, radar ultrasonido-servo)  
-  que combinan varios bloques: contadores, FSM, PWM, sensores y actuadores.
+  que combinan contadores, FSM, PWM, sensores y actuadores.
 
-> Cada carpeta incluye un `README.md` con: objetivo, pasos, checklist, pines/constraints y entregables sugeridos.
+- **board_support/** (o nombre equivalente)  
+  Archivos de soporte para distintas tarjetas FPGA.  
+  Esta sección proviene originalmente del trabajo de **Yuri Panchul** en *basic-graphics-music*  
+  y aquí solo se adapta y documenta para el contexto de la Tang Nano 9K.
+
+- **labs_common/**  
+  Módulos SystemVerilog reutilizables entre varios labs  
+  (por ejemplo, el driver de display de 7 segmentos).  
+  Su origen también está en los ejemplos genéricos del proyecto *basic-graphics-music*.
+
+- **peripherals/**  
+  Drivers y módulos de alto nivel para periféricos como:
+  - TM1638 (7 segmentos + LEDs + teclas).
+  - LCD 480×272.
+  - Sensores básicos.  
+  La mayoría de estos bloques se derivan de los ejemplos del ecosistema de  
+  *basic-graphics-music* y del *verilog-hackathon-education-kit*.
+
+- **scripts/**  
+  Scripts en Bash para síntesis, generación de bitstream y programación de la FPGA.  
+  El diseño de estos scripts sigue muy de cerca el esquema propuesto por **Yuri Panchul**  
+  en *basic-graphics-music* (modo estricto de Bash, uso de gw_sh, etc.).
+
+> Cada carpeta principal procura incluir un `README.md` con: objetivo, pasos sugeridos,
+> checklist breve, mapeo de pines/constraints y, cuando aplica, entregables recomendados.
 
 ---
 
 ## Cómo empezar
 
-1. Revisar el contenido de `1_docs/1_1_Overview/` para entender el contexto y el flujo recomendado.
-2. Seguir la guía de instalación en `1_docs/1_3_Install/` (Windows o Linux).
-3. Ejecutar un ejemplo básico de `3_examples/` (por ejemplo, un contador o un “blink”).
-4. Continuar con la actividad asociada en `4_activities/`.
-5. Pasar al laboratorio correspondiente en `5_labs/`.
-6. Finalmente, explorar los mini-proyectos en `6_implementation/`.
+Un flujo sugerido es el siguiente:
 
-Este flujo permite verificar paso a paso que el entorno funciona, que la placa está bien conectada y que cada concepto se comprende antes de avanzar.
+1. Revisar el contenido de `1_Docs/1_1_Overview/` para conocer el contexto y la ruta recomendada.
+2. Seguir la guía de instalación en `1_Docs/1_3_Install/` (Windows o Linux).
+3. Ejecutar un ejemplo básico de `3_Examples/` (por ejemplo, un contador o “blink”).
+4. Continuar con la actividad asociada en `4_Activities/`.
+5. Pasar al laboratorio correspondiente en `5_Labs/`.
+6. Finalmente, explorar los mini-proyectos en `6_Implementation/`.
+
+Este flujo permite verificar paso a paso que:
+
+- El entorno de herramientas está correctamente instalado.
+- La placa está bien conectada y configurada.
+- Cada concepto se asimila antes de pasar al siguiente nivel de complejidad.
 
 ---
 
 ## Principios de diseño
 
-- **Brevedad accionable:** teoría corta, código mínimo y enlaces directos entre Example → Activity → Lab.
-- **Consistencia:** misma estructura, nomenclatura y plantilla de README en todas las carpetas.
-- **Reutilización:** drivers y bloques comunes en `ip_blocks/` y constraints centralizados en `2_devices/`.
-- **Evaluación clara:** criterios de aceptación, checklist y rúbricas simples.
-- **Escalabilidad:** progresión de lo básico a lo avanzado, sin saltos bruscos.
-- **Continuidad:** el repositorio está diseñado para que otras personas puedan extenderlo, corregirlo y adaptarlo a nuevos dispositivos o actividades.
+El repositorio se organiza siguiendo estos principios:
+
+- **Brevedad accionable**  
+  Teoría corta, código mínimo y conexión clara Example → Activity → Lab.
+
+- **Consistencia**  
+  Estructura similar, nomenclatura homogénea y plantillas de README compatibles entre carpetas.
+
+- **Reutilización**  
+  Drivers y bloques comunes se concentran en `labs_common/`, `peripherals/` y soporte de tarjetas en `board_support/`, evitando duplicar código.
+
+- **Evaluación clara**  
+  Cuando aplica, se incluyen checklist, criterios de aceptación y rúbricas simples.
+
+- **Escalabilidad**  
+  Progresión gradual de lo básico a lo avanzado, sin saltos bruscos.
+
+- **Continuidad**  
+  El repositorio está pensado para que otras personas puedan extenderlo, corregirlo y adaptarlo a nuevas actividades, dispositivos o cursos sin depender de quienes lo iniciaron.
 
 ---
 
 ## Créditos y fuentes principales
 
-El enfoque, la estructura y varios ejemplos de este repositorio se inspiran y/o se apoyan en los siguientes proyectos:
+Este repositorio no se construye desde cero: se apoya fuertemente en trabajo previo de la comunidad.  
+En particular, se reconocen como fuentes clave:
 
 - `https://github.com/yuri-panchul/basics-graphics-music`  
-(pendiente añadir una información de cada repositorio para facilitar la busqueda)
+  Colección de ejemplos de gráficos y música para múltiples FPGAs.  
+  De aquí provienen:
+  - La idea general de un “kit educativo” con ejemplos, labs y scripts.
+  - El soporte para varias tarjetas (incluida la Tang Nano 9K).
+  - La estructura de scripts en Bash para síntesis y programación.  
+  En este proyecto se reutilizan y adaptan esos elementos, agregando documentación en español y una ruta de aprendizaje alineada a la UABC.
 
-- `https://github.com/verilog-meetup/verilog-hackathon-education-kit-manual`
-- `https://github.com/ramprakashb/verilog-hackathon-education-kit-manual`
-- `https://github.com/yuri-panchul/systemverilog-homework`
+- `https://github.com/verilog-meetup/verilog-hackathon-education-kit-manual`  
+  Manual educativo asociado a un kit de aprendizaje de Verilog.  
+  Aporta:
+  - Enfoque pedagógico por etapas.
+  - Ideas de actividades y labs.
+  - Estilo de documentación orientado a hackathons y cursos cortos.
 
-El objetivo no es replicar estos materiales, sino **adaptarlos, organizarlos y extenderlos** en un contexto académico específico, con una ruta de aprendizaje clara y criterios de evaluación alineados al proyecto de investigación.
+- `https://github.com/ramprakashb/verilog-hackathon-education-kit-manual`  
+  Fork y variantes del manual del verilog hackathon education kit.  
+  Se usa como referencia complementaria para comparar enfoques y ejemplos.
+
+- `https://github.com/yuri-panchul/systemverilog-homework`  
+  Conjunto de tareas y ejercicios de SystemVerilog.  
+  Sirve como inspiración para el diseño de actividades prácticas y la forma de plantear problemas.
+
+El objetivo de este repositorio no es replicar literalmente esos materiales, sino **adaptarlos, organizarlos y extenderlos**:
+
+- Una ruta de aprendizaje clara.
+- Documentación unificada.
+
+Cualquier contribución futura debe respetar estas referencias y mantener el reconocimiento a las fuentes originales.
