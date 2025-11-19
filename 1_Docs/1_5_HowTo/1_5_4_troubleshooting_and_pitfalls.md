@@ -2,8 +2,6 @@
 
 Este documento resume los **problemas más comunes** al trabajar con este repositorio y con la Tang Nano 9K, más **precauciones** para evitarlos.
 
-La idea es que, cuando algo “no funcione”, puedas revisar primero aquí antes de volverte loco 😅.
-
 ---
 
 ## 0. Mapa rápido
@@ -283,3 +281,5 @@ Si después de seguir este checklist el problema continúa, será más sencillo 
 - El mensaje de error **exacto** (copiado del log o terminal).
 - Una breve descripción de lo que se esperaba ver en la tarjeta.
 - El ejemplo o actividad específica donde ocurre el fallo.
+
+Correo: diego.peralta52@uabc.edu.mx
