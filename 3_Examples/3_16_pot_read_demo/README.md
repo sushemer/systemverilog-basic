@@ -1,160 +1,150 @@
-# 3.15 TM1638 quickstart
+# 3.16 Potentiometer Read Demo (Simulated with Switches)
 
-Este ejemplo es un **“hola mundo” con el módulo TM1638** en la configuración:
+This example demonstrates how to simulate the reading of a potentiometer using the 8 digital inputs (`key[7:0]`) on the Hackathon board.
 
-> `tang_nano_9k_lcd_480_272_tm1638_hackathon`
+The goal is to show the value in three ways:
 
-La idea es tener la forma más simple de verificar:
+- **LEDs** → raw binary value  
+- **TM1638 (7-segment display)** → hexadecimal value  
+- **LCD screen** → a horizontal green bar whose width is proportional to the potentiometer value  
 
-- Lectura de teclas (`key[7:0]`).
-- Encendido de LEDs (`led[7:0]`).
-- Uso básico del display de 7 segmentos (TM1638) mediante las señales
-  `abcdefgh` y `digit`.
-
-No se usa la LCD en este ejemplo; se mantiene apagada.
+This is the first step toward real analog-to-digital demos (for example, using an ADC in future labs).
 
 ---
 
-## Objetivo
+## Objective
 
-Al terminar este ejemplo, la persona usuaria podrá:
+By the end of this example, the user will understand how to:
 
-- Confirmar que las **entradas digitales** (teclas / switches) llegan correctamente al FPGA.
-- Confirmar que los **LEDs** responden directamente a esas entradas.
-- Ver cómo el valor de las teclas se refleja en el **display TM1638** como número hexadecimal usando el módulo `seven_segment_display`.
-
-Este ejemplo sirve como **punto de partida** para todos los ejercicios con TM1638.
-
----
-
-## Señales principales
-
-### Entradas / salidas lógicas
-
-En `hackathon_top.sv` se usan principalmente:
-
-Entradas:
-
-    input  logic       clock,
-    input  logic       slow_clock,
-    input  logic       reset,
-    input  logic [7:0] key,
-
-Salidas hacia la tarjeta TM1638:
-
-    output logic [7:0] led,
-    output logic [7:0] abcdefgh,
-    output logic [7:0] digit,
-
-Salidas no usadas en este ejemplo (forzadas a 0 o alta impedancia):
-
-    output logic [4:0] red,
-    output logic [5:0] green,
-    output logic [4:0] blue,
-    inout  logic [3:0] gpio
-
-En este quickstart:
-
-- `red`, `green`, `blue` se fuerzan a cero (LCD apagada).
-- `gpio` se deja en `'z` (sin uso).
+- Represent a numeric value visually on different outputs (LEDs, 7-segment, LCD).
+- Simulate analog input using digital switches.
+- Draw a dynamic graphical element (horizontal bar) on the LCD based on a variable.
+- Use arithmetic operations to scale a value to screen coordinates.
 
 ---
 
-## Comportamiento básico
+## Concept Summary
 
-### 1. Teclas → LEDs
+### Simulated Potentiometer Value
 
-El comportamiento mínimo suele ser:
+Since the board does not include a built-in ADC, the potentiometer is simulated with:
 
-- Reflejar el valor de las teclas directamente en los LEDs.
+- `pot_value = key[7:0]` (a number between 0 and 255)
 
-Ejemplo típico:
+In a real scenario, this would be replaced with an ADC output.
 
-    assign led = key;
+### Displaying the Value
 
-De esta forma:
+The example shows `pot_value` in three places:
 
-- Si se activa solamente `key[0]`, se enciende únicamente `led[0]`.
-- Si se activa `key = 8'b1111_0000`, se encienden `led[7:4]`.
-- Se puede comprobar rápidamente que el escaneo de teclas y el cableado son correctos.
+- **LEDs** → each bit turns on/off matching `pot_value`
+- **TM1638 7-segment display** → numeric representation in hexadecimal
+- **LCD horizontal bar** → width proportional to `pot_value`
 
-### 2. Teclas → valor numérico (para 7 segmentos)
+### LCD Concept
 
-Se toma el mismo vector `key[7:0]` como número a mostrar:
+The LCD receives the current pixel coordinates:
 
-    logic [7:0] value;
+- `x` (0–479)
+- `y` (0–271)
 
-    always_comb begin
-        value = key;  // en este quickstart, “número” = patrón de teclas
-    end
+To draw a bar:
 
-En ejemplos más avanzados, se podrían usar solo algunos bits, o bien combinar botones para formar un valor concreto.
+- Compute a scaled width  
+  `bar_width = (pot_value * SCREEN_WIDTH) >> 8`
 
----
-
-## Uso del display TM1638
-
-El TM1638 de la tarjeta hackathon se maneja indirectamente:
-
-- El driver de la placa se encarga del protocolo TM1638.
-- Tu módulo `hackathon_top` solo necesita producir:
-  - `abcdefgh[7:0]` → segmentos a–h para el dígito activo.
-  - `digit[7:0]`    → máscara one-hot del dígito activo (multiplexado).
-
-En este quickstart se recomienda **no implementar el multiplexado a mano**, sino usar el módulo reutilizable `seven_segment_display`.
-
-### 1. Módulo `seven_segment_display`
-
-Instanciación típica:
-
-    seven_segment_display #(
-        .w_digit (8)   // 8 dígitos en el módulo TM1638 de la tarjeta
-    ) i_7segment (
-        .clk      (clock),
-        .rst      (reset),
-        .number   (value),          // número a mostrar (aquí, key[7:0])
-        .dots     (8'b0000_0000),   // puntos decimales apagados
-        .abcdefgh (abcdefgh),
-        .digit    (digit)
-    );
-
-- `number` recibe el valor que se quiere mostrar (en este ejemplo, `value = key`).
-- `dots` controla los puntos decimales (`h`) de cada dígito.
-- El propio módulo:
-  - Multiplexa los 8 dígitos.
-  - Genera los patrones de segmentos correspondientes.
-
-De esta manera, el quickstart se centra en:
-
-- Proporcionar un valor a `number`.
-- Ver el resultado en el TM1638.
+Then color pixels accordingly:
+- Black background  
+- Green bar for the first `bar_width` pixels  
+- Optional red center reference line  
 
 ---
 
-## Apagado de la LCD y GPIO
+## Signals and Ports
 
-Como en este ejemplo solo interesa el TM1638:
+### Key Inputs
 
-    assign red   = 5'd0;
-    assign green = 6'd0;
-    assign blue  = 5'd0;
+- `key[7:0]` — simulated potentiometer value (0–255)
 
-    assign gpio  = 4'bz;
+### Outputs
 
-- La pantalla LCD permanece en negro.
-- Los pines `gpio[3:0]` quedan disponibles para otros ejemplos o extensiones futuras.
+- `led[7:0]` — binary representation of `pot_value`
+- `abcdefgh[7:0]`, `digit[7:0]` — TM1638 display outputs
+- `red`, `green`, `blue` — LCD pixel color
+- `gpio[3:0]` — unused
+
+### LCD Coordinates
+
+- `x` → horizontal pixel (0–479)  
+- `y` → vertical pixel (0–271)
 
 ---
 
-## Resumen
+## Internal Behavior
 
-- `key[7:0]` se usa como valor de prueba.
-- `led[7:0]` refleja ese valor en binario.
-- El módulo `seven_segment_display` convierte `value` (derivado de `key`) en segmentos para el TM1638.
-- LCD y GPIO se mantienen sin uso para que el foco esté en el TM1638.
+### 1. Potentiometer Value Selection
 
-Este ejemplo permite verificar rápidamente que:
+`pot_value = key[7:0]` — the switches simulate the ADC output.
 
-- El wiring de TM1638 está correcto.
-- El reloj, reset y flujos básicos de `hackathon_top.sv` funcionan.
-- Las bases para ejercicios posteriores con teclado, LEDs y displays de 7 segmentos están en su lugar.
+### 2. LEDs
+
+Direct mapping:  
+`led = pot_value`
+
+### 3. TM1638 Display
+
+Uses `seven_segment_display` to show `pot_value` in hexadecimal.
+
+### 4. LCD Horizontal Bar Rendering
+
+- Background → black
+- Green bar → width proportional to `pot_value`
+- Red vertical reference line at `SCREEN_WIDTH/2`
+
+---
+
+## Visual Output Overview
+
+### LEDs
+- Each bit of the pot value lights a corresponding LED.
+
+### TM1638
+- Shows the same value in hexadecimal.
+
+### LCD
+- A horizontal green bar grows or shrinks as `key[7:0]` changes.
+
+---
+
+## Relationship to Previous Examples
+
+Builds upon:
+
+- **3_13** — static LCD shapes  
+- **3_14** — moving rectangle on LCD  
+- **3_15** — TM1638 quickstart  
+
+This is the first example to combine **LCD + LEDs + TM1638**.
+
+---
+
+## Possible Extensions
+
+- Reverse bar direction  
+- Add decimal or blinking indicators  
+- Display value in decimal  
+- Add multiple bars  
+- Replace simulated input with a real ADC  
+
+---
+
+## Summary
+
+The `3_16` Potentiometer Read Demo ties together:
+
+- Digital inputs  
+- LED indicators  
+- TM1638 output  
+- LCD graphics  
+
+It demonstrates how to convert a numeric value into multiple visual representations on the Tang Nano 9K Hackathon board.

@@ -1,98 +1,98 @@
-# 4_9_solutions · Soluciones del Módulo 4
+# 4_9_solutions · Module 4 Solutions
 
-Este directorio contiene las **soluciones de referencia** para las actividades del módulo 4.
+This directory contains the **reference solutions** for the activities of Module 4.
 
-Cada subcarpeta corresponde a una actividad de `4_Activities` y suele contener:
+Each subfolder corresponds to an activity in `4_Activities` and usually contains:
 
-- `hackathon_top.sv` → versión **resuelta** de la actividad.
-- `README.md` → explicación breve de la solución, modos y decisiones de diseño.
+- `hackathon_top.sv` → the **completed** version of the activity  
+- `README.md` → a brief explanation of the solution, modes, and design decisions
 
-> **Recomendación:**  
-> Usa estas soluciones solo **después** de intentar resolver la actividad en `4_Activities`.  
-> El objetivo es aprender comparando tu enfoque con uno de referencia, no solo copiar código.
-
----
-
-## Mapeo actividades ↔ soluciones
-
-| Solución                                   | Basado en actividad                          | Descripción rápida                                |
-|-------------------------------------------|----------------------------------------------|---------------------------------------------------|
-| `4_9_1_logic_gates_and_demorgan/`         | `4_01_logic_gates_and_demorgan`              | Compuertas, De Morgan, funciones de 3 entradas y EN |
-| `4_9_2_mux_and_decoder_composition/`      | `4_02_mux_and_decoder_composition`           | Decoder 2→4 + mux 4→1 con AND/OR + visualización en LEDs |
-| `4_9_3_priority_encoder_and_valid_flag/`  | `4_03_priority_encoder_and_valid_flag`       | Priority encoder 3→2 con bandera `valid`          |
-| `4_9_4_mini_alu_4bit/`                    | `4_04_mini_alu_4bit`                         | Mini ALU 4 bits (suma, resta, lógicas, carry, zero) |
-| `4_9_5_counters_and_shift_patterns/`      | `4_05_counters_and_shift_patterns`           | Divisor de frecuencia + patrones de LEDs (counter/shift) |
-| `4_9_6_seven_segment_playground/`         | `4_06_seven_segment_playground`              | Experimentos con display de 7 segmentos y modos   |
-| `4_9_7_lcd_hello_and_basic_graphics/`     | `4_07_lcd_hello_and_basic_graphics`          | Marco en LCD + franja “HELLO” en bloques + barra inferior |
-| `4_9_8_sensors_and_tm1638_integration/`   | `4_08_sensors_and_tm1638_integration`        | HC-SR04 + KY-040 + bar graph en LEDs + TM1638 en HEX |
+> **Recommendation:**  
+> Use these solutions only **after** attempting the activity in `4_Activities`.  
+> The goal is to learn by comparing your approach with a reference, not simply copying code.
 
 ---
 
-## Convenciones de nombres
+## Activity ↔ Solution Mapping
 
-- Carpeta de solución:  
-  `4_9_X_nombre_de_la_actividad/`
-
-- Archivo principal:  
-  `hackathon_top.sv` (mismo nombre que en `4_Activities`, pero ya resuelto).
-
-- En muchos casos hay también:  
-  `README.md` con:
-  - Descripción de los modos (`key`, `switches`, `gpio`).
-  - Explicación de cómo se usan displays, LEDs, LCD, etc.
-  - Ideas de extensiones o mejoras.
-
----
-
-## Cómo usar estas soluciones
-
-1. **Resuelve primero la actividad en `4_Activities`.**
-2. Luego abre la solución correspondiente en `4_9_solutions/`.
-3. Compara:
-   - Cómo se mapean las señales (`key`, `led`, `gpio`).
-   - Cómo se estructuran los `always_comb` y `always_ff`.
-   - Cómo se implementan:
-     - decoders/mux,
-     - prioridad,
-     - ALU,
-     - divisores de frecuencia,
-     - drivers de display,
-     - integración de sensores.
-
-4. Si algo no se entiende, puedes:
-   - Hacer un diff (por ejemplo, con Git o un editor tipo VS Code).
-   - Agregar comentarios propios sobre el código de referencia.
+| Solution                                   | Based on activity                           | Quick description                                                |
+|-------------------------------------------|----------------------------------------------|------------------------------------------------------------------|
+| `4_9_1_logic_gates_and_demorgan/`         | `4_01_logic_gates_and_demorgan`              | Logic gates, De Morgan, 3-input functions, and EN signals        |
+| `4_9_2_mux_and_decoder_composition/`      | `4_02_mux_and_decoder_composition`           | Decoder 2→4 + mux 4→1 with AND/OR + LED visualization            |
+| `4_9_3_priority_encoder_and_valid_flag/`  | `4_03_priority_encoder_and_valid_flag`       | Priority encoder 3→2 with `valid` flag                           |
+| `4_9_4_mini_alu_4bit/`                    | `4_04_mini_alu_4bit`                         | 4-bit Mini ALU (add, subtract, logic ops, carry, zero)           |
+| `4_9_5_counters_and_shift_patterns/`      | `4_05_counters_and_shift_patterns`           | Frequency divider + LED patterns (counter/shift)                 |
+| `4_9_6_seven_segment_playground/`         | `4_06_seven_segment_playground`              | Experiments with 7-segment displays and modes                    |
+| `4_9_7_lcd_hello_and_basic_graphics/`     | `4_07_lcd_hello_and_basic_graphics`          | LCD frame + “HELLO” block text + bottom status bar               |
+| `4_9_8_sensors_and_tm1638_integration/`   | `4_08_sensors_and_tm1638_integration`        | HC-SR04 + KY-040 + LED bar graph + TM1638 HEX display            |
 
 ---
 
-## Ejemplo: solución 4_9_8 (sensores + TM1638)
+## Naming conventions
 
-- Integra:
-  - `ultrasonic_distance_sensor` (HC-SR04).
-  - `sync_and_debounce` + `rotary_encoder` (KY-040).
-  - `seven_segment_display` (TM1638).
+- Solution folder:  
+  `4_9_X_activity_name/`
 
-- Modos (`key[1:0]`):
-  - `00`: distancia relativa.
-  - `01`: valor del encoder.
-  - `10`: combinación (distancia + encoder).
-  - `11`: apagado/0.
+- Main file:  
+  `hackathon_top.sv` (same name as in `4_Activities`, but completed)
 
-- Visualización:
-  - LEDs: barra de nivel basada en bits altos de `sensor_value`.
-  - 7 segmentos: `sensor_value` en HEX.
-
-Este patrón (sensores → valor → visualización en LEDs + display) es reutilizable para otros proyectos.
+- Often includes:  
+  `README.md` with:
+  - Mode descriptions (`key`, `switches`, `gpio`)
+  - Explanation of LEDs, displays, LCD usage
+  - Ideas for extensions or improvements
 
 ---
 
-## Nota final
+## How to use these solutions
 
-Estas soluciones están pensadas como **material de estudio**, no solo como “respuesta”.  
-Puedes:
+1. **First complete the activity in `4_Activities`.**  
+2. Then open the corresponding solution in `4_9_solutions/`.  
+3. Compare:
+   - How signals (`key`, `led`, `gpio`) are mapped  
+   - How `always_comb` and `always_ff` are structured  
+   - How the following are implemented:
+     - decoders/muxes  
+     - priority logic  
+     - ALU  
+     - frequency dividers  
+     - display drivers  
+     - sensor integration  
 
-- Tomarlas como base para proyectos más grandes.
-- Modificar constantes, modos y mapeos de pines.
-- Añadir nuevas funciones (más operaciones en la ALU, más patrones de LEDs, textos en LCD, etc.).
+4. If something is unclear, you can:
+   - Run a diff (Git or VS Code)
+   - Add your own comments to the reference code
 
-La idea es que el módulo 4 sea tu “caja de herramientas” inicial para seguir jugando con SystemVerilog + FPGA 
+---
+
+## Example: solution 4_9_8 (sensors + TM1638)
+
+- Integrates:
+  - `ultrasonic_distance_sensor` (HC-SR04)
+  - `sync_and_debounce` + `rotary_encoder` (KY-040)
+  - `seven_segment_display` (TM1638)
+
+- Modes (`key[1:0]`):
+  - `00`: relative distance  
+  - `01`: encoder value  
+  - `10`: combination (distance + encoder)  
+  - `11`: off/0  
+
+- Visualization:
+  - LEDs: level bar based on the upper bits of `sensor_value`  
+  - 7-segment: `sensor_value` in HEX  
+
+This pattern (sensors → value → visualization) is reusable in many projects.
+
+---
+
+## Final note
+
+These solutions are meant as **learning material**, not just “answers.”  
+You can:
+
+- Use them as a base for larger projects  
+- Modify constants, modes, and pin mappings  
+- Add new functions (more ALU ops, more LED patterns, LCD text, etc.)  
+
+The idea is that Module 4 becomes your initial **toolbox** for exploring SystemVerilog + FPGA.

@@ -1,12 +1,12 @@
 # Board Support
 
-Este directorio documenta las tarjetas FPGA que el proyecto de **basic graphics** soporta o ha probado.
+This directory documents the FPGA boards that the **basic graphics** project supports or has tested.
 
-En **este repositorio** solo se usa activamente la **Tang Nano 9K** (Gowin), pero se conserva la lista completa de placas del proyecto original de *basic graphics* como referencia. Esto sirve para:
+In **this repository**, only the **Tang Nano 9K** (Gowin) is actively used, but the full list of boards from the original *basic graphics* project is kept as a reference. This helps to:
 
-- Saber en qué familias de FPGAs se han probado los ejemplos.
-- Facilitar una posible **portabilidad** de los diseños a otras tarjetas.
-- Ubicar la **Tang Nano 9K** dentro de un ecosistema más amplio de boards.
+- Know which FPGA families the examples have been tested on.
+- Facilitate potential **portability** of the designs to other boards.
+
 
 ## Altera Terasic
 

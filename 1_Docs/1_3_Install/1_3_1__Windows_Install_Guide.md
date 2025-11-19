@@ -1,185 +1,194 @@
-# Windows install guide · Visual Studio Code, Git (Git Bash), repositorio y Gowin IDE
+# Windows install guide · Visual Studio Code, Git (Git Bash), repository and Gowin IDE
 
-Este documento describe cómo preparar el entorno en **Windows** para trabajar con este repositorio:
+This document describes how to prepare the environment on **Windows** to work with this repository:
 
-1. Instalar **Visual Studio Code**.
-2. Instalar **Git** (incluye **Git Bash**).
-3. Descargar o clonar el **repositorio** de este proyecto:  
-   <https://github.com/sushemer/systemverilog-basic>
-4. Instalar **Gowin IDE** (versión educativa).
-5. Verificar la instalación con una prueba básica en la Tang Nano 9K.
+1. Install **Visual Studio Code**.
+2. Install **Git** (includes **Git Bash**).
+3. Download or clone the **repository** of this project:  
+   https://github.com/sushemer/systemverilog-basic
+4. Install **Gowin IDE** (education version).
+5. Verify the installation with a basic test on the Tang Nano 9K.
 
 ---
 
 ## 1. Visual Studio Code (VSC)
 
-### 1.1 Descargar VSC
+### 1.1 Download VSC
 
-1. Ingresar al sitio oficial:  
-   <https://code.visualstudio.com/download>
-2. Seleccionar el instalador correspondiente a **Windows**.
-3. Descargar el archivo `.exe`.
+1. Go to the official website:  
+   https://code.visualstudio.com/download
+2. Select the installer corresponding to **Windows**.
+3. Download the `.exe` file.
 
 ![alt text](mult/image.png)
 
-### 1.2 Configuración inicial
+### 1.2 Initial configuration
 
-Durante la instalación:
+During installation:
 
-- Aceptar los términos y condiciones.
-- Opcionalmente activar:
-  - Crear acceso directo en el escritorio.
-  - Agregar “Open with Code” al menú contextual.
-  - Asociar archivos de texto/código con VSC.
+- Accept the terms and conditions.
+- Optionally enable:
+  - Create desktop shortcut.
+  - Add “Open with Code” to the context menu.
+  - Associate text/code files with VSC.
 
 ![alt text](mult/image-1.png)
-### 1.3 Finalizar instalación
 
-1. Seleccionar **Install** en el asistente.
-2. Esperar a que termine la instalación.
-3. Abrir **Visual Studio Code** para confirmar que inicia correctamente.
+### 1.3 Finish installation
+
+1. Click **Install** in the wizard.
+2. Wait for the installation to complete.
+3. Open **Visual Studio Code** to confirm it starts correctly.
 
 ![alt text](mult/image-4.png)
+
 ---
 
-## 2. Git y Git Bash
+## 2. Git and Git Bash
 
-En Windows, la forma más sencilla de obtener una terminal tipo Unix (bash) es instalar **Git for Windows**, que incluye **Git Bash**.
+On Windows, the easiest way to obtain a Unix-style terminal (bash) is to install **Git for Windows**, which includes **Git Bash**.
 
-### 2.1 Descargar e instalar Git
+### 2.1 Download and install Git
 
-1. Ingresar a:  
-   <https://git-scm.com/downloads>
-2. Descargar el instalador para Windows.
-3. Ejecutar el instalador.
+1. Go to:  
+   https://git-scm.com/downloads
+2. Download the installer for Windows.
+3. Run the installer.
 
-### 2.2 Opciones recomendadas durante la instalación
+### 2.2 Recommended options during installation
 
-- Aceptar la mayoría de opciones por defecto.
-- Asegurarse de:
-  - Permitir que se instale **Git Bash**.
-  - Agregar Git al **PATH del sistema**  
-    (opción “Git from the command line and also from 3rd-party software” o similar).
+- Accept most default options.
+- Make sure to:
+  - Allow **Git Bash** to be installed.
+  - Add Git to the **system PATH**
+    (option “Git from the command line and also from 3rd-party software” or similar).
 
 ![alt text](mult/image-10.png)
 
-Con esto podrá:
+With this you will be able to:
 
-- Usar el comando `git` desde cualquier terminal.
-- Usar **Git Bash**, que se comporta de forma similar a una terminal Linux y será útil para comandos de este repositorio.
+- Use the `git` command from any terminal.
+- Use **Git Bash**, which behaves similarly to a Linux terminal and will be useful for commands in this repository.
 
-### 2.3 Verificar instalación
+### 2.3 Verify installation
 
-Abrir:
+Open:
 
-- **Git Bash** (desde el menú Inicio), o
-- **PowerShell / Símbolo del sistema**.
+- **Git Bash** (from the Start menu), or  
+- **PowerShell / Command Prompt**.
 
-Escribir:
+Type:
 
-```bash
 git --version
-```
-## 3. Descargar o clonar el repositorio del proyecto
 
-> Se recomienda guardar el proyecto en una carpeta **sin espacios en la ruta** para evitar problemas con algunas herramientas.
+---
 
-Repositorio principal de este proyecto:
+## 3. Download or clone the project repository
+
+> It is recommended to store the project in a folder **without spaces in the path** to avoid issues with some tools.
+
+Main repository of this project:
 
 https://github.com/sushemer/systemverilog-basic
 
-Ejemplos de rutas:
+Examples of paths:
 
 - ✅ C:\ProyectosFPGA\systemverilog-basic  
 - ❌ C:\Mis proyectos FPGA\systemverilog-basic
 
 ---
 
-### 3.1 Clonar desde la línea de comandos (recomendado)
+### 3.1 Clone from the command line (recommended)
 
-Esta opción requiere tener **Git** instalado y permite actualizar el proyecto más adelante con `git pull`.
+This option requires **Git** installed and allows updating the project later with `git pull`.
 
-1. Abrir Git Bash (o una terminal donde `git` funcione).
-2. Crear una carpeta de trabajo sin espacios y entrar en ella, por ejemplo:
-    ```
-    mkdir -p /c/ProyectosFPGA
-    cd /c/ProyectosFPGA
-    ```
-3. Clonar el repositorio:
-    ```
-    git clone https://github.com/sushemer/systemverilog-basic.git
-    cd systemverilog-basic
-    ```
+1. Open Git Bash (or a terminal where `git` works).
+2. Create a workspace folder without spaces and enter it, for example:
+
+mkdir -p /c/ProyectosFPGA  
+cd /c/ProyectosFPGA
+
+3. Clone the repository:
+
+git clone https://github.com/sushemer/systemverilog-basic.git  
+cd systemverilog-basic
 
 ---
 
-### 3.2 Descargar como ZIP (sin usar comandos)
+### 3.2 Download as ZIP (without using commands)
+
 ![alt text](mult/image-5.png)
-1. Abrir en el navegador:  
+
+1. Open in the browser:  
    https://github.com/sushemer/systemverilog-basic
-2. Hacer clic en **Code → Download ZIP**.
-3. Guardar el archivo ZIP en una carpeta sin espacios, por ejemplo:
+2. Click **Code → Download ZIP**.
+3. Save the ZIP file in a folder without spaces, for example:
 
-   C:\ProyectosFPGA\
+C:\ProyectosFPGA\
 
-4. Extraer el ZIP:
-   - Clic derecho sobre el archivo → **Extraer todo…**
-   - Elegir como destino, por ejemplo:
+4. Extract the ZIP:
+   - Right-click on the file → **Extract All…**
+   - Choose destination, for example:
 
-     C:\ProyectosFPGA\systemverilog-basic
+C:\ProyectosFPGA\systemverilog-basic
 
-5. Abrir Visual Studio Code.
-6. Ir a **File → Open Folder…**.
-7. Seleccionar la carpeta:
+5. Open Visual Studio Code.
+6. Go to **File → Open Folder…**.
+7. Select the folder:
 
-   C:\ProyectosFPGA\systemverilog-basic
+C:\ProyectosFPGA\systemverilog-basic
 
-8. Verificar que dentro de la carpeta se encuentran, al menos, las siguientes carpetas:
+8. Verify that the folder contains at least the following subfolders:
 
-   - 1_docs  
-   - 2_devices  
-   - 3_examples  
-   - 4_activities  
-   - 5_labs  
-   - 6_implementation
+- 1_docs  
+- 2_devices  
+- 3_examples  
+- 4_activities  
+- 5_labs  
+- 6_implementation
 
-## 4. Instalación de Gowin IDE (Windows)
+---
 
-> Los nombres de versión pueden cambiar (por ejemplo `V1.9.9.x Education`).  
-> Se recomienda usar la versión **Education** más reciente que soporte la Tang Nano 9K.
+## 4. Installation of Gowin IDE (Windows)
 
-### 4.1 Registro en Gowin
+> Version names may vary (for example, `V1.9.9.x Education`).  
+> It is recommended to use the most recent **Education** version that supports the Tang Nano 9K.
 
-1. Ingresar a:  
-   <https://www.gowinsemi.com/en/support/download_eda/>
-2. Hacer clic en **Register** para crear una cuenta (si aún no se tiene).
-3. Completar el formulario (se puede indicar uso educativo).
-4. Confirmar la cuenta desde el correo enviado por Gowin.
-![alt text]mult/(image-6.png)
-### 4.2 Descarga de la versión educativa
+### 4.1 Register on Gowin
 
-1. Iniciar sesión con la cuenta creada.
-2. Ir a la sección **Downloads**.
-3. Descargar la versión **Education** para Windows (archivo `.exe`).
-4. Guardar el instalador en una carpeta conocida (por ejemplo `Descargas`).
+1. Go to:  
+   https://www.gowinsemi.com/en/support/download_eda/
+2. Click **Register** to create an account (if you do not already have one).
+3. Complete the form (you can indicate educational use).
+4. Confirm your account from the email sent by Gowin.
+
+![alt text](mult/(image-6.png))
+
+### 4.2 Download the education version
+
+1. Log in with the created account.
+2. Go to the **Downloads** section.
+3. Download the **Education** version for Windows (`.exe` file).
+4. Save the installer in a known folder (for example, `Downloads`).
+
 ![alt text](mult/image-7.png)
-### 4.3 Instalación de Gowin IDE
 
-1. Ejecutar el instalador como **Administrador**  
-   (clic derecho → *Run as administrator*).
-2. En el asistente:
-   - Clic en **Next** en la pantalla de bienvenida.
-   - Aceptar el acuerdo de licencia.
-3. Seleccionar todos los componentes:
-   - **Designer** (IDE principal).
+### 4.3 Install Gowin IDE
+
+1. Run the installer as **Administrator**
+   (right-click → *Run as administrator*).
+2. In the wizard:
+   - Click **Next** on the welcome screen.
+   - Accept the license agreement.
+3. Select all components:
+   - **Designer** (main IDE).
    - **Gowin Programmer**.
-   - Herramientas adicionales incluidas.
-   
-   ![alt text](mult/image-8.png)
-4. Usar la ruta por defecto, por ejemplo:
+   - Additional included tools.
 
-   ```text
-   C:\Gowin
-   ```
+![alt text](mult/image-8.png)
 
-   ![alt text](mult/image-9.png)
+4. Use the default path, for example:
+
+C:\Gowin
+
+![alt text](mult/image-9.png)

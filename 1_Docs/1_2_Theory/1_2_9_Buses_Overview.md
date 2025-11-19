@@ -1,159 +1,142 @@
 # Buses overview
 
-Este documento ofrece una introducción general a los **buses de comunicación** más relevantes para este repositorio:
+This document introduces the main **communication buses** relevant to this repository:
 
-- Buses **paralelos** simples.
-- Buses **seriales** básicos (SPI e I²C) desde el punto de vista de la FPGA.
+- Simple **parallel** buses  
+- Basic **serial** buses (SPI and I²C) from the FPGA perspective  
 
-No entra en todos los detalles de protocolos específicos, pero da el contexto necesario para entender por qué se usan y cómo se relacionan con los ejemplos.
-
----
-
-## ¿Qué es un bus?
-
-Un **bus** es un conjunto de líneas (señales) que se utilizan para transmitir información entre:
-
-- La FPGA y un periférico externo.
-- Módulos dentro de un sistema digital.
-
-Puede ser:
-
-- **Paralelo**: varios bits al mismo tiempo.
-- **Serial**: los bits se envían uno tras otro por una o pocas líneas.
+It does not go into full protocol details but provides enough context to understand their usage.
 
 ---
 
-## Buses paralelos simples
+## What is a bus?
 
-Ejemplos de este repositorio:
+A **bus** is a set of signal lines used to transmit information between:
 
-- Conexión a displays de 7 segmentos:
-  - `seg[6:0]` → 7 líneas para segmentos.
-  - `digit[7:0]` (o similar) → líneas de habilitación de dígitos.
-- Conexión a LEDs:
-  - `led[7:0]`.
+- The FPGA and an external peripheral  
+- Modules within a digital system  
 
-Características:
+It may be:
 
-- Fáciles de entender: cada bit tiene su propio cable.
-- Pueden requerir muchos pines de la FPGA.
-- Adecuados cuando el número de señales es razonable.
-
-En estos casos, el “protocolo” suele ser muy sencillo:
-
-- El valor del bus refleja directamente la información que se quiere mostrar.
+- **Parallel**: several bits transmitted at once  
+- **Serial**: bits transmitted one after another
 
 ---
 
-## Buses seriales: motivación
+## Simple parallel buses
 
-Cuando:
+Examples:
 
-- Se incrementa el número de periféricos.
-- Se quiere ahorrar pines de FPGA.
-- Se usan dispositivos comerciales (sensores, ADC, expansores, etc.),
+- 7-segment displays  
+  - `seg[6:0]` → segment lines  
+  - `digit[7:0]` → digit enable lines  
+- LEDs: `led[7:0]`
 
-es común recurrir a buses **seriales**, donde la información se envía bit por bit usando menos líneas.
+Characteristics:
 
-En este repositorio, los más relevantes son:
+- Easy to understand  
+- Require many FPGA pins  
+- Good when the number of signals is manageable  
 
-- **SPI**
+The bus directly reflects the value to be shown.
+
+---
+
+## Serial buses: motivation
+
+Used when:
+
+- Peripherals increase  
+- FPGA pins must be saved  
+- Commercial sensors/expanders are used  
+
+Relevant in this repo:
+
+- **SPI**  
 - **I²C**
 
 ---
 
-## SPI (Serial Peripheral Interface)
+## SPI
 
-Características generales:
+General characteristics:
 
-- Modelo típico: un **master** (la FPGA) y uno o varios **slaves** (dispositivos).
-- Líneas principales:
-  - `SCK` (clock de serie).
-  - `MOSI` (Master Out, Slave In).
-  - `MISO` (Master In, Slave Out).
-  - `CS` o `SS` (Chip Select / Slave Select).
+- Master/slave model  
+- Lines:
+  - `SCK`  
+  - `MOSI`  
+  - `MISO`  
+  - `CS`  
 
-Flujo simplificado:
+Basic flow:
 
-1. La FPGA (master) baja `CS` del dispositivo con el que quiere hablar.
-2. Genera pulsos de `SCK`.
-3. En cada pulso envía un bit por `MOSI` y puede recibir un bit por `MISO`.
-4. Cuando termina la transacción, sube `CS`.
+1. FPGA lowers `CS`  
+2. Toggles `SCK`  
+3. Sends data on `MOSI`, receives on `MISO`  
+4. Raises `CS` at end  
 
-Usos típicos en este repositorio:
+Used for:
 
-- Comunicación con algunos ADC externos.
-- Módulos específicos que requieren envío/recepción de tramas seriales.
-
----
-
-## I²C (Inter-Integrated Circuit)
-
-Características generales:
-
-- Usa solo dos líneas:
-  - `SCL` (clock).
-  - `SDA` (datos bidireccionales).
-- Todos los dispositivos comparten estas dos líneas.
-- Cada dispositivo tiene una **dirección**.
-
-Flujo simplificado:
-
-1. El master (FPGA) genera una **condición de start**.
-2. Envía la dirección del dispositivo y el bit de lectura/escritura.
-3. El dispositivo responde con un bit de **ACK/NACK**.
-4. Se envían o reciben uno o más bytes de datos.
-5. El master genera una **condición de stop**.
----
-
-## Relación con la FPGA en este proyecto
-
-En este repositorio, la FPGA actúa típicamente como **master**:
-
-- Genera el clock (`SCK` o `SCL`).
-- Controla cuándo se envía y se recibe cada bit.
-- Implementa en SystemVerilog la lógica que genera:
-  - Secuencias de reloj.
-  - Bits de datos.
-  - Estados de `CS`, `SDA`, etc.
-
-La lógica concreta para cada dispositivo (tiempos, comandos, direcciones) se detalla en:
-
-- La documentación de `2_devices/`.
-- Ejemplos y labs que usen esos periféricos.
+- External ADCs  
+- Serial peripheral modules  
 
 ---
 
-## Conexión con otros temas de teoría
+## I²C
 
-Los buses interactúan con varios conceptos vistos antes:
+General characteristics:
 
-- **FSM**:
-  - Muchas implementaciones de SPI/I²C usan una máquina de estados para recorrer las fases del protocolo.
-- **Timing y divisores**:
-  - La frecuencia de `SCK` o `SCL` suele ser menor que la frecuencia de `clk`, por lo que se usan contadores para generar “ticks” de comunicación.
-- **Registros**:
-  - Los datos que se envían o reciben pasan por registros de desplazamiento internos.
+- Only two lines:
+  - `SCL`  
+  - `SDA` (bidirectional)  
+- Devices share the bus  
+- Each device has an address  
+
+Basic flow:
+
+1. Master generates **start**  
+2. Sends address + R/W bit  
+3. Receives ACK/NACK  
+4. Sends/receives multiple bytes  
+5. Generates **stop**  
 
 ---
 
-## Relación con ejemplos y labs
+## FPGA's role
 
-Archivos de teoría relacionados:
+In this repo the FPGA acts as **master**:
 
-- `1_2_6_Timing_and_Dividers.md`
-- `1_2_7_Finite_State_Machines.md`
-- `1_2_11_ADC_Basics.md`
+- Generates the clock (`SCL`/`SCK`)  
+- Controls when bits are sent/received  
+- Implements protocol sequences in SystemVerilog  
+
+---
+
+## Relation to other theory files
+
+- FSMs: protocol sequences handled with state machines  
+- Timing/dividers: serial clock frequencies lower than system clock  
+- Registers: shift registers used for serial data  
+
+Related:
+
+- `1_2_6_Timing_and_Dividers.md`  
+- `1_2_7_Finite_State_Machines.md`  
+- `1_2_11_ADC_Basics.md`  
 - `1_2_15_Potentiometer_ADC_Basics.md`
 
-Examples / Activities / Labs donde suelen aparecer buses:
+---
 
-- Lectura de potenciómetro con ADC externo (SPI o I²C).
-- Actividades con PCF8574 (expansor I²C).
-- Labs de integración con LCD vía I²C o módulos como TM1638
-  (aunque TM1638 tiene su propio protocolo, conceptualmente se parece a un bus serial).
+## Examples and labs
 
-En todos estos casos, la idea central es la misma:
+Serial buses appear in:
 
-- Compartir pocas líneas físicas para comunicar varios bits de información.
-- Coordinar la secuencia mediante relojes, FSM y registros dentro de la FPGA.
+- Potentiometer reading with external ADC  
+- Activities with PCF8574 (I²C expander)  
+- LCD integration via I²C  
+- TM1638 (its own protocol but conceptually similar)
+
+Concepts:
+
+- Use few physical lines  
+- Coordinate sequences via clocks, FSMs, and registers  

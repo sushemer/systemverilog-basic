@@ -1,224 +1,164 @@
 # Lab 5.1 – counter_hello_world
 
-**Nivel:** Básico  
-**Board:** Tang Nano 9K (configuración `tang_nano_9k_lcd_480_272_tm1638_hackathon`)  
-**Archivo principal:** `hackathon_top.sv`
+**Level:** Beginner  
+**Board:** Tang Nano 9K (`tang_nano_9k_lcd_480_272_tm1638_hackathon`)  
+**Main file:** `hackathon_top.sv`
 
 ---
 
-## 1. Objetivo
+## 1. Objective
 
-Hacer parpadear un LED de la placa (~1 Hz) usando:
+Make an LED on the board blink (~1 Hz) using:
 
-- Un **contador** que divide el reloj de la FPGA.
-- Un **registro** actualizado en `always_ff @(posedge clk)`.
-- Un **mapeo simple** desde lógica interna a un pin físico (`led[0]`).
+- A **counter** that divides the FPGA clock.
+- A **register** updated using `always_ff @(posedge clk)`.
+- A simple **mapping** from internal logic to a physical pin (`led[0]`).
 
-Al final del lab, se busca que la persona que lo realiza se sienta cómoda con:
+By the end of the lab, the student should feel comfortable with:
 
-- Crear un módulo simple con entradas y salidas.
-- Usar un registro como divisor de frecuencia.
-- Entender cómo un bit alto del contador se ve como un parpadeo visible.
-
----
-
-## 2. Requisitos previos
-
-- Tener instalado:
-  - Gowin IDE + toolchain (como en el resto del repositorio).
-  - Scripts `03_synthesize_for_fpga.bash` funcionando.
-- Conocer lo básico de:
-  - Tipos `logic`, `always_ff`, `always_comb`.
-  - Estructura de `hackathon_top` en otros ejemplos.
+- Creating a simple module with inputs and outputs.
+- Using a register as a frequency divider.
+- Understanding how a high bit of the counter becomes a visible blinking signal.
 
 ---
 
-## 3. Pasos sugeridos
+## 2. Prerequisites
 
-### Paso 1 – Explorar la plantilla
+You should have:
 
-1. Abrir `5_Labs/5_1_counter_hello_world/hackathon_top.sv`.
-2. Localizar:
-   - Las asignaciones que apagan `abcdefgh`, `digit`, `red`, `green`, `blue`.
-   - La sección del **divisor de frecuencia** (`W_DIV` y `div_cnt`).
-   - El bloque `always_comb` donde se asigna `led`.
-
-La idea es identificar dónde se encuentra el contador y dónde se conecta el LED antes de modificar nada.
+- Installed:
+  - Gowin IDE + toolchain (as used across the repo).
+  - The `03_synthesize_for_fpga.bash` script working.
+- Basic understanding of:
+  - `logic`, `always_ff`, `always_comb`.
+  - The general `hackathon_top` structure from earlier examples.
 
 ---
 
-### Paso 2 – Implementar el contador
+## 3. Suggested Steps
 
-En el archivo se encuentra algo similar a:
+### Step 1 – Explore the template
 
-    logic [W_DIV-1:0] div_cnt;
+1. Open `5_Labs/5_1_counter_hello_world/hackathon_top.sv`.
+2. Identify:
+   - The assignments disabling `abcdefgh`, `digit`, `red`, `green`, `blue`.
+   - The **frequency divider** section (`W_DIV` and `div_cnt`).
+   - The `always_comb` block where LEDs are driven.
 
-    always_ff @(posedge clock or posedge reset)
+The idea is to locate where the counter is and where the LED must be mapped before writing any logic.
+
+---
+
+### Step 2 – Implement the counter
+
+In the file you will find something like:
+
+logic [W_DIV-1:0] div_cnt;
+
+always_ff @(posedge clock or posedge reset)
+begin
+    if (reset)
     begin
-        if (reset)
-        begin
-            div_cnt <= '0;
-        end
-        else
-        begin
-            // TODO: incrementar el contador
-            // div_cnt <= ...;
-        end
+        div_cnt <= '0;
     end
-
-La tarea consiste en que el contador **avance de forma continua** mientras `reset` sea 0.  
-Una implementación típica es:
-
-- Después del `else`, sumar 1 al registro:
-
-    always_ff @(posedge clock or posedge reset)
+    else
     begin
-        if (reset)
-        begin
-            div_cnt <= '0;
-        end
-        else
-        begin
-            div_cnt <= div_cnt + 1'b1;
-        end
+        // TODO: increment counter
+        // div_cnt <= ...;
     end
+end
 
-Con esto, `div_cnt` se comporta como un contador binario de `W_DIV` bits que se incrementa en cada flanco positivo de `clock`.
+The task is for the counter to **increment continuously** while `reset` is low.
+
+A typical implementation is:
+
+always_ff @(posedge clock or posedge reset)
+begin
+    if (reset)
+    begin
+        div_cnt <= '0;
+    end
+    else
+    begin
+        div_cnt <= div_cnt + 1'b1;
+    end
+end
+
+This makes `div_cnt` behave as a binary counter of `W_DIV` bits that increases on every rising clock edge.
 
 ---
 
-### Paso 3 – Elegir el bit que producirá el parpadeo
+### Step 3 – Choose the bit that will produce the blinking
 
-Cada bit de `div_cnt` cambia a una frecuencia distinta:
+Each bit of `div_cnt` toggles at a different frequency:
 
-- El bit 0 cambia a la misma frecuencia que el reloj (`clock`).
-- El bit 1 cambia a la mitad.
-- El bit 2 a la cuarta parte.
+- Bit 0 toggles at the same frequency as the FPGA clock.
+- Bit 1 toggles at half that.
+- Bit 2 at one-fourth.
 - …
-- En general, el bit `k` cambia a `clock / (2^(k+1))`.
+- In general, bit `k` toggles at:
 
-Para generar un parpadeo cercano a 1 Hz, se elige un bit “alto” del contador (dependerá del valor de `W_DIV` y de la frecuencia real de `clock` de la placa).
+    clock / (2^(k+1))
 
-Ejemplo típico:
+To generate ~1 Hz blinking, choose a **higher bit** of the counter (depending on the FPGA clock and the selected `W_DIV`).
 
-- Si `W_DIV = 25`, un buen candidato puede ser `div_cnt[24]`.
+Example:
 
-Se puede declarar una señal intermedia:
+- If `W_DIV = 25`, a typical choice is `div_cnt[24]`.
 
-    logic blink;
+You can declare an intermediate signal:
 
-    assign blink = div_cnt[W_DIV-1];  // por ejemplo, el bit más alto
+logic blink;
+assign blink = div_cnt[W_DIV-1];  // highest bit of the counter
 
-O, si se prefiere, un índice concreto:
+Or use an explicit index:
 
-    localparam int BLINK_BIT = W_DIV-1;
-    logic blink;
+localparam int BLINK_BIT = W_DIV-1;
+logic blink;
 
-    assign blink = div_cnt[BLINK_BIT];
-
-Ese bit será el que se conecte después al LED.
-
----
-
-### Paso 4 – Mapear el bit de parpadeo a `led[0]`
-
-En la plantilla suele haber un bloque combinacional para los LEDs:
-
-    always_comb
-    begin
-        led = 8'b0000_0000;
-        // TODO: conectar algo a led[0]
-    end
-
-La idea es:
-
-- Mantener apagados los demás LEDs.
-- Conectar `blink` a `led[0]`.
-
-Por ejemplo:
-
-    always_comb
-    begin
-        led      = 8'b0000_0000;
-        led[0]   = blink;      // LED0 parpadea con el bit del contador
-        // led[7:1] se quedan en 0
-    end
-
-Con esto, el pin físico asociado a `led[0]` en la placa mostrará el parpadeo.
+assign blink = div_cnt[BLINK_BIT];
 
 ---
 
-### Paso 5 – Sintetizar, programar y observar
+### Step 4 – Map the blinking bit to `led[0]`
 
-1. Ejecutar el script de síntesis/programación del repo desde la raíz (o desde la carpeta correspondiente), por ejemplo:
+The template includes:
 
-   - `./03_synthesize_for_fpga.bash 5_Labs/5_1_counter_hello_world`
+always_comb
+begin
+    led = 8'b0000_0000;
+    // TODO: connect something to led[0]
+end
 
-   (El comando exacto depende de cómo estén organizados los scripts en el entorno local.)
+You must:
 
-2. Esperar a que se genere el bitstream y se programe la Tang Nano 9K.
+- Keep all LEDs OFF.
+- Connect `blink` to `led[0]`.
 
-3. Una vez cargado el diseño:
+Example:
 
-   - Verificar que `led[0]` parpadea.
-   - Si parpadea **demasiado rápido** (apenas se distingue el encendido y apagado), se puede:
-     - Aumentar `W_DIV` (más bits de contador).
-     - Elegir un bit más alto (`div_cnt[k]` con `k` mayor).
-   - Si parpadea **demasiado lento**, hacer lo contrario:
-     - Reducir `W_DIV`.
-     - Elegir un bit más bajo.
+always_comb
+begin
+    led    = 8'b0000_0000;
+    led[0] = blink;      // LED0 blinks with the counter bit
+end
 
-La meta es encontrar un parpadeo cómodo a la vista (~1–2 Hz).
-
----
-
-## 4. Pruebas y extensiones
-
-### 4.1 Verificaciones básicas
-
-- Confirmar que al activar `reset`:
-  - El contador `div_cnt` vuelve a 0.
-  - El LED vuelve a un estado coherente (por ejemplo, apagado si el bit elegido parte de 0).
-- Verificar que el parpadeo es **estable** y no errático.
-
-### 4.2 Extensiones sugeridas
-
-Cuando la versión básica funcione, se pueden realizar pequeñas mejoras:
-
-1. **Varios LEDs con diferentes frecuencias**
-
-   - Conectar `led[1]` a otro bit de `div_cnt` (por ejemplo `div_cnt[W_DIV-2]`).
-   - Conectar `led[2]` a otro bit más bajo.
-   - Se observarán distintos parpadeos y patrones.
-
-2. **Invertir el parpadeo**
-
-   - Usar `~blink` en lugar de `blink` para que el LED esté encendido cuando el bit es 0 y apagado cuando es 1.
-
-3. **Control simple de velocidad con teclas**
-
-   - Usar uno o dos bits de `key` para seleccionar entre distintos bits del contador (por ejemplo, un pequeño multiplexor que elija entre `div_cnt[20]`, `div_cnt[21]`, `div_cnt[22]`).
-   - De esta forma se suaviza la transición hacia otros labs donde se usan teclas para cambiar modos.
-
-4. **Preparar el código para labs posteriores**
-
-   - Mantener clara la separación entre:
-     - Lógica de **división de reloj**.
-     - Lógica de **salida a LEDs**.
-   - Esto facilita reutilizar la misma estructura en labs posteriores (contadores más complejos, registros de desplazamiento, etc.).
+This ensures the physical LED receives the blinking signal.
 
 ---
 
-## 5. Resumen
+### Step 5 – Synthesize, program, and observe
 
-En este lab se implementa el equivalente a un “hola mundo” para FPGAs:
+1. Run the synthesis/programming script from the repo root:
 
-- Un contador divide el reloj rápido de la placa.
-- Un bit de ese contador se conecte a un LED.
-- El resultado visible es un **LED parpadeando**, demostrando:
+./03_synthesize_for_fpga.bash 5_Labs/5_1_counter_hello_world
 
-  - Que el reloj está funcionando.
-  - Que el flujo de síntesis y programación está correcto.
-  - Que se comprende la relación entre frecuencia de reloj, contadores y señales visibles.
+2. Program the Tang Nano 9K once the bitstream is generated.
 
-Este patrón se reutilizará en muchos de los ejemplos y labs posteriores, como base para animaciones, divisores de frecuencia, temporizadores y lógica más compleja.
+3. After loading the bitstream:
+
+- Check that `led[0]` is blinking visibly.
+- If it blinks **too fast**, increase `W_DIV` or use a higher counter bit.
+- If it blinks **too slow**, decrease `W_DIV` or use a lower counter bit.
+
+A comfortable blinking frequency is around 1–2 Hz.

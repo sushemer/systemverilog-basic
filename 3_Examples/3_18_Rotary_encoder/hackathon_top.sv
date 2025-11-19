@@ -1,32 +1,31 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // 3.18: Rotary encoder (KY-040) + TM1638 + LCD helper
 //
-// Ejemplo de uso de un encoder rotatorio tipo KY-040 conectado a gpio[3:2]:
-//   - gpio[3] = CLK (canal A)
-//   - gpio[2] = DT  (canal B)
+// Example of using a KY-040 rotary encoder connected to gpio[3:2]:
+//   - gpio[3] = CLK (channel A)
+//   - gpio[2] = DT  (channel B)
 //
-// El valor decodificado se muestra:
-//   - En el display de 7 segmentos (TM1638) como número.
-//   - En los LEDs (8 LSB) como apoyo visual.
-//   - Como “umbral” vertical en la LCD: para columnas con x > value, se pinta azul.
+// The decoded value is displayed:
+//   - On the seven-segment display (TM1638) as a number.
+//   - On the LEDs (8 LSB) as binary debug.
+//   - As a vertical “threshold” on the LCD: for columns with x > value, the pixel is blue.
 //
-// Los módulos auxiliares sync_and_debounce y rotary_encoder se reutilizan sin
-// modificaciones.
+// The helper modules sync_and_debounce and rotary_encoder are reused without modifications.
 
 module hackathon_top
 (
     input  logic       clock,
-    input  logic       slow_clock,   // no usado en este ejemplo
+    input  logic       slow_clock,   // not used in this example
     input  logic       reset,
 
-    input  logic [7:0] key,          // reservado para ejercicios
+    input  logic [7:0] key,          // reserved for exercises
     output logic [7:0] led,
 
-    // Display de 7 segmentos (TM1638)
+    // Seven-segment display (TM1638)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz de la LCD
+    // LCD interface
     input  logic [8:0] x,
     input  logic [8:0] y,
 
@@ -38,14 +37,14 @@ module hackathon_top
 );
 
     // --------------------------------------------------------------------
-    // Encoder KY-040 en gpio[3:2]
+    // KY-040 encoder on gpio[3:2]
     // --------------------------------------------------------------------
     //
-    // Marcado típico en el módulo:
-    //   CLK - canal A
-    //   DT  - canal B
+    // Typical pin names on the module:
+    //   CLK - channel A
+    //   DT  - channel B
     //
-    // Primero se sincroniza y aplica debouncing a las señales del encoder.
+    // First, synchronize and debounce the encoder signals.
 
     logic a;
     logic b;
@@ -60,11 +59,11 @@ module hackathon_top
     );
 
     // --------------------------------------------------------------------
-    // Decodificador de encoder rotatorio
+    // Rotary encoder decoder
     // --------------------------------------------------------------------
     //
-    // El módulo rotary_encoder entrega un valor de 16 bits (value) que se
-    // incrementa o decrementa según el giro del encoder.
+    // The module rotary_encoder outputs a 16-bit value that increments
+    // or decrements depending on encoder rotation.
 
     logic [15:0] value;
 
@@ -77,55 +76,54 @@ module hackathon_top
     );
 
     // --------------------------------------------------------------------
-    // Visualización en display TM1638 (7 segmentos) y LEDs
+    // TM1638 (seven-segment) and LED visualization
     // --------------------------------------------------------------------
 
     seven_segment_display #(
-        .w_digit (8)   // 8 dígitos en el módulo de la tarjeta hackathon
+        .w_digit (8)   // 8 digits on the TM1638 module
     ) i_7segment (
         .clk      (clock),
         .rst      (reset),
-        .number   (32'(value)),      // se extiende internamente a 32 bits
+        .number   (32'(value)),   // extend to 32 bits internally
         .dots     ('0),
         .abcdefgh (abcdefgh),
         .digit    (digit)
     );
 
-    // LEDs: muestran los 8 bits menos significativos del valor del encoder.
+    // LEDs show the 8 LSB of the encoder value.
     assign led = value[7:0];
 
     // --------------------------------------------------------------------
-    // Lógica de video: umbral vertical controlado por el encoder
+    // LCD video logic: vertical threshold controlled by the encoder
     // --------------------------------------------------------------------
     //
-    // Para todas las coordenadas con x > value[8:0], se pinta azul.
-    // A medida que se gira el encoder, se desplaza el "umbral" vertical.
-    // La intensidad de azul varía ligeramente con x (demo visual simple).
+    // For all coordinates with x > value[8:0], paint blue.
+    // As the encoder rotates, the vertical threshold shifts.
+    // Blue intensity varies with x (simple visual effect).
 
     always_comb begin
-        // Fondo negro
+        // Black background
         red   = 5'd0;
         green = 6'd0;
         blue  = 5'd0;
 
-        // Región a la derecha del umbral: azul
+        // Region to the right of the threshold
         if (x > value[8:0]) begin
             red   = 5'd0;
             green = 6'd0;
-            blue  = x[4:0];   // intensidad de azul basada en x (solo efecto visual)
+            blue  = x[4:0];   // blue intensity based on x
         end
     end
 
     // --------------------------------------------------------------------
-    // Ideas de ejercicios adicionales
+    // Additional exercise ideas (kept from original)
     // --------------------------------------------------------------------
     //
-    // - Ejercicio 1:
-    //   Usar el valor del encoder para controlar la posición de un rectángulo
-    //   en la LCD (similar a 3.14, pero con posición definida por value).
+    // - Exercise 1:
+    //   Use value to control the position of a rectangle on the LCD
+    //   (similar to 3.14 but driven by encoder value).
     //
-    // - Ejercicio 2:
-    //   Conectar dos encoders a distintos GPIO y usar uno para desplazar en X
-    //   y otro para desplazar en Y una figura dibujada en la pantalla.
+    // - Exercise 2:
+    //   Connect two encoders: one for X and another for Y movement.
 
 endmodule

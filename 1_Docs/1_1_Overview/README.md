@@ -1,94 +1,94 @@
-# 1.1 Overview · Cómo usar la documentación
+# 1.1 Overview · How to use the documentation
 
-Este documento ofrece una visión general de la carpeta `1_docs` y explica cómo se relaciona con el resto del repositorio (`2_devices`, `3_examples`, `4_activities`, `5_labs`, `6_implementation`).
+This document provides a high-level view of the `1_docs` folder and explains how it connects with the rest of the repository (`2_devices`, `3_examples`, `4_activities`, `5_labs`, `6_implementation`).
 
-El objetivo es responder a tres preguntas:
+Its aim is to answer three questions:
 
-- ¿Por dónde empezar?
-- ¿Cuándo consultar teoría?
-- ¿Cómo conectar la documentación con ejemplos, actividades, labs e implementaciones?
-
----
-
-## 1. Flujo sugerido de aprendizaje
-
-Un recorrido típico usando la documentación es el siguiente:
-
-1. **Leer este Overview (`1_1_Overview`)**  
-   Para entender el propósito del repositorio, a quién va dirigido y qué resultados se esperan.
-
-2. **Revisar la teoría que haga falta (`1_2_*`)**  
-   Solo lo necesario para la práctica que vas a hacer (lógica combinacional, FSM, contadores, PWM, etc.).
-
-3. **Seguir las guías de instalación y entorno (`1_3_install`)**  
-   Para dejar listo VS Code, Git, Gowin y la clonación del repositorio.
-
-4. **Usar los how-to cuando te atores (`1_5_howto`)**  
-   - Conexiones de hardware (`1_5_1_connections`).
-   - Flujo de código (`1_5_2_code_flow`).
-   - Cómo correr scripts (`1_5_3_how_to_run`).
-   - Errores típicos y precauciones (`1_5_4_troubleshooting_and_pitfalls`).
-
-5. **Trabajar sobre `4_activities`, `5_labs` y `6_implementation`**  
-   Usando la documentación de `1_docs` como apoyo cuando haga falta.
+- Where do I start?
+- When should I consult the theory?
+- How do I connect the documentation with the examples, activities, labs, and implementations?
 
 ---
 
-## 2. Relación con el resto del repositorio
+## 1. Suggested learning flow
 
-A alto nivel:
+A typical workflow when using this documentation is:
+
+1. **Read this Overview (`1_1_Overview`)**  
+   To understand the purpose of the repository, who it is for, and what results are expected.
+
+2. **Review only the theory you need (`1_2_*`)**  
+   Just the concepts needed for the practice you are about to do (combinational logic, FSM, counters, PWM, etc.).
+
+3. **Follow installation and environment guides (`1_3_install`)**  
+   To set up VS Code, Git, Gowin, and to clone the repository.
+
+4. **Use the how-to guides when you get stuck (`1_5_howto`)**  
+   - Hardware connections (`1_5_1_connections`).
+   - Code flow (`1_5_2_code_flow`).
+   - How to run scripts (`1_5_3_how_to_run`).
+   - Common mistakes and precautions (`1_5_4_troubleshooting_and_pitfalls`).
+
+5. **Work on `4_activities`, `5_labs`, and `6_implementation`**  
+   Using the documentation in `1_docs` as support whenever needed.
+
+---
+
+## 2. Relationship with the rest of the repository
+
+At a high level:
 
 - `1_docs/`  
-  Explica conceptos, flujo de trabajo, instalación y errores comunes.  
-  No contiene el código de las prácticas principales, sino el soporte teórico y práctico.
+  Explains concepts, workflow, installation, and common errors.  
+  It does not contain the main practice code—only theoretical and practical support.
 
 - `2_devices/`  
-  Describe la Tang Nano 9K y los periféricos usados.  
-  Se consulta cuando hay dudas sobre pines, voltajes o conexiones físicas.
+  Describes the Tang Nano 9K and peripherals used.  
+  Useful for questions about pinouts, voltages, and physical connections.
 
 - `3_examples/`  
-  Ofrece ejemplos de referencia (gráficos, sonido, integraciones más complejas).  
-  Sirve para estudiar diseños más grandes y ver cómo se estructuran.
+  Provides reference examples (graphics, audio, complex integrations).  
+  Good for studying larger designs and understanding structure.
 
 - `4_activities/`  
-  Agrupa ejercicios cortos, cada uno centrado en un concepto concreto.  
-  La documentación ayuda a recordar teoría mientras se completan los `TODO`.
+  Contains short exercises focused on specific concepts.  
+  Documentation helps recall theory while completing `TODO`s.
 
 - `5_labs/`  
-  Reúne prácticas más completas, integrando varios conceptos.  
-  La documentación se usa como guía rápida para repasar temas al diseñar y depurar.
+  Groups more complete, integrated practices.  
+  Documentation serves as a quick reference for reviewing concepts during design and debugging.
 
 - `6_implementation/`  
-  Contendrá mini–proyectos que combinan todo lo anterior.  
-  La documentación sirve como referencia para justificar decisiones de diseño y estructura.
+  Includes mini-projects combining all previous work.  
+  Documentation helps justify architecture and design decisions.
 
 ---
 
-## 3. Cuándo leer qué
+## 3. When to read what
 
-- **Antes de tocar código**:  
-  - Lea `1_1_1_Purpose`, `1_1_2_Audience` y `1_1_3_Results` para tener claro el objetivo.
-  - Revise rápidamente `1_1_4_Map` para ubicarse en el repositorio.
+- **Before touching code**:  
+  - Read `1_1_1_Purpose`, `1_1_2_Audience`, and `1_1_3_Results`.  
+  - Skim `1_1_4_Map` to understand the overall layout.
 
-- **Cuando esté preparando su máquina**:  
-  - Use `1_3_install` (Windows o Linux) para configurar VS Code, Git y Gowin.
+- **When setting up your machine**:  
+  - Use `1_3_install` (Windows or Linux) to configure VS Code, Git, and Gowin.
 
-- **Cuando un ejercicio no se entienda bien**:  
-  - Vea los resúmenes teóricos en `1_2_*` y a los how-to de `1_5_*`.
+- **When an exercise is unclear**:  
+  - Check the theory summaries in `1_2_*` and the how-to guides in `1_5_*`.
 
-- **Cuando algo no funcione**:  
-  - Revise `1_5_3_how_to_run` (por si es un tema de scripts).
-  - Revise `1_5_4_troubleshooting_and_pitfalls` (errores típicos y precauciones).
+- **When something breaks**:  
+  - Check `1_5_3_how_to_run` (script-related issues).  
+  - Check `1_5_4_troubleshooting_and_pitfalls` (common errors and warnings).
 
 ---
 
-## 4. Resumen
+## 4. Summary
 
-- `1_docs` es el **manual** que acompaña a las carpetas de código y hardware.
-- Esta subcarpeta `1_1_Overview` explica:
-  - Para qué existe el repositorio.
-  - Para quién está pensado.
-  - Qué resultados se esperan.
-  - Cómo se conectan documentación, ejemplos, activities, labs e implementations.
+- `1_docs` is the **manual** that supports the code and hardware folders.
+- This `1_1_Overview` subfolder explains:
+  - Why the repository exists.
+  - Who it is for.
+  - What results are expected.
+  - How documentation connects with examples, activities, labs, and implementations.
 
-Una vez que tenga clara esta estructura, puede moverse con más seguridad por el resto del proyecto.
+Once you understand this structure, you can navigate the rest of the project with more confidence.

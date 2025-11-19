@@ -1,168 +1,169 @@
 # 1.4.3 Peripherals and buses terms
 
-Términos relacionados con periféricos (sensores, actuadores) y buses de comunicación usados en el repositorio.
+Terms related to peripherals (sensors, actuators) and communication buses used in the repository.
 
 ---
 
 ### GPIO (General-Purpose Input/Output)
 
-Pines de propósito general que pueden configurarse como entrada o salida digital.  
-En la FPGA se usan para conectar botones, LEDs, 7 segmentos, buzzer, etc.
+General-purpose pins configurable as digital input or output.  
+Used on the FPGA to connect buttons, LEDs, 7-segment displays, buzzers, etc.
 
 ---
 
 ### Bus
 
-Conjunto de líneas (señales) que transmiten información entre módulos o entre la FPGA y un periférico.  
-Puede ser:
-- Paralelo (varios bits en paralelo, por ejemplo `led[7:0]`).
-- Serial (bits enviados uno tras otro, como en SPI o I²C).
+Set of lines (signals) that transmit information between modules or between the FPGA and a peripheral.  
+It may be:
+
+- Parallel (multiple bits in parallel, e.g., `led[7:0]`)  
+- Serial (bits sent one after another: SPI, I²C)
 
 ---
 
 ### ADC (Analog-to-Digital Converter)
 
-Convertidor analógico–digital que transforma un voltaje analógico en un número digital.  
-La FPGA lo usa para leer señales analógicas, como el valor de un potenciómetro.  
-En este repositorio se utilizan ADC externos (MCP3008, ADS1115, ADC0832, etc.).
+Converts an analog voltage into a digital number.  
+The FPGA uses it to read analog signals, such as a potentiometer.  
+This repository uses external ADCs (MCP3008, ADS1115, ADC0832, etc.).
 
 ---
 
 ### PWM (Pulse Width Modulation)
 
-Técnica que usa una señal digital de periodo fijo con ciclo de trabajo (duty cycle) variable para emular niveles analógicos.  
-Se usa en este repositorio para controlar brillo de LEDs y posición de servos.
+Technique that uses a fixed-period digital signal with a variable duty cycle to emulate analog levels.  
+Used in this repository to control LED brightness and servo position.
 
 ---
 
 ### Seven-segment display
 
-Display formado por 7 LEDs dispuestos en forma de “8” (más punto decimal opcional).  
-Se usan combinaciones de segmentos encendidos para representar dígitos y algunas letras.  
-En el repo se utiliza para mostrar contadores, resultados y estados simples.
+Display formed by 7 LEDs arranged in the shape of an “8” (plus optional decimal point).  
+Uses segment combinations to represent digits and some letters.  
+In the repository it is used to show counters, results, and simple states.
 
 ---
 
 ### LCD (Liquid Crystal Display) HD44780
 
-Display de caracteres (típicamente 16x2 o 20x4) basado en el controlador HD44780 o compatibles.  
-Permite mostrar texto (mensajes, valores numéricos, menús).  
-Puede conectarse en modo paralelo (4/8 bits) o a través de un backpack I²C (por ejemplo, PCF8574).
+Character display (typically 16x2 or 20x4) based on the HD44780 controller or compatible ones.  
+Used to display text (messages, numeric values, menus).  
+Can be connected in 4/8-bit parallel mode or through an I²C backpack (PCF8574).
 
 ---
 
 ### TM1638
 
-Controlador/módulo que integra:
+Controller/module integrating:
 
-- Displays de 7 segmentos.
-- Varias teclas.
-- LEDs individuales.
+- 7-segment displays  
+- Several keys  
+- Individual LEDs  
 
-Se comunica con la FPGA mediante un protocolo serial sencillo (CLK, DIO, STB).  
-En este repositorio se usa para interfaces compactas de usuario (display + teclas + LEDs).
+Communicates with the FPGA via a simple serial protocol (CLK, DIO, STB).  
+Used in this repository for compact user interfaces.
 
 ---
 
 ### PCF8574
 
-Expansor de entradas/salidas de 8 bits vía I²C.  
-Permite aumentar la cantidad de pines digitales disponibles usando solo dos líneas (SCL, SDA).  
-Se utiliza, entre otros, para controlar LCDs HD44780 mediante un backpack I²C.
+8-bit I/O expander via I²C.  
+Allows increasing available digital I/O using only two lines (SCL, SDA).  
+Commonly used to control HD44780 LCDs through an I²C backpack.
 
 ---
 
 ### HC-SR04
 
-Sensor ultrasónico de distancia.  
-Usa un pulso en `TRIG` para disparar la medición y devuelve un pulso en `ECHO` cuya duración es proporcional a la distancia medida.  
-En la FPGA se mide el ancho del pulso de `ECHO` con contadores.
+Ultrasonic distance sensor.  
+Uses a pulse on `TRIG` to start the measurement and returns a pulse on `ECHO` whose duration is proportional to the measured distance.  
+The FPGA measures the width of the `ECHO` pulse using counters.
 
 ---
 
-### Servo (por ejemplo, SG90)
+### Servo (e.g., SG90)
 
-Actuador rotacional que se posiciona según el ancho de un pulso PWM de periodo fijo (~20 ms).  
-En el repo se controla con módulos de PWM diseñados para generar los pulsos de 1–2 ms correspondientes a ángulos como 0°, 90°, 180°.
+Rotational actuator positioned according to the width of a fixed-period PWM pulse (~20 ms).  
+In the repository, custom PWM modules are used to generate 1–2 ms pulses for positions such as 0°, 90°, 180°.
 
 ---
 
 ### Potentiometer
 
-Resistencia variable con tres terminales que funciona como divisor de voltaje.  
-Conectado a un ADC permite obtener un valor digital ajustable (por ejemplo, para controlar brillo, posición, umbrales, etc.).
+Variable resistor with three terminals acting as a voltage divider.  
+When connected to an ADC, it provides an adjustable digital value (e.g., for brightness, position, thresholds).
 
 ---
 
 ### Buzzer (active / passive)
 
-Dispositivo que produce sonido:
+Device that produces sound:
 
-- **Active buzzer**: suena al aplicar un nivel lógico estable (internamente genera la frecuencia).
-- **Passive buzzer**: requiere una señal PWM a cierta frecuencia para producir tono.  
+- **Active buzzer**: produces sound when driven with a stable logic level (frequency generated internally).  
+- **Passive buzzer**: requires a PWM signal at a specific frequency to produce a tone.
 
-En este repositorio, se enlaza con módulos de PWM o divisores de frecuencia para generar notas simples o melodías básicas.
+Used with PWM or clock dividers to generate simple tones/melodies.
 
 ---
 
 ### SPI (Serial Peripheral Interface)
 
-Bus serial síncrono con líneas típicas:
+Synchronous serial bus with typical lines:
 
-- `SCK` (clock),
-- `MOSI` (Master Out, Slave In),
-- `MISO` (Master In, Slave Out),
-- `CS` / `SS` (Chip Select).
+- `SCK` (clock)  
+- `MOSI` (Master Out, Slave In)  
+- `MISO` (Master In, Slave Out)  
+- `CS` / `SS` (Chip Select)
 
-La FPGA actúa como master y controla la comunicación con dispositivos como algunos ADCs o controladores externos.
+The FPGA acts as master and controls communication with devices such as some ADCs.
 
 ---
 
 ### I²C (Inter-Integrated Circuit)
 
-Bus serial de dos hilos:
+Two-wire serial bus:
 
-- `SCL` (clock),
-- `SDA` (datos bidireccionales).
+- `SCL` (clock)  
+- `SDA` (bidirectional data)
 
-Permite conectar múltiples dispositivos (con direcciones) en las mismas líneas.  
-Se usa con expansores (PCF8574), algunos ADCs y módulos de LCD con backpack I²C.
+Supports multiple devices with addresses.  
+Used with expanders (PCF8574), some ADCs, and LCD modules with I²C backpacks.
 
 ---
 
 ### UART (Universal Asynchronous Receiver/Transmitter)
 
-Interfaz serie asíncrona (TX/RX) usada para comunicación punto a punto, por ejemplo con un PC.  
-Aunque no es el foco principal de este repositorio, es un periférico típico en proyectos con FPGA y puede aparecer en extensiones futuras.
+Asynchronous serial interface (TX/RX) used for point-to-point communication, e.g., with a PC.  
+Not a main focus of this repository but typical in FPGA projects.
 
 ---
 
 ### Debounce (debouncing)
 
-Técnica para eliminar rebotes mecánicos de botones o switches, filtrando cambios muy rápidos.  
-En el contexto de periféricos, se aplica a entradas humanas (botones del usuario).
+Technique to eliminate mechanical bounce in buttons or switches by filtering very fast transitions.  
+Applied to user-button inputs.
 
 ---
 
 ### Edge detection (for inputs)
 
-Detección de flancos (subida/bajada) en señales provenientes del exterior (botones, ECHO, etc.) para generar pulsos de un ciclo.  
-Se utiliza en integración con periféricos para registrar eventos únicos a partir de señales más largas.
+Logic for detecting rising/falling edges in external signals (buttons, ECHO, etc.) to generate one-cycle pulses.  
+Used to capture unique events from longer signals.
 
 ---
 
 ### Pull-up / pull-down resistor
 
-Resistencias usadas para fijar el valor de una señal cuando no está siendo activamente conducida.  
+Resistors used to set a signal to a known default value when not actively driven.
 
-- **Pull-up**: mantiene la señal en 1 lógico por defecto.
-- **Pull-down**: mantiene la señal en 0 lógico por defecto.
+- **Pull-up**: keeps the signal at logic 1 by default  
+- **Pull-down**: keeps the signal at logic 0 by default
 
-En botones y buses (como I²C) ayudan a asegurar niveles definidos y evitar entradas flotantes.
+Used in buttons and buses like I²C.
 
 ---
 
 ### Level shifter / level shifting
 
-Circuito para adaptar niveles de voltaje entre dispositivos que trabajan a tensiones distintas (por ejemplo, 5 V ↔ 3.3 V).  
-En este repositorio es importante para conectar módulos como el HC-SR04 (salida ECHO a 5 V) a la FPGA de 3.3 V sin dañarla.
+Circuit used to adapt voltage levels between devices operating at different tensions (e.g., 5 V ↔ 3.3 V).  
+Important for modules such as the HC-SR04 (ECHO at 5V) when connected to the FPGA.

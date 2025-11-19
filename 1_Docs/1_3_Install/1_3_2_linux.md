@@ -1,206 +1,167 @@
-# Linux install guide · Visual Studio Code, Git, repositorio y Gowin IDE
+# Linux install guide · Visual Studio Code, Git, repository, and Gowin IDE
 
-Este documento describe cómo preparar el entorno en **Linux** para trabajar con este repositorio:
-
-1. Instalar **Visual Studio Code**.
-2. Instalar **Git**.
-3. Descargar o clonar el **repositorio** de este proyecto:  
-   https://github.com/sushemer/systemverilog-basic
-4. Instalar **Gowin IDE** (versión educativa para Linux).
-5. Configurar variables de entorno.
-6. Verificar la instalación con una prueba básica.
+This document describes how to prepare the environment on **Linux** to work with this repository.
 
 ---
 
 ## 1. Visual Studio Code (VSC)
 
-> Los pasos pueden variar ligeramente según la distribución.  
+### 1.1 Download VSC
 
-### 1.1 Descargar Visual Studio Code
-
-1. Abrir el navegador y entrar a:  
+1. Open the official website:  
    https://code.visualstudio.com/download
-2. Seleccionar el paquete adecuado:
-   - `.deb` para Debian / Ubuntu.
-   - `.rpm` para Fedora / openSUSE.
-3. Descargar el archivo en la carpeta `Descargas` (o similar).
+2. Select the package corresponding to your Linux distribution (`.deb`, `.rpm`, etc.).
+3. Download the installer file.
+
 ![alt text](mult/image.png)
 
-### 1.2 Instalar VSC (ejemplo con .deb en Debian/Ubuntu)
+### 1.2 Installation
 
-Abrir una terminal y ejecutar:
+Depending on your distribution, the installation may vary:
 
-    cd ~/Descargas
-    sudo dpkg -i code_*.deb
-    sudo apt-get -f install    # Corrige dependencias si hace falta
+- **Debian/Ubuntu (.deb):**
 
-Si usas otra distribución, puedes seguir las instrucciones específicas de la página oficial de Visual Studio Code.
+sudo dpkg -i code_*.deb  
+sudo apt-get -f install
 
-### 1.3 Verificar instalación
+- **Fedora/openSUSE (.rpm):**
 
-En una terminal:
+sudo rpm -i code-*.rpm
 
-    code --version
+### 1.3 Initial launch
 
-Si aparece un número de versión (por ejemplo `1.xx.x`), Visual Studio Code está instalado.
+Open Visual Studio Code from your applications menu or via terminal:
 
----
-
-## 2. Git
-
-En la mayoría de distribuciones Linux, Git está disponible desde los repositorios oficiales.
-
-### 2.1 Instalar Git
-
-En Debian / Ubuntu:
-
-    sudo apt-get update
-    sudo apt-get install git
-
-En Fedora:
-
-    sudo dnf install git
-
-En Arch Linux:
-
-    sudo pacman -S git
-
-### 2.2 Verificar instalación
-
-    git --version
-
-Si se muestra una versión (`git version 2.x.x`), Git está listo.
+code
 
 ---
 
-## 3. Descargar o clonar el repositorio del proyecto
+## 2. Git Installation
 
-Repositorio principal de este proyecto:
+Git is required to clone and manage the repository.
 
-    https://github.com/sushemer/systemverilog-basic
+### 2.1 Installing Git
 
-Se recomienda usar una carpeta **sin espacios** en la ruta, por ejemplo:
+- **Debian/Ubuntu:**
 
-- ✅ `/home/usuario/ProyectosFPGA/systemverilog-basic`  
-- ❌ `/home/usuario/Mis proyectos FPGA/systemverilog-basic`
+sudo apt-get update  
+sudo apt-get install git
 
-### 3.1 Clonar con Git (recomendado)
+- **Fedora:**
 
-1. Abrir una terminal.
-2. Crear una carpeta de trabajo y entrar en ella:
+sudo dnf install git
 
-       mkdir -p ~/ProyectosFPGA
-       cd ~/ProyectosFPGA
+- **Arch Linux:**
 
-3. Clonar el repositorio:
+sudo pacman -S git
 
-       git clone https://github.com/sushemer/systemverilog-basic.git
-       cd systemverilog-basic
+![alt text](mult/image-3.png)
 
-4. (Opcional) Abrir la carpeta en Visual Studio Code:
+### 2.2 Verify installation
 
-       code .
+git --version
 
-### 3.2 Descargar como ZIP (sin usar Git)
+---
 
-1. Abrir en el navegador:  
+## 3. Download or clone the project repository
+
+> It is recommended to store the project in a folder **without spaces** in the path.
+
+Main repository of this project:
+
+https://github.com/sushemer/systemverilog-basic
+
+### 3.1 Clone using Git (recommended)
+
+1. Create a workspace folder (without spaces), for example:
+
+mkdir -p ~/ProyectosFPGA  
+cd ~/ProyectosFPGA
+
+2. Clone the repository:
+
+git clone https://github.com/sushemer/systemverilog-basic.git
+
+3. Enter the project folder:
+
+cd systemverilog-basic
+
+### 3.2 Download as ZIP (without Git)
+
+1. Open in your browser:  
    https://github.com/sushemer/systemverilog-basic
-2. Hacer clic en **Code → Download ZIP**.
-3. Guardar el archivo en `~/Descargas` (o similar).
-4. Extraer el ZIP, por ejemplo:
+2. Click **Code → Download ZIP**.
+3. Save the ZIP file.
+4. Extract it:
 
-       mkdir -p ~/ProyectosFPGA
-       cd ~/ProyectosFPGA
-       unzip ~/Descargas/systemverilog-basic-main.zip
-       mv systemverilog-basic-main systemverilog-basic
+unzip systemverilog-basic-main.zip  
+mv systemverilog-basic-main systemverilog-basic
 
-5. Abrir la carpeta en Visual Studio Code:
+5. Open in VS Code:
 
-       cd ~/ProyectosFPGA/systemverilog-basic
-       code .
+code systemverilog-basic
+
+![alt text](mult/image-4.png)
 
 ---
 
-## 4. Instalación de Gowin IDE (Linux)
+## 4. Install Gowin IDE (Linux)
 
-> Los nombres de versión y la ruta exacta del archivo `.tar.gz` pueden cambiar.  
-> Aquí se muestra un ejemplo con un nombre típico:  
-> `Gowin_V1.9.9.03_Education_linux.tar.gz`.
+### 4.1 Download Gowin IDE
 
-### 4.1 Descarga de Gowin IDE
-
-1. Ir a la página de descargas de Gowin:  
+1. Go to:  
    https://www.gowinsemi.com/en/support/download_eda/
-2. Crear una cuenta o iniciar sesión si ya se tiene.
-3. Buscar la versión **Education** para **Linux**.
-4. Descargar el archivo `.tar.gz` (por ejemplo):  
-   `Gowin_V1.9.9.03_Education_linux.tar.gz`  
-   y guardarlo en `~/Descargas`.
+2. Download the **Education** version for Linux.
+3. Save the `.tar.gz` file in your Downloads folder.
 
-### 4.2 Extraer el archivo
+![alt text](mult/image-1.png)
 
-En la terminal:
+### 4.2 Extract the installer
 
-    cd ~/Descargas
-    tar -xvzf Gowin_V1.9.9.03_Education_linux.tar.gz
+cd ~/Descargas  
+tar -xvzf Gowin_V1.x.x_Education_linux.tar.gz
 
-Esto creará una carpeta con el IDE, por ejemplo:
+This will create a folder like:
 
-    Gowin_V1.9.9.03_Education_linux
+Gowin_V1.x.x_Education_linux/
 
-### 4.3 Mover a un directorio fijo (por ejemplo `~/gowin`)
+### 4.3 Move Gowin to a known location
 
-    rm -rf ~/gowin
-    mv ~/Descargas/Gowin_V1.9.9.03_Education_linux ~/gowin
+rm -rf ~/gowin  
+mv Gowin_V1.x.x_Education_linux ~/gowin
 
-Si la carpeta tiene un nombre distinto, ajustarlo en el comando `mv`.
+![alt text](mult/image-2.png)
 
 ---
 
-## 5. Configurar variables de entorno
+## 5. Configure environment variables
 
-Para poder llamar a las herramientas de Gowin desde cualquier terminal, se recomienda añadirlas al `PATH`.
+### 5.1 Edit `.bashrc`
 
-### 5.1 Editar `.bashrc` (o el archivo de configuración de tu shell)
+nano ~/.bashrc
 
-Abrir el archivo `.bashrc` con tu editor preferido, por ejemplo:
+Add the following lines at the end:
 
-    nano ~/.bashrc
+export PATH="$PATH:$HOME/gowin/IDE/bin:$HOME/gowin/Programmer/bin"
 
-Al final del archivo, añadir la línea:
+Save and exit (`Ctrl + O`, `Enter`, `Ctrl + X`).
 
-    export PATH="$PATH:$HOME/gowin/IDE/bin:$HOME/gowin/Programmer/bin"
+### 5.2 Apply the changes
 
-Guardar y cerrar.
-
-### 5.2 Aplicar cambios
-
-    source ~/.bashrc
-
-O cerrar la sesión y volver a entrar.
+source ~/.bashrc
 
 ---
 
-## 6. Verificación de Gowin en Linux
+## 6. Verify installation
 
-### 6.1 Verificar consola de Gowin (gw_sh)
+### 6.1 Verify using the console
 
-En la terminal:
+gw_sh
 
-    gw_sh
+### 6.2 Verify using the graphical IDE
 
-Si la instalación es correcta, deberá abrirse la consola TCL de Gowin.
+gw_ide &
 
-### 6.2 Verificar interfaz gráfica (gw_ide)
+![alt text](mult/image-5.png)
 
-En la terminal:
-
-    gw_ide &
-
-Esto debería abrir la interfaz gráfica del IDE Gowin.  
-En el primer inicio, puede solicitar configuración de licencia:
-
-- Seleccionar **Education License** si se muestra esa opción.
-- Confirmar que el IDE abre sin errores críticos.
-
----
+If the IDE opens successfully, your Gowin installation on Linux is complete.

@@ -1,103 +1,105 @@
-# 2.5 Conventions · Convenciones de uso de dispositivos
+# 2.5 Conventions · Device usage conventions
 
-Esta carpeta reúne las **convenciones** que se siguen en `2_devices` para:
+This folder gathers the **conventions** followed in `2_devices` to:
 
-- Mantener la asignación de pines consistente.
-- Unificar nombres de señales.
-- Estandarizar la documentación de cada dispositivo.
-- Mejorar la seguridad y la reproducibilidad de los montajes.
+- Keep pin assignments consistent  
+- Unify signal names  
+- Standardize documentation for each device  
+- Improve safety and reproducibility of builds  
 
-La intención es que quienes colaboren en el proyecto puedan extenderlo sin romper la organización existente.
+The goal is for collaborators to extend the project without breaking the existing organization.
 
 ---
 
-## 1. Archivo de constraints centralizado
+## 1. Centralized constraints file
 
-- La asignación de pines de la Tang Nano 9K se define en un único archivo:
+- Pin assignments for the Tang Nano 9K are defined in a single file:
 
   2_1_Boards/2_1_1_Tang_Nano_9K/constr/tang-nano-9k.cst
 
-- Cada Example, Activity, Lab o Implementation debe:
-  - Reutilizar este `.cst` o una variante documentada.
-  - Evitar crear múltiples versiones contradictorias para la misma placa.
+- Each Example, Activity, Lab, or Implementation must:
+  - Reuse this `.cst` or a documented variant  
+  - Avoid creating many contradictory versions for the same board  
 
-Regla práctica:
+Practical rule:
 
-> Si se cambia el pin de un dispositivo, primero se actualiza el `.cst` y el `pinout.md`, y después se ajustan los READMEs y el código.
+> If a device pin is changed, first update `.cst` and `pinout.md`, then update READMEs and code.
 
 ---
 
-## 2. Nombres de señales coherentes
+## 2. Coherent signal names
 
-Se recomienda usar nombres coherentes entre:
+Signal names should be consistent across:
 
-- Código Verilog/SystemVerilog.
-- Archivo `.cst`.
-- Documentación (`README.md` de cada dispositivo).
+- SystemVerilog code  
+- `.cst` file  
+- Device documentation (`README.md`)  
 
-Ejemplos de convenciones:
+Examples of naming conventions:
 
-- Señales generales:
+- General signals:
   - `clk`, `rst_n`, `btn`, `led[5:0]`
 - HC-SR04:
   - `hcsr04_trig`, `hcsr04_echo`
 - Rotary encoder:
   - `enc_a`, `enc_b`, `enc_sw`
-- Botones/switches:
+- Buttons/switches:
   - `btn_a`, `btn_b`, `sw_mode`
-- 7 segmentos:
+- 7-segment:
   - `seg[6:0]`, `seg_dp`, `digit_en[3:0]`
 - TM1638:
   - `tm_dio`, `tm_clk`, `tm_stb`
 - LCD 16x2:
   - `lcd_rs`, `lcd_en`, `lcd_d[3:0]`
 
-La meta es que, al ver el nombre de una señal en el código o en el `.cst`, sea fácil localizarla en el README del dispositivo correspondiente.
+The goal is for the signal name in code or `.cst` to make it easy to find the corresponding device documentation.
 
 ---
 
-## 3. Estructura mínima de cada README de dispositivo
+## 3. Minimum README structure for each device
 
-Cada carpeta de dispositivo en `2_2_Sensors` y `2_3_Actuators` debe incluir un `README.md` con, al menos:
+Each device folder in `2_2_Sensors` and `2_3_Actuators` must include a `README.md` with at least:
 
-1. **Propósito**  
-   - Qué hace el dispositivo.  
-   - Para qué se usa dentro del repositorio.
+1. **Purpose**  
+   - What the device does  
+   - How it is used in the repository  
 
-2. **Señales/pines lógicos**  
-   - Lista de señales (por ejemplo, `hcsr04_trig`, `hcsr04_echo`).  
-   - Referencia a `pinout.md` y al archivo `.cst` para los pines físicos.
+2. **Logical signals / pins**  
+   - List of signals (`hcsr04_trig`, `hcsr04_echo`, etc.)  
+   - Reference to `pinout.md` and `.cst` for physical pins  
 
-3. **Notas de conexión (wiring)**  
-   - Descripción básica de cómo se conecta a la Tang Nano 9K y al protoboard.  
-   - Enlace a `2_4_Common` cuando aplique.
+3. **Wiring notes**  
+   - Basic description of how it connects to Tang Nano 9K and protoboard  
+   - Link to `2_4_Common` when applicable  
 
-4. **Notas eléctricas básicas**  
-   - Indicación explícita cuando el dispositivo utiliza 5 V.  
-   - Advertencias sobre niveles de señal y necesidad de adaptación (por ejemplo, `ECHO` del HC-SR04).
+4. **Basic electrical notes**  
+   - Indicate explicitly when a device uses 5 V  
+   - Warnings about level shifting needs  
 
-5. **Relación con la teoría**  
-   - Archivos de `1_2_Theory` recomendados para entender el funcionamiento del dispositivo.
+5. **Relation to theory**  
+   - Recommend `1_2_Theory` files needed to understand the device  
 
-6. **Relación con Examples / Activities / Labs**  
-   - Lista de prácticas donde se utiliza (cuando ya estén definidas).  
-   - Tipo de uso (ejemplo mínimo, actividad guiada, lab integrador).
+6. **Relation to Examples / Activities / Labs**  
+   - List where it is used (once defined)  
+   - Type of use (simple example, guided activity, integrator lab)  
 
 ---
 
-## 4. Seguridad y reproducibilidad
+## 4. Safety and reproducibility
 
-- Marcar claramente cualquier caso en el que haya diferencia de voltaje:
-  - 3.3 V (FPGA) ↔ 5 V (algunos módulos).
+- Clearly mark all cases involving voltage differences:
+  - 3.3 V (FPGA) ↔ 5 V (some modules)
 
-- Reglas mínimas:
-  - No conectar salidas de 5 V directamente a entradas de la FPGA sin revisar previamente.
-  - Mantener **GND común** en todos los montajes.
-  - Documentar cualquier excepción o requisito especial en el README del dispositivo.
+Minimum rules:
 
-- Evitar montajes “implícitos”:
-  - Siempre indicar en la documentación:
-    - Qué pin de la FPGA va a qué pin del módulo.
-    - Qué riel del protoboard se usa para VCC y GND.
+- Do not connect 5 V outputs directly to FPGA inputs  
+- Always maintain **common GND**  
+- Document any special wiring or exceptions  
+
+Avoid “implicit” wiring:
+
+- Always document:
+  - Which FPGA pin connects to which module pin  
+  - Which rail is used for VCC and GND  
 
 ---

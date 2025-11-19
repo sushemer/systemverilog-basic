@@ -1,49 +1,51 @@
-# 2.2.1 HC-SR04 · Sensor ultrasónico de distancia
+# 2.2.1 HC-SR04 · Ultrasonic distance sensor
 ![alt text](Mult/image.png)
 
-El **HC-SR04** es un sensor que mide distancia usando ultrasonido.  
-Funciona enviando un pulso de sonido de alta frecuencia y midiendo el tiempo que tarda en regresar el eco.
+The **HC-SR04** is a sensor that measures distance using ultrasound.  
+It works by sending a high-frequency sound pulse and measuring the time it takes for the echo to return.
 
-En este repositorio se utiliza para:
+In this repository it is used to:
 
-- Medir distancia en centímetros.
-- Mostrar el resultado en:
-  - Displays de 7 segmentos.
-  - Módulo TM1638.
-  - LCD 16x2.
-- Construir mini-proyectos como medidores de proximidad.
+- Measure distance in centimeters.
+- Display the result on:
+  - 7-segment displays.
+  - TM1638 module.
+  - 16x2 LCD.
+- Build mini-projects such as proximity meters.
 
 ---
 
-## Señales y pines lógicos
+## Signals and logical pins
 
-El módulo HC-SR04 tiene cuatro pines principales:
+The HC-SR04 module has four main pins:
 
-- `VCC` → alimentación (típicamente 5 V).
-- `GND` → tierra común (debe conectarse a la misma GND que la Tang Nano 9K).
-- `TRIG` → entrada de disparo (desde la FPGA).
-- `ECHO` → salida de eco (hacia la FPGA).
+- `VCC` → power supply (typically 5 V).
+- `GND` → common ground (must be connected to the same GND as the Tang Nano 9K).
+- `TRIG` → trigger input (from the FPGA).
+- `ECHO` → echo output (to the FPGA).
 
-En el código, se suelen usar nombres como:
+In code, names such as:
 
 - `hcsr04_trig`
 - `hcsr04_echo`
 
-La asignación a pines físicos concretos se documenta en:
+are commonly used.
+
+The assignment to physical pins is documented in:
 
 - `2_1_Boards/2_1_1_Tang_Nano_9K/docs/pinout.md`
 - `2_1_Boards/2_1_1_Tang_Nano_9K/constr/tang-nano-9k.cst`
 
 ---
 
-## Principio de funcionamiento
+## Operating principle
 
-1. La FPGA genera un pulso corto en `TRIG` (por ejemplo, 10 µs).
-2. El sensor envía un tren de pulsos ultrasónicos.
-3. Cuando el eco regresa, el sensor mantiene `ECHO` en nivel alto durante un tiempo proporcional a la distancia.
-4. La FPGA mide el **ancho del pulso** en `ECHO` usando un contador basado en el reloj.
-5. Con esa cuenta, se calcula la distancia aproximada en centímetros.
+1. The FPGA generates a short pulse on `TRIG` (e.g., 10 µs).
+2. The sensor emits an ultrasonic pulse train.
+3. When the echo returns, the sensor holds `ECHO` high for a time proportional to the distance.
+4. The FPGA measures the **pulse width** on `ECHO` using a counter based on the clock.
+5. With that count, the approximate distance in centimeters is calculated.
 
-Fórmula típica (aproximada):
+Typical formula (approximate):
 
--distancia (cm) ≈ (tiempo_eco_en_segundos * velocidad_sonido) / 2
+- distance (cm) ≈ (echo_time_in_seconds * speed_of_sound) / 2

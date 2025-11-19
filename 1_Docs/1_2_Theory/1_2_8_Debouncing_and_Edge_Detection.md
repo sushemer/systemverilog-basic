@@ -1,155 +1,91 @@
 # Debouncing and edge detection
 
-Este documento aborda dos temas que aparecen en casi todos los diseños con botones y señales lentas:
+This document covers two concepts used in almost all designs involving buttons or slow signals:
 
-- **Debouncing** (eliminar rebotes).
-- **Detección de flancos** (`edge detection`).
-
----
-
-## Problema del rebote (bouncing)
-
-Cuando se presiona un botón físico:
-
-- El contacto no pasa de 0 a 1 de forma limpia.
-- Durante unos milisegundos puede “rebotar”:
-  0 → 1 → 0 → 1 → … antes de estabilizarse.
-
-Si la FPGA ve estos rebotes:
-
-- Puede interpretar varias pulsaciones en lugar de una.
-- Las máquinas de estados pueden avanzar más de un paso.
-- Los contadores pueden incrementar varias veces por un solo toque.
+- **Debouncing**
+- **Edge detection**
 
 ---
 
-## ¿Qué es el debouncing?
+## Bouncing problem
 
-**Debouncing** es el proceso de filtrar esos rebotes para obtener una señal más estable:
+When a physical button is pressed:
 
-- Entrada “sucia” del botón → filtro de tiempo → señal “limpia”.
-- Una transición real de 0→1 o 1→0 se reconoce solo cuando la señal permanece estable cierto tiempo.
+- The contact does not go cleanly from 0 to 1.  
+- For a few milliseconds it may “bounce”:  
+  0 → 1 → 0 → 1 → … until stabilizing.
 
-En FPGA, el debouncing suele implementarse:
+If the FPGA reads these bounces:
 
-- Con contadores que verifican estabilidad.
-- Con muestreo periódico de la entrada.
-
-Ejemplo conceptual (debouncing por conteo de estabilidad):
-  ```sv
-    module button_debouncer (
-        input  logic clk,
-        input  logic rst_n,
-        input  logic btn_raw,     // señal con rebotes
-        output logic btn_clean    // señal filtrada
-    );
-
-        logic [15:0] counter;
-        logic        btn_sync;
-
-        // Sincronización simple a clk (recomendable cuando el botón viene del mundo exterior)
-        always_ff @(posedge clk or negedge rst_n) begin
-            if (!rst_n)
-                btn_sync <= 1'b0;
-            else
-                btn_sync <= btn_raw;
-        end
-
-        // Debouncing: contar cuánto tiempo se mantiene el valor actual
-        always_ff @(posedge clk or negedge rst_n) begin
-            if (!rst_n) begin
-                counter   <= '0;
-                btn_clean <= 1'b0;
-            end else begin
-                if (btn_clean == btn_sync) begin
-                    // Sin cambio aparente → reiniciar contador
-                    counter <= '0;
-                end else begin
-                    // Posible cambio → contar
-                    counter <= counter + 1;
-
-                    // Si se mantiene el nuevo valor el tiempo suficiente, aceptarlo
-                    if (&counter) begin
-                        btn_clean <= btn_sync;
-                        counter   <= '0;
-                    end
-                end
-            end
-        end
-
-    endmodule
-  ```
----
-
-## Detección de flancos (edge detection)
-
-Una vez que se tiene una señal limpia (`btn_clean`), muchas veces no se desea trabajar con el “nivel” (1 mientras el botón está presionado), sino con un **pulso corto** cuando se produce el cambio:
-
-- **Flanco de subida** (rising edge): 0 → 1.
-- **Flanco de bajada** (falling edge): 1 → 0.
-
-Ejemplo típico: se quiere que un contador incremente **una sola vez** en cada pulsación, aunque el usuario mantenga el botón presionado un tiempo.
-
-Idea básica:
-
-- Guardar el valor anterior de la señal limpia.
-- Comparar el valor actual con el anterior.
-
-Ejemplo:
-  ```sv
-    module edge_detector (
-        input  logic clk,
-        input  logic rst_n,
-        input  logic sig_in,      // señal limpia (por ejemplo, btn_clean)
-        output logic rise_edge,   // pulso 1 ciclo en flanco 0→1
-        output logic fall_edge    // pulso 1 ciclo en flanco 1→0
-    );
-
-        logic sig_prev;
-
-        always_ff @(posedge clk or negedge rst_n) begin
-            if (!rst_n)
-                sig_prev <= 1'b0;
-            else
-                sig_prev <= sig_in;
-        end
-
-        // Flanco de subida: antes 0, ahora 1
-        assign rise_edge = (sig_in == 1'b1) && (sig_prev == 1'b0);
-
-        // Flanco de bajada: antes 1, ahora 0
-        assign fall_edge = (sig_in == 1'b0) && (sig_prev == 1'b1);
-
-    endmodule
-  ```
-En muchos labs solo se necesita el flanco de subida (`rise_edge`), ya que se interpreta como “evento” o “click”.
+- It may detect multiple presses instead of one  
+- FSMs may advance several steps  
+- Counters may increment multiple times
 
 ---
 
-## Relación con los módulos comunes del repositorio
+## What is debouncing?
 
-En este proyecto se utilizan módulos reutilizables que combinan:
+**Debouncing** filters bouncing to produce a stable signal:
 
-- **Sincronización** (para señales externas como botones o sensores).
-- **Debounce** (para limpiarlas).
-- **Detección de flancos** (para generar pulsos).
+- Raw noisy button → time-based filter → clean signal  
+- A real transition (0→1 or 1→0) is accepted only after the value is stable for a certain time
 
-Ejemplos típicos:
+Typical FPGA implementations use:
 
-- `sync_and_debounce`: trata un vector de entradas (por ejemplo, varios botones) y entrega versiones limpias y sincronizadas.
-- `sync_and_debounce_one`: versión simple para una sola señal.
+- Counters for stability
+- Periodic sampling
 
-Estas salidas se usan luego para:
-
-- Avanzar máquinas de estados (FSM).
-- Iniciar o detener contadores.
-- Cambiar modos de operación (por ejemplo, seleccionar qué sensor se muestra).
+The idea:  
+Compare the sampled value to the previously filtered value; accept change only after a long enough consistency.
 
 ---
 
-## Resumen
+## Edge detection
 
-- Los botones físicos generan rebotes que pueden causar múltiples conteos no deseados.
-- El **debouncing** filtra esos rebotes mediante estabilidad en el tiempo.
-- La **detección de flancos** convierte cambios de nivel en pulsos de un solo ciclo.
-- En este repositorio se encapsulan estos patrones en módulos como `sync_and_debounce`, que se usan en activities, labs e implementations para tener entradas confiables.
+Once a clean signal exists (`btn_clean`), often we want **short pulses** on transitions:
+
+- Rising edge: 0 → 1  
+- Falling edge: 1 → 0  
+
+Useful for:
+
+- Single-step FSM control  
+- Single increment on button press even if held down  
+- Triggering events  
+
+Technique:
+
+- Store previous value  
+- Compare to current value  
+- Generate a one-cycle pulse when a change is detected
+
+---
+
+## Relation to common modules
+
+This repository provides reusable modules that combine:
+
+- Synchronization  
+- Debouncing  
+- Edge detection  
+
+Examples:
+
+- `sync_and_debounce` (multiple inputs)  
+- `sync_and_debounce_one` (single input)  
+
+Outputs from these modules are used to:
+
+- Advance FSMs  
+- Start/stop counters  
+- Change modes  
+- Trigger sensor reads  
+
+---
+
+## Summary
+
+- Buttons bounce → multiple false triggers  
+- Debouncing filters noise and ensures stable transitions  
+- Edge detection converts transitions into one-cycle pulses  
+- These patterns are encapsulated in reusable modules used across activities, labs, and implementations  

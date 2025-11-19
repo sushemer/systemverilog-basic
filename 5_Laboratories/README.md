@@ -1,90 +1,90 @@
-# 5. Labs – Guided practices
+# 5. Labs – Guided Practices
 
-Hands-on labs using **Tang Nano 9K + TM1638 + LCD 480×272 + sensores reales**.  
-Cada lab tiene:
+Hands-on labs using **Tang Nano 9K + TM1638 + LCD 480×272 + real sensors**.  
+Each lab contains:
 
-- Un archivo principal `hackathon_top.sv`.
-- Un `README.md` propio con objetivos, conexiones y checklist.
+- A main file `hackathon_top.sv`.
+- Its own `README.md` with objectives, wiring, and checklist.
 
-Se recomienda hacerlos **en orden**.
+It is recommended to complete them **in order**.
 
 ---
 
 ## 5.1 – counter_blink_hello_world
 
-**Carpeta:** `5_1_counter_blink_hello_world`  
+**Folder:** `5_1_counter_blink_hello_world`  
 
-- **Objetivo:** hacer parpadear un LED a ~1 Hz usando un divisor de reloj.
-- **Conceptos clave:** módulo top, registros, `always_ff @(posedge clk)`, overflow de contador.
-- **Hardware:** Tang Nano 9K, un LED de usuario.
+- **Objective:** make an LED blink at ~1 Hz using a clock divider.
+- **Key concepts:** top module, registers, `always_ff @(posedge clk)`, counter overflow.
+- **Hardware:** Tang Nano 9K, one user LED.
 
 ---
 
 ## 5.2 – buttons_and_debounce
 
-**Carpeta:** `5_2_buttons_and_debounce`  
+**Folder:** `5_2_buttons_and_debounce`  
 
-- **Objetivo:** leer un botón, eliminar rebotes y generar pulsos limpios para cambiar el estado de un LED.
-- **Conceptos clave:** sincronización a reloj, debounce simple, detección de flanco.
-- **Hardware:** Tang Nano 9K, al menos 1 botón y 1 LED.
+- **Objective:** read a button, remove bounce, and generate clean pulses to toggle an LED.
+- **Key concepts:** clock-domain synchronization, simple debounce, edge detection.
+- **Hardware:** Tang Nano 9K, at least 1 button and 1 LED.
 
 ---
 
 ## 5.3 – shift_register_patterns
 
-**Carpeta:** `5_3_shift_register_patterns`  
+**Folder:** `5_3_shift_register_patterns`  
 
-- **Objetivo:** generar patrones de desplazamiento en una barra de 8 LEDs (running light / “KITT”).
-- **Conceptos clave:** registros de desplazamiento, rotación, patrones periódicos, enable lento.
+- **Objective:** generate shifting light patterns on an 8-LED bar (running light / “KITT”).
+- **Key concepts:** shift registers, rotation, periodic patterns, slow enable.
 - **Hardware:** Tang Nano 9K, 8 LEDs.
 
 ---
 
 ## 5.4 – fsm_traffic_and_lock
 
-**Carpeta:** `5_4_fsm_traffic_and_lock`  
+**Folder:** `5_4_fsm_traffic_and_lock`  
 
-- **Objetivo:** implementar dos máquinas de estados:
-  - Semáforo (R→G→Y→R) con tiempos configurables.
-  - “Sequence lock”: una secuencia correcta de botones enciende un LED de “desbloqueo”.
-- **Conceptos clave:** FSM con `case`, temporización basada en contadores, uso de entradas con debounce.
-- **Hardware:** LEDs para luces del semáforo + LED de lock, botones de entrada.
+- **Objective:** implement two state machines:
+  - Traffic light (R→G→Y→R) with configurable timing.
+  - “Sequence lock”: correct A-B-A-B button sequence lights a “unlock” LED.
+- **Key concepts:** FSM with `case`, timing based on counters, debounced inputs.
+- **Hardware:** LEDs for the traffic lights + lock LED, input buttons.
 
 ---
 
 ## 5.5 – seven_segment_and_tm1638
 
-**Carpeta:** `5_5_seven_segment_and_tm1638`  
+**Folder:** `5_5_seven_segment_and_tm1638`  
 
-- **Objetivo:** usar el driver de 7 segmentos + TM1638 para mostrar valores y usar los LEDs como barra/estado.
-- **Conceptos clave:** `seven_segment_display`, TM1638 como periférico integrado, mapeo de nibbles a dígitos.
-- **Hardware:** Módulo **TM1638** (7 segmentos, LEDs y teclas).
+- **Objective:** use the seven-segment driver + TM1638 to show values and use LEDs as bar/state indicators.
+- **Key concepts:** `seven_segment_display`, TM1638 peripheral integration, mapping nibbles to digits.
+- **Hardware:** **TM1638 module** (seven-segment, LEDs, and keys).
 
 ---
 
 ## 5.6 – sensors_and_lcd_integration
 
-**Carpeta:** `5_6_sensors_and_lcd_integration`  
+**Folder:** `5_6_sensors_and_lcd_integration`  
 
-- **Objetivo:** integrar sensores reales con la pantalla LCD:
-  - Leer **HC-SR04** (ultrasonido) y **encoder rotatorio KY-040**.
-  - Seleccionar el origen del dato con teclas.
-  - Mostrar el valor como una **barra vertical tipo “gauge”** en el LCD y como patrón en LEDs.
-- **Conceptos clave:** integración de módulos (ultrasonic + rotary_encoder + debounce), uso de coordenadas `(x, y)` para gráficos simples, escalado de valores a altura de píxeles.
-- **Hardware:** Tang Nano 9K, módulo LCD 480×272, HC-SR04, encoder KY-040.
+- **Objective:** integrate real sensors with the LCD panel:
+  - Read **HC-SR04** ultrasonic sensor and **KY-040 rotary encoder**.
+  - Select data source using keys.
+  - Show the value as a **vertical gauge bar** on the LCD and as a pattern on LEDs.
+- **Key concepts:** sensor module integration (ultrasonic + rotary_encoder + debounce), using `(x, y)` for simple graphics, scaling values to pixel heights.
+- **Hardware:** Tang Nano 9K, 480×272 LCD, HC-SR04, KY-040 encoder.
 
 ---
 
-## Recomendación de uso
+## Usage recommendation
 
-1. Empiece con **5.1** y **5.2** para afianzar reloj, contadores y botones.
-2. Siga con **5.3** para practicar registros de desplazamiento y patrones.
-3. En **5.4**, consolide su manejo de FSMs con ejemplos claros.
-4. En **5.5**, entre al mundo de los displays multiplexados y TM1638.
-5. Cierre con **5.6**, donde une sensores y LCD en una práctica de integración “tipo mini-proyecto”.
+1. Start with **5.1** and **5.2** to strengthen your understanding of clocking, counters, and buttons.
+2. Continue with **5.3** to practice shift registers and visual patterns.
+3. In **5.4**, consolidate your FSM knowledge with clear examples.
+4. In **5.5**, dive into multiplexed displays and TM1638.
+5. Finish with **5.6**, where you combine sensors + LCD in a “mini-project” style practice.
 
-Cada lab está pensado para ser:
+Each lab is designed to be:
 
-- **Corto**, pero con espacio para extensiones.
-- **Reutilizable** como base para proyectos más grandes.
-- Coherente con el hardware que tienes actualmente.
+- **Short**, but with room for extensions.  
+- **Reusable** as a foundation for larger projects.  
+- Compatible with your current hardware setup.  

@@ -1,146 +1,146 @@
 # 1.4.2 FPGA and tools terms
 
-Términos relacionados con FPGAs, recursos internos y flujo de herramientas (toolchain).
+Terms related to FPGAs, internal resources, and the toolchain.
 
 ---
 
 ### FPGA (Field Programmable Gate Array)
 
-Circuito integrado configurable que contiene bloques lógicos, registros, memoria y recursos de interconexión.  
-Permite implementar hardware digital personalizado después de fabricar el chip.  
-La placa principal de este repositorio, Tang Nano 9K, integra una FPGA de Gowin.
+Configurable integrated circuit containing logic blocks, registers, memory, and interconnection resources.  
+It allows implementing custom digital hardware after the chip is manufactured.  
+The main board in this repository, the Tang Nano 9K, includes a Gowin FPGA.
 
 ---
 
 ### Fabric / logic fabric
 
-Conjunto de recursos programables de la FPGA (LUTs, flip-flops, rutas de interconexión) donde se mapean los módulos RTL.  
-Es el “tejido” interno que se configura a partir del bitstream.
+Set of programmable FPGA resources (LUTs, flip-flops, routing) where RTL modules are mapped.  
+It is the internal “fabric” configured through the bitstream.
 
 ---
 
 ### LUT (Look-Up Table)
 
-Bloque de lógica programable que implementa funciones combinacionales.  
-Recibe varias entradas y produce una salida según una tabla de verdad almacenada internamente.  
-Las herramientas de síntesis traducen expresiones lógicas a redes de LUTs.
+Programmable logic block that implements combinational functions.  
+It receives several inputs and produces an output based on an internally stored truth table.  
+Synthesis tools translate logical expressions into LUT networks.
 
 ---
 
 ### IO / IO pin / IO bank
 
-- **IO pin**: pin físico de entrada/salida de la FPGA, que puede conectarse a periféricos externos.  
-- **IO bank**: grupo de pines que comparten características eléctricas (tensión, estándares).  
+- **IO pin**: physical input/output pin of the FPGA, used to connect to external peripherals.  
+- **IO bank**: group of pins that share electrical characteristics (voltage, standards).
 
-En este repositorio se documentan pines de la Tang Nano 9K en `2_devices/tang-nano-9k/`.
+In this repository, Tang Nano 9K pinouts are documented in `2_devices/tang-nano-9k/`.
 
 ---
 
 ### Constraints / constraints file
 
-Restricciones que indican a las herramientas cómo mapear señales lógicas a pines físicos, y requisitos de reloj/timing.  
-En este repositorio se usan archivos de constraints (por ejemplo `.cst`) como fuente única de verdad para la asignación de pines y configuraciones básicas.
+Restrictions that instruct the tools how to map logical signals to physical pins and specify clock/timing requirements.  
+This repository uses constraints files (e.g., `.cst`) as the single source of truth for pin assignment and basic configurations.
 
 ---
 
 ### Toolchain
 
-Conjunto de herramientas que se usan en cadena:
+Set of tools used in sequence:
 
-1. Editor / entorno de edición de código.
-2. Síntesis RTL.
-3. Place & Route.
-4. Generación de bitstream.
-5. Programador de la FPGA.
+1. Code editor / development environment  
+2. RTL synthesis  
+3. Place & Route  
+4. Bitstream generation  
+5. FPGA programmer
 
-En este proyecto se utiliza la toolchain asociada a la FPGA de Tang Nano 9K (por ejemplo, Gowin EDA y su programador).
+In this project, we use the toolchain associated with the Tang Nano 9K FPGA (Gowin EDA and its programmer).
 
 ---
 
-### Synthesis (síntesis)
+### Synthesis
 
-Proceso en el que el código RTL (SystemVerilog) se traduce a una red de componentes lógicos (LUTs, flip-flops, etc.).  
-La herramienta de síntesis verifica el diseño y genera una representación intermedia para el Place & Route.
+Process where RTL (SystemVerilog) code is translated into a network of logic components (LUTs, flip-flops, etc.).  
+The synthesis tool checks the design and produces an intermediate representation for Place & Route.
 
 ---
 
 ### Place & Route (P&R)
 
-Fase donde:
+Stage where:
 
-- Se decide **dónde** colocar cada recurso lógico (place).
-- Se determinan las rutas físicas de interconexión (route).
+- The **placement** of each logic resource is decided.  
+- The **routing** (physical interconnection paths) is determined.
 
-El resultado debe cumplir restricciones de timing (frecuencia de reloj) y uso de recursos.
+The result must meet timing constraints (clock frequency) and resource usage requirements.
 
 ---
 
 ### Bitstream
 
-Archivo de configuración que se carga a la FPGA para programarla con el diseño definido.  
-Es el resultado final del flujo de síntesis + Place & Route.  
-Al programar la Tang Nano 9K, se envía este bitstream a la FPGA.
+Configuration file uploaded to the FPGA to program it with the defined design.  
+It is the final result of synthesis + Place & Route.  
+When programming the Tang Nano 9K, this bitstream is sent to the FPGA.
 
 ---
 
 ### Programmer / programming cable
 
-Herramienta o módulo (a veces integrado) que permite transferir el bitstream desde el PC a la FPGA vía USB u otra interfaz.  
-En la Tang Nano 9K suele estar integrado en la propia placa.
+Tool or module (sometimes integrated) used to transfer the bitstream from the PC to the FPGA via USB or another interface.  
+The Tang Nano 9K usually includes an onboard programming interface.
 
 ---
 
 ### Timing analysis
 
-Análisis que verifica si las rutas de señal en el diseño cumplen con los tiempos requeridos para la frecuencia de reloj especificada.  
-Busca detectar posibles violaciones de setup/hold y otros problemas de temporización.
+Analysis that verifies whether signal paths in the design meet the timing requirements for the specified clock frequency.  
+It checks for setup/hold violations and other timing issues.
 
 ---
 
 ### Clock domain
 
-Conjunto de lógica (registros, FF, etc.) que comparte el mismo reloj.  
-Múltiples dominios de reloj pueden requerir técnicas especiales de sincronización.  
-En este repositorio se recomienda mantener diseños sencillos preferentemente con un solo dominio de reloj al inicio.
+Group of logic (registers, FFs, etc.) that shares the same clock.  
+Multiple clock domains may require special synchronization techniques.  
+This repository recommends starting with simple designs using a single clock domain.
 
 ---
 
 ### Simulation
 
-Ejecución del diseño en un entorno simulado (sin hardware real) para observar su comportamiento.  
-Permite verificar lógica y FSM antes de sintetizar y programar la FPGA.  
-Aunque este repositorio se centra en pruebas en placa, la simulación es una herramienta complementaria útil.
+Running the design in a simulated environment (without hardware) to observe its behavior.  
+It allows verifying logic and FSMs before synthesizing and programming the FPGA.  
+Although this repository focuses on on-board testing, simulation is a useful complementary tool.
 
 ---
 
 ### Testbench
 
-Módulo de verificación usado en simulación que:
+Verification module used in simulation that:
 
-- Genera estímulos (entradas) para el diseño bajo prueba.
-- Observa y comprueba las salidas.
+- Generates stimuli (inputs) for the design under test  
+- Observes and checks outputs  
 
-No se sintetiza a hardware; solo sirve para probar el diseño en simulación.
+It is not synthesized into hardware; it only serves to test the design in simulation.
 
 ---
 
 ### IP core / IP block
 
-Bloque de propiedad intelectual (IP) reutilizable que implementa una función específica:  
-por ejemplo, controlador de memoria, módulo de comunicación o PWM parametrizable.  
-En este repositorio, los bloques reutilizables más sencillos pueden considerarse IPs internos dentro de `ip_blocks/`.
+Reusable hardware block implementing a specific function:  
+e.g., memory controller, communication module, or configurable PWM.  
+In this repository, simple reusable blocks can be considered internal IPs inside `ip_blocks/`.
 
 ---
 
 ### Resource utilization
 
-Medida de cuántos recursos de la FPGA (LUTs, flip-flops, memoria, etc.) usa un diseño.  
-Las herramientas la reportan tras la síntesis y P&R.  
-En diseños académicos iniciales suele no ser un problema, pero es un concepto importante.
+Measure of how many FPGA resources (LUTs, flip-flops, memory, etc.) a design uses.  
+Tools report utilization after synthesis and P&R.  
+In introductory designs this is rarely a limitation but is an important concept.
 
 ---
 
 ### Device / part number
 
-Identificador específico del modelo de FPGA (familia, tamaño, encapsulado).  
-En la herramienta EDA se debe seleccionar el **device** adecuado para la Tang Nano 9K, ya que afecta mapeo de recursos y bitstream generado.
+Specific identifier of the FPGA model (family, size, package).  
+In the EDA tool, you must select the correct **device** for the Tang Nano 9K, as it affects resource mapping and the generated bitstream.

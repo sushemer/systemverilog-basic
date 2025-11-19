@@ -1,118 +1,112 @@
-# peripherals – Drivers y módulos para hardware externo
+# peripherals – Drivers and modules for external hardware
 
-Este directorio contiene **módulos SystemVerilog específicos de hardware**  
-(sensores, displays, placas de E/S, etc.) usados en las actividades y labs,
-principalmente con la placa **Tang Nano 9K** en la configuración:
+This directory contains **hardware-specific SystemVerilog modules**  
+(sensors, displays, I/O boards, etc.) used in activities and labs, mainly with the  
+**Tang Nano 9K** in the configuration:
 
     tang_nano_9k_lcd_480_272_tm1638_hackathon
 
-Aquí se agrupan los **drivers de dispositivos reales** (periféricos) para no
-mezclarlos con la lógica de los ejercicios (`hackathon_top.sv`) ni con los
-módulos genéricos de `labs_common`.
+Here we group **drivers for real physical devices** (peripherals) so they are not mixed
+with the logic in the exercises (`hackathon_top.sv`) nor with the generic modules in  
+`labs_common`.
 
-> Origen: la mayoría de estos módulos están basados o derivados del proyecto  
-> **“basic-graphics” para FPGAs**, desarrollado por **Mr. Panchul**.  
-> En ese proyecto se usan como drivers y bloques de apoyo para múltiples
+> Origin: most of these modules are based on or derived from the  
+> **“basic-graphics” FPGA project**, developed by **Mr. Panchul**.  
+> In that project, these modules are used as drivers and support blocks for many
 > boards (Gowin, Altera, etc.).  
-> En este repositorio se han **adaptado** para trabajar con Tang Nano 9K,
-> pero la autoría original de la idea y de gran parte del código base
-> corresponde a **Mr. Panchul** y al proyecto *basic-graphics*.
->  
-> Este README solo documenta cómo se usan y cómo se integran en los labs,
-> no reclama autoría sobre los archivos de este directorio.
+> In this repository, they have been **adapted** for the Tang Nano 9K, but the
+> original idea and much of the base code belongs to **Mr. Panchul** and the
+> *basic-graphics* project.  
+>
+> This README only documents how these modules are used and integrated in the labs,
+> and does not claim authorship over the files in this directory.
 
 ---
 
-## 1. Propósito del directorio
+## 1. Purpose of the directory
 
-El objetivo de `peripherals` es:
+The purpose of `peripherals` is:
 
-- Reunir **todos los módulos que hablan directamente con hardware externo**:
-  sensores, encoder, TM1638, LCD, etc.
-- Mantener la lógica de cada lab/actividad más limpia, delegando aquí:
-  - Timings específicos del dispositivo.
-  - Protocolos de comunicación simples (señales, multiplexado, escaneo).
-- Permitir **reutilizar** los mismos drivers en varias actividades sin copiar
-  código.
+- To gather **all modules that interface directly with external hardware**:  
+  sensors, encoder, TM1638, LCD, etc.
+- To keep each lab/activity cleaner by delegating here:
+  - Device-specific timing.
+  - Simple communication protocols (signals, multiplexing, scanning).
+- To allow **reusing** the same drivers across activities without duplicating code.
 
-En resumen, mientras `labs_common` contiene bloques más “genéricos” y de apoyo,
-`peripherals` contiene los **drivers específicos de cada periférico físico**.
+In summary:  
+While `labs_common` contains more *generic* helper blocks,  
+`peripherals` contains the **drivers for real physical peripherals**.
 
 ---
 
-## 2. Contenido típico
+## 2. Typical contents
 
-La lista exacta de archivos puede variar según la versión del repositorio, pero
-normalmente encontrarás módulos como:
+The exact file list may vary depending on the repository version, but typically includes modules such as:
 
 - ultrasonic_distance_sensor.sv  
-  Driver para el **sensor de ultrasonido HC-SR04**:
-  - Genera el pulso de `TRIG`.
-  - Mide el ancho de `ECHO` usando el reloj de la FPGA.
-  - Entrega un valor de distancia relativa (`relative_distance`, por ejemplo de 16 bits)
-    que luego se puede mapear a LEDs, LCD, TM1638, etc.
-  - Se usa en actividades como:
-    - Examples de ultrasonido.
-    - Labs/activities de integración de sensores (LCD, TM1638).
+  Driver for the **HC-SR04 ultrasonic sensor**:
+  - Generates the `TRIG` pulse.
+  - Measures the `ECHO` width using the FPGA clock.
+  - Outputs a relative distance value (`relative_distance`, often 16 bits)
+    which can then be mapped to LEDs, LCD, TM1638, etc.
+  - Used in activities such as:
+    - Ultrasonic sensor examples.
+    - Sensor-integration labs (LCD, TM1638).
 
 - rotary_encoder.sv  
-  Driver para el **encoder rotatorio KY-040**:
-  - Recibe señales A/B (CLK/DT) ya sincronizadas y con debounce.
-  - Detecta pasos en sentido horario/antihorario.
-  - Mantiene un contador (por ejemplo `value[15:0]`) que aumenta/disminuye.
-  - Se usa para ajustar parámetros, seleccionar modos, etc.
+  Driver for the **KY-040 rotary encoder**:
+  - Receives A/B (CLK/DT) signals already synchronized and debounced.
+  - Detects clockwise/counter-clockwise steps.
+  - Maintains a counter (e.g., `value[15:0]`) that increments/decrements.
+  - Used to adjust parameters, select modes, etc.
 
 - sync_and_debounce.sv  
-  Módulo genérico de **sincronización y eliminación de rebotes** (multi-bit):
-  - Recibe un vector de entradas “lentas” (botones, líneas del encoder).
-  - Las pasa por una cadena de flip-flops y lógica de filtro.
-  - Entrega un vector limpio y sincronizado al reloj de la FPGA.
-  - Uso típico:
-    - Limpiar `key`, líneas A/B del encoder, señales de switches externos, etc.
+  Generic **synchronization and debounce** module (multi-bit):
+  - Receives a vector of “slow” inputs (buttons, encoder lines).
+  - Passes them through a flip-flop chain and filter logic.
+  - Outputs a clean, clock-synchronous vector.  
+  Typical use:
+    - Cleaning `key`, encoder A/B lines, external switches, etc.
 
 - sync_and_debounce_one.sv  
-  Variante de **un solo bit** (1-bit) de `sync_and_debounce`:
-  - Más simple cuando solo se necesita limpiar una señal puntual.
-  - Se usa, por ejemplo, para un solo botón de “step” o “reset externo”.
+  **Single-bit** version of sync_and_debounce:
+  - Simpler when only one signal needs cleaning.
+  - Used for a single “step” or “external reset” button.
 
-- Módulos TM1638 (nombre puede variar, p.ej. tm1638_board, tm1638_controller, etc.)  
-  Drivers para la **placa TM1638** (8 dígitos 7seg + 8 LEDs + 8 teclas):
-  - Implementan el protocolo de comunicación serie del TM1638.
-  - Reciben:
-    - Datos para los dígitos (nibbles hex).
-    - Un patrón para los LEDs.
-  - Entregan:
-    - Lectura del estado de las teclas de la placa TM1638.
-  - Se usan en actividades de:
-    - Contadores en 7 segmentos.
-    - Integración sensores + bar graph en los LEDs.
+- TM1638 modules (names may vary, e.g. tm1638_board, tm1638_controller, etc.)  
+  Drivers for the **TM1638 board** (8 seven-segment digits + 8 LEDs + 8 buttons):
+  - Implement the TM1638 serial protocol.
+  - Receive:
+    - Digit data (hex nibbles)
+    - LED pattern
+  - Output:
+    - State of TM1638 buttons  
+  Used in:
+    - Seven-segment counter activities
+    - Sensor + LED bar-graph integration
 
-- Módulos de apoyo para LCD (nombres típicos en basic-graphics)  
-  Dependiendo de cómo esté organizado el repositorio, pueden existir aquí
-  componentes de apoyo para el LCD de 480x272 (o estar en otro directorio
-  específico). En general:
-  - Reciben coordenadas x/y y señales de sincronización.
-  - Generan patrones de color, fondos, barras, etc.
-  - Sirven como base para ejercicios tipo “HELLO” y gráficas simples.
+- LCD helper modules (typical names in basic-graphics)  
+  Depending on repo organization, LCD 480×272 helpers may be here or in a dedicated directory.  
+  Generally:
+  - Receive x/y coordinates and sync signals
+  - Generate colors, backgrounds, bars, etc.
+  - Used for “HELLO” and simple graphics exercises
 
-Nota: los nombres concretos de archivo deben consultarse en el árbol del
-repositorio, pero todos los módulos de este directorio comparten la idea de
-ser **drivers de periféricos físicos**, muchos de ellos originalmente tomados
-de *basic-graphics* y adaptados.
+Note: exact filenames should be checked in the repository tree, but all modules share the idea of being **drivers for real physical peripherals**, many originally from *basic-graphics* and adapted.
 
 ---
 
-## 3. Uso desde labs y actividades
+## 3. Usage from labs and activities
 
-En los distintos `hackathon_top.sv` (por ejemplo, en:
+In the various `hackathon_top.sv` files (e.g.:
 
-- 4_Activities/4_xx_*/hackathon_top.sv
-- 5_Labs/5_xx_*/hackathon_top.sv
+- 4_Activities/4_xx_*/hackathon_top.sv  
+- 5_Labs/5_xx_*/hackathon_top.sv  
 
-es habitual ver instanciaciones de módulos de `peripherals`. Algunos ejemplos
-típicos (escritos aquí a modo ilustrativo):
+it is common to see instantiations of `peripherals` modules. For example:
 
-1) Uso de `ultrasonic_distance_sensor`:
+1) Using `ultrasonic_distance_sensor`:
 
     wire [15:0] distance_rel;
 
@@ -130,7 +124,7 @@ típicos (escritos aquí a modo ilustrativo):
         .relative_distance ( distance_rel )
     );
 
-2) Uso de `sync_and_debounce` + `rotary_encoder`:
+2) Using `sync_and_debounce` + `rotary_encoder`:
 
     wire enc_a_raw = gpio[3];
     wire enc_b_raw = gpio[2];
@@ -157,70 +151,59 @@ típicos (escritos aquí a modo ilustrativo):
         .value ( encoder_value )
     );
 
-En todos los casos, la lógica de alto nivel (selección de modo, escalado,
-visualización en LEDs/LCD/TM1638) se implementa en `hackathon_top.sv`, mientras
-que la **interacción de bajo nivel con el hardware** se delega a los módulos
-de `peripherals`.
+In all cases, **high-level logic** (mode selection, scaling, displaying on LEDs/LCD/TM1638) is implemented in `hackathon_top.sv`, while **low-level hardware interaction** is delegated to the modules in `peripherals`.
 
 ---
 
-## 4. Inclusión en los scripts de síntesis
+## 4. Inclusion in synthesis scripts
 
-Para que Gowin (u otra toolchain) pueda usar estos módulos, es necesario:
+For Gowin (or any toolchain) to use these modules, you must:
 
-- Incluir explícitamente los archivos de `peripherals`:
-  - En el script `03_synthesize_for_fpga.bash`, o
-  - En el archivo de proyecto Tcl (`fpga_project.tcl`), o
-  - En el proyecto del IDE.
+- Explicitly include all `peripherals` files:
+  - In `03_synthesize_for_fpga.bash`, or
+  - In the Tcl project file (`fpga_project.tcl`), or
+  - In the IDE project.
 
-Si al sintetizar aparece un error del tipo:
+If synthesis reports:
 
-    ERROR (EX3937) : Instantiating unknown module 'ultrasonic_distance_sensor'
+    ERROR (EX3937): Instantiating unknown module 'ultrasonic_distance_sensor'
 
-o similar con `rotary_encoder`, `sync_and_debounce`, `tm1638_*`, etc., casi
-siempre significa que **falta añadir el archivo correspondiente** de `peripherals`
-al proyecto de síntesis.
+or similar errors for `rotary_encoder`, `sync_and_debounce`, `tm1638_*`, etc., it almost always means the corresponding `.sv` file **was not added** to the synthesis project.
 
-Regla general:
+General rule:
 
-- Si se instancia un módulo de `peripherals` en `hackathon_top.sv`,  
-  su archivo `.sv` debe estar listado en los scripts/proyecto.
+- If a `peripherals` module is instantiated in `hackathon_top.sv`,  
+  its `.sv` file **must** be listed in the synthesis scripts/project.
 
 ---
 
-## 5. Buenas prácticas
+## 5. Best practices
 
-Al trabajar con este directorio, se recomienda:
+When working with this directory:
 
-- Tratar estos módulos como una **biblioteca de drivers**:
-  - No mezclar aquí lógica de un lab concreto.
-  - Evitar “parchar” código localmente para un solo ejercicio; si se necesita
-    un cambio específico, documentarlo o crear una variante clara.
-- Mantener los comentarios en inglés (siguiendo el estilo de basic-graphics)
-  o bilingües, pero sin borrar el crédito original.
-- Si se agrega soporte para **un nuevo periférico**:
-  - Crear un archivo nuevo en `peripherals` (por ejemplo `my_new_sensor.sv`).
-  - Añadir una breve descripción en este README.
-  - Actualizar los scripts de síntesis para incluirlo.
+- Treat these modules as a **driver library**:
+  - Do not mix lab-specific logic here.
+  - Avoid hacking the code for a single exercise; if needed, create a clear variant.
+- Keep comments in English (following basic-graphics style) or bilingual, without removing original credit.
+- If adding support for **a new peripheral**:
+  - Create a new `.sv` file in `peripherals` (e.g., `my_new_sensor.sv`).
+  - Add a short description in this README.
+  - Update synthesis scripts accordingly.
 
 ---
 
-## 6. Relación con otros directorios
+## 6. Relation to other directories
 
 - boards/  
-  Descripciones y soporte para distintas placas FPGA (pinouts, constraints, etc.),
-  también inspiradas en el repositorio *basic-graphics*.
+  FPGA board descriptions and support files (pinouts, constraints), also inspired by *basic-graphics*.
 
 - labs_common/  
-  Módulos genéricos reutilizables (por ejemplo, driver para display de 7 segmentos),
-  independientes de un periférico físico concreto.
+  Generic reusable modules (e.g., seven-segment driver), independent of specific hardware.
 
 - 4_Activities/, 5_Labs/  
-  Ejercicios y laboratorios que **instancian** los drivers de `peripherals`
-  y los bloques de `labs_common` para construir ejemplos completos.
+  Exercises and labs that **instantiate** drivers from `peripherals` and helper blocks from `labs_common`.
 
 - scripts/  
-  Scripts de automatización (síntesis, place&route, programación) basados en la
-  estructura de trabajo de *basic-graphics* y adaptados a este repo.
+  Automation scripts (synthesis, place&route, programming), based on the *basic-graphics* workflow and adapted to this repo.
 
-En conjunto, `peripherals` aporta la “capa de hardware real” con sensores, displays y módulos externos, apoyándose en el trabajo previo de **Mr. Panchul** y del proyecto **basic-graphics**, y sirviendo como base para los labs y actividades de este repositorio.
+Together, `peripherals` provides the **real hardware layer** with sensors, displays, and external modules—building on the prior work of **Mr. Panchul** and the *basic-graphics* project—and serves as the foundation for the labs and activities in this repository.

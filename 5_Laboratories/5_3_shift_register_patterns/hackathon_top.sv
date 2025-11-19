@@ -1,16 +1,16 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// Lab 5.3 – Shift register patterns (KITT / running lights / rotaciones)
+// Lab 5.3 – Shift register patterns (KITT / running lights / rotations)
 //
 // Idea:
-//   - Usar un divisor de frecuencia para generar un "tick" lento.
-//   - Mantener un registro de 8 bits que define el patrón de LEDs.
-//   - Cambiar el comportamiento del patrón según key[1:0]:
-//       00: rotación circular a la izquierda
-//       01: rotación circular a la derecha
+//   - Use a frequency divider to generate a slow "tick".
+//   - Maintain an 8-bit register that defines the LED pattern.
+//   - Change the pattern behavior depending on key[1:0]:
+//       00: circular left rotation
+//       01: circular right rotation
 //       10: KITT (ping-pong)
-//       11: LEDs apagados (reservado para experimentos)
+//       11: LEDs off (reserved for experiments)
 //
-//   - led[7:0] muestran directamente el contenido del shift register.
+//   - led[7:0] directly show the content of the shift register.
 //
 
 module hackathon_top
@@ -22,33 +22,32 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (no usado aquí)
+    // 7-segment display (not used here)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no usada en este lab)
+    // LCD interface (not used in this lab)
     input  logic [8:0] x,
     input  logic [8:0] y,
-    output logic [4:0] red,
-    output logic [5:0] green,
+    output logic [4:5] green,
     output logic [4:0] blue,
 
     inout  logic [3:0] gpio
 );
 
-    // No usamos LCD, 7 segmentos ni GPIO en este lab.
+    // We do not use LCD, 7-segment display nor GPIO in this lab.
     assign abcdefgh = '0;
     assign digit    = '0;
     assign red      = '0;
     assign green    = '0;
     assign blue     = '0;
-    // gpio lo gestiona el wrapper de la placa.
+    // gpio is handled by the board wrapper.
 
     // -------------------------------------------------------------------------
-    // 1) Divisor de frecuencia para generar step_en (tick lento)
+    // 1) Frequency divider to generate step_en (slow tick)
     // -------------------------------------------------------------------------
     //
-    // Con ~27 MHz, W_DIV=22 da unos pocos pasos por segundo (visible a ojo).
+    // With ~27 MHz, W_DIV = 22 gives a few steps per second (visible to the eye).
 
     localparam int W_DIV = 22;
 
@@ -64,72 +63,72 @@ module hackathon_top
     assign step_en = (div_cnt == '0);
 
     // -------------------------------------------------------------------------
-    // 2) Registro de desplazamiento + modo
+    // 2) Shift register + mode
     // -------------------------------------------------------------------------
 
-    // Modo de animación:
-    //   key[1:0] = modo
+    // Animation mode:
+    //   key[1:0] = mode
     logic [1:0] mode;
     assign mode = key[1:0];
 
-    // Registro que se mostrará en los LEDs
+    // Register shown on the LEDs
     logic [7:0] pattern_reg;
 
-    // Dirección para el modo KITT (ping-pong):
-    //   0 → moviéndose hacia la izquierda (hacia led[7])
-    //   1 → moviéndose hacia la derecha (hacia led[0])
+    // Direction for KITT (ping-pong):
+    //   0 → moving left (toward led[7])
+    //   1 → moving right (toward led[0])
     logic dir_kitt;
 
-    // Inicialización y actualización del patrón
+    // Initialization and pattern update
     always_ff @(posedge clock or posedge reset)
         if (reset)
         begin
-            pattern_reg <= 8'b0000_0001; // empieza en el LED 0
-            dir_kitt    <= 1'b0;         // primera dirección: izquierda
+            pattern_reg <= 8'b0000_0001; // start at LED 0
+            dir_kitt    <= 1'b0;         // initial direction: left
         end
         else if (step_en)
         begin
             unique case (mode)
                 // -------------------------------------------------------------
-                // Modo 0: rotación circular a la izquierda
+                // Mode 0: circular left rotation
                 // -------------------------------------------------------------
                 2'b00:
                 begin
-                    // bit más significativo se regresa al bit 0
+                    // MSB goes back to bit 0
                     pattern_reg <= { pattern_reg[6:0], pattern_reg[7] };
                 end
 
                 // -------------------------------------------------------------
-                // Modo 1: rotación circular a la derecha
+                // Mode 1: circular right rotation
                 // -------------------------------------------------------------
                 2'b01:
                 begin
-                    // bit 0 se pasa al MSB
+                    // bit 0 goes to MSB
                     pattern_reg <= { pattern_reg[0], pattern_reg[7:1] };
                 end
 
                 // -------------------------------------------------------------
-                // Modo 2: KITT / ping-pong
+                // Mode 2: KITT / ping-pong
                 // -------------------------------------------------------------
                 2'b10:
                 begin
-                    // Cuando llega al extremo izquierdo, cambia de sentido
-                    if (!dir_kitt) // moviéndose hacia la izquierda
+                    // When reaching the left edge, change direction
+                    if (!dir_kitt) // moving left
                     begin
                         if (pattern_reg == 8'b1000_0000)
                         begin
-                            dir_kitt    <= 1'b1;           // cambia a derecha
-                            pattern_reg <= 8'b0100_0000;    // paso hacia adentro
+                            dir_kitt    <= 1'b1;           // change to right
+                            pattern_reg <= 8'b0100_0000;    // one step inward
                         end
                         else
                             pattern_reg <= pattern_reg << 1;
                     end
-                    else // dir_kitt == 1'b1 → moviéndose hacia la derecha
+                    else // dir_kitt == 1 → moving right
                     begin
                         if (pattern_reg == 8'b0000_0001)
                         begin
-                            dir_kitt    <= 1'b0;           // cambia a izquierda
-                            pattern_reg <= 8'b0000_0010;    // paso hacia adentro
+                            dir_kitt    <= 1'b0;           // change to left
+                            pattern_reg <= 8'b0000_0010;    // one step inward
                         end
                         else
                             pattern_reg <= pattern_reg >> 1;
@@ -137,7 +136,7 @@ module hackathon_top
                 end
 
                 // -------------------------------------------------------------
-                // Modo 3: todo apagado (espacio para experimentar)
+                // Mode 3: all off (space to experiment)
                 // -------------------------------------------------------------
                 default:
                 begin
@@ -147,7 +146,7 @@ module hackathon_top
         end
 
     // -------------------------------------------------------------------------
-    // 3) Salida a LEDs
+    // 3) LED output
     // -------------------------------------------------------------------------
 
     assign led = pattern_reg;

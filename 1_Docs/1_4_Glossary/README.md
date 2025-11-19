@@ -1,26 +1,26 @@
-# 1.4 Glossary · Términos clave de HDL/FPGA
+# 1.4 Glossary · Key HDL/FPGA terms
 
-La carpeta `1_4_Glosarry` reúne definiciones breves de términos que aparecen con frecuencia en el repositorio:
+The `1_4_Glossary` folder contains brief definitions of terms that frequently appear in the repository:
 
-- Conceptos de HDL y diseño digital.
-- Elementos propios de FPGA y herramientas de síntesis.
-- Nombres de periféricos y buses usados en los ejemplos y labs.
+- HDL and digital design concepts  
+- FPGA and synthesis toolchain elements  
+- Names of peripherals and buses used in examples and labs  
 
-El objetivo es servir como **consulta rápida**, no como enciclopedia completa.
+The goal is to serve as a **quick reference**, not a full encyclopedia.
 
 ---
 
-## Alcance del glosario
+## Scope of the glossary
 
-Este glosario está pensado para:
+This glossary is intended for:
 
-- Estudiantes y personas que están viendo HDL/FPGA por primera vez.
-- Personas de software que migran a hardware y no dominan aún la terminología.
-- Lectores que necesiten recordar rápidamente qué significa una sigla o palabra clave.
+- Students and people starting with HDL/FPGA  
+- Software developers transitioning to hardware  
+- Readers who need a quick reminder of what a keyword or acronym means  
 
-El enfoque es:
+The focus is on:
 
-- Definiciones **cortas y claras**.
-- Contexto concreto dentro de este repositorio cuando aplique.
+- **Short and clear definitions**  
+- Concrete context within this repository when applicable
 
 ---

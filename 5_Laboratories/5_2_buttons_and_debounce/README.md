@@ -1,143 +1,119 @@
 # Lab 5.2 – buttons_and_debounce
 
-**Nivel:** Básico  
-**Board:** Tang Nano 9K (configuración `tang_nano_9k_lcd_480_272_tm1638_hackathon`)  
-**Archivo principal:** `hackathon_top.sv`
+**Level:** Beginner  
+**Board:** Tang Nano 9K (`tang_nano_9k_lcd_480_272_tm1638_hackathon`)  
+**Main file:** `hackathon_top.sv`
 
 ---
 
-## 1. Objetivo
+## 1. Objective
 
-Controlar uno o varios LEDs a partir de botones, usando **lógica combinacional pura**:
+Control one or more LEDs using buttons, with **pure combinational logic**, practicing:
 
-- Asignaciones continuas (`assign`).
-- Operadores lógicos sobre 1 bit: `~`, `&`.
-- Mapeo directo de señales internas a salidas físicas.
+- Continuous assignments (`assign`)
+- Basic 1-bit logic operators: `~`, `&`
+- Simple wiring between inputs and outputs
 
-Al final del lab se busca que:
+At the end of this lab, the student should understand:
 
-- Se entienda la diferencia entre `assign` (combinacional continuo) y `always_ff`.
-- Se pueda mapear rápidamente botones a LEDs con distintas relaciones lógicas.
-- Se vea físicamente en la placa qué hace cada operación booleana.
-
----
-
-## 2. Mapeo de señales
-
-Sugerencia de mapeo (se puede ajustar al wrapper que se esté usando):
-
-- **Entradas:**
-  - `btn = key[0]` → botón principal.
-  - `en  = key[1]` → botón de habilitación (enable).
-
-- **Salidas:**
-  - `led[0]` → sigue directamente el botón (`btn`).
-  - `led[1]` → encendido cuando el botón está suelto (`~btn`).
-  - `led[2]` → encendido solo cuando `btn` y `en` son 1 (`btn & en`).
-  - `led[7:3]` → apagados (`0`).
+- The difference between `assign` (continuous combinational logic) and `always_ff`
+- How to map button inputs to LED outputs
+- How Boolean operations behave visibly on the FPGA board
 
 ---
 
-## 3. Pasos sugeridos
+## 2. Signal mapping
 
-### Paso 1 – Abrir la plantilla
+Suggested mapping (may vary depending on the board wrapper):
 
-1. Ir a la carpeta:  
-   `5_Labs/5_2_comb_button_led/`
-2. Ubicar en `hackathon_top.sv`:
-   - La sección donde se apagan `abcdefgh`, `digit`, `red`, `green`, `blue`.
-   - El mapeo de `btn` y `en` desde `key`.
-   - Las líneas `assign` marcadas como `TODO`.
+- **Inputs:**
+  - `btn = key[0]` → main button
+  - `en  = key[1]` → enable button
 
----
-
-### Paso 2 – Completar las asignaciones
-
-En la plantilla aparece algo similar a:
-
-    assign led[7:3] = 5'b00000;
-
-    // assign led[0] = ...;
-    // assign led[1] = ...;
-    // assign led[2] = ...;
-
-El objetivo es completar estas asignaciones con las expresiones lógicas deseadas.
-
-1. **LED 0: seguir directamente el botón**
-
-   Se quiere que `led[0]` copie el estado de `btn`:
-
-   - Si `btn = 1` → `led[0] = 1`
-   - Si `btn = 0` → `led[0] = 0`
-
-   Asignación:
-
-   - `assign led[0] = btn;`
-
-2. **LED 1: encender cuando el botón está suelto**
-
-   Se quiere que `led[1]` sea el complemento de `btn`:
-
-   - Si `btn = 1` (botón presionado) → `led[1] = 0`
-   - Si `btn = 0` (botón suelto)     → `led[1] = 1`
-
-   Asignación:
-
-   - `assign led[1] = ~btn;`
-
-3. **LED 2: `btn` con habilitación (`en`)**
-
-   Se quiere que `led[2]` solo se encienda cuando:
-
-   - `btn = 1` **y**
-   - `en = 1`
-
-   Esta es una AND lógica:
-
-   - `assign led[2] = btn & en;`
-
-El bloque completo de salidas de LEDs queda, por ejemplo:
-
-    assign led[7:3] = 5'b00000;  // LEDs superiores apagados
-    assign led[0]   = btn;       // botón directo
-    assign led[1]   = ~btn;      // botón negado
-    assign led[2]   = btn & en;  // botón con enable
+- **Outputs:**
+  - `led[0]` → follows the button (`btn`)
+  - `led[1]` → ON when button is released (`~btn`)
+  - `led[2]` → ON only when both `btn` and `en` are 1 (`btn & en`)
+  - `led[7:3]` → OFF (`0`)
 
 ---
 
-## 4. Pruebas sugeridas
+## 3. Suggested steps
 
-### 4.1 Probar `led[0]` y `led[1]`
+### Step 1 – Open the template
 
-1. Programar la FPGA con el diseño.
-2. Observar:
+1. Go to:
+   `5_Labs/5_2_buttons_and_debounce/`
+2. In `hackathon_top.sv`, locate:
+   - The assignments that disable `abcdefgh`, `digit`, `red`, `green`, `blue`
+   - The section where `btn` and `en` are mapped from `key`
+   - The `assign` lines marked as TODO
 
-   - Al presionar `key[0]` (`btn = 1`):
-     - `led[0]` debe encender.
-     - `led[1]` debe apagarse.
-   - Al soltar `key[0]` (`btn = 0`):
-     - `led[0]` debe apagarse.
-     - `led[1]` debe encenderse.
+---
 
-Esto permite visualizar claramente:
+### Step 2 – Complete the assignments
 
-- El valor directo del botón (`led[0]`).
-- Su negación (`led[1]`).
+The template contains:
 
-### 4.2 Probar `led[2]` con habilitación
+assign led[7:3] = 5'b00000;
 
-1. Poner `en = 0` (`key[1]` sin presionar):
-   - Sin importar el estado de `btn`, `led[2]` debe permanecer apagado (`0`).
-2. Poner `en = 1` (`key[1]` presionado):
-   - `led[2]` debe encender **solo** cuando también `btn = 1`.
+// assign led[0] = ...;
+// assign led[1] = ...;
+// assign led[2] = ...;
 
-De manera resumida:
+You must complete them with the correct logic.
 
-- `en = 0` → `led[2] = 0` siempre.
-- `en = 1` y `btn = 0` → `led[2] = 0`.
-- `en = 1` y `btn = 1` → `led[2] = 1`.
+#### 1. LED 0 → direct mapping
 
-En términos de tabla de verdad (`btn`, `en` → `led[2]`):
+assign led[0] = btn;
+
+#### 2. LED 1 → inverted behavior
+
+assign led[1] = ~btn;
+
+#### 3. LED 2 → AND with enable
+
+assign led[2] = btn & en;
+
+Full block:
+
+assign led[7:3] = 5'b00000;  // higher LEDs OFF
+assign led[0]   = btn;       // direct button
+assign led[1]   = ~btn;      // inverted button
+assign led[2]   = btn & en;  // AND with enable
+
+---
+
+## 4. Suggested tests
+
+### 4.1 Test LED 0 and LED 1
+
+Press `key[0]`:
+
+- `btn = 1` →  
+  - `led[0]` ON  
+  - `led[1]` OFF  
+
+Release `key[0]`:
+
+- `btn = 0` →  
+  - `led[0]` OFF  
+  - `led[1]` ON  
+
+This visually demonstrates:
+
+- The button value (`led[0]`)
+- Its logical negation (`led[1]`)
+
+### 4.2 Test LED 2 with enable
+
+Case analysis:
+
+- `en = 0` → `led[2] = 0`, regardless of `btn`
+- `en = 1` and `btn = 0` → `led[2] = 0`
+- `en = 1` and `btn = 1` → `led[2] = 1`
+
+Truth table (`btn`, `en` → `led[2]`):
 
 - 0,0 → 0  
 - 0,1 → 0  
@@ -146,71 +122,56 @@ En términos de tabla de verdad (`btn`, `en` → `led[2]`):
 
 ---
 
-## 5. Sobre el rebote de botones (debounce)
+## 5. About mechanical button bounce
 
-Este lab se centra en **lógica combinacional pura**, por lo que se conecta el botón directamente. En hardware real, los botones mecánicos producen **rebotes** (transiciones rápidas 0↔1 cuando se presionan o sueltan).
+This lab uses **raw button inputs**, so electrical bouncing is visible but harmless.
 
-Eso implica que, en aplicaciones más complejas:
+Real buttons typically “bounce” (0↔1 transitions during press/release).  
+For simple LED mapping this is fine, but later labs (counters, FSMs) **require** clean inputs.
 
-- Un solo “clic” humano puede verse como varias pulsaciones breves.
-- Un contador o FSM podría avanzar más de una vez por cada pulsación.
+The repository includes debounce modules:
 
-Aunque en este lab el efecto no es crítico, es importante entender que:
+- `sync_and_debounce`
+- `sync_and_debounce_one`
 
-- Para usos más avanzados se suele pasar el botón por un módulo de **sincronización + debounce** (como `sync_and_debounce` en este repositorio).
-- Ese módulo entrega una versión “limpia” de la señal del botón, apta para lógica secuencial más sofisticada.
-
----
-
-## 6. Extensiones opcionales
-
-Cuando el comportamiento básico esté verificado, se pueden probar variaciones.
-
-### 6.1 Usar más combinaciones lógicas
-
-Algunas ideas:
-
-- `led[3] = btn | en;` → LED encendido si **alguno** de los dos botones está activo.
-- `led[4] = btn ^ en;` → LED encendido si **exactamente uno** está activo (XOR).
-- `led[5] = ~(btn & en);` → ejemplo de Ley de De Morgan.
-
-Esto permite visualizar más operaciones lógicas directamente en la placa.
-
-### 6.2 Invertir el sentido de los LEDs
-
-Si el hardware tiene LEDs activos en bajo, se pueden invertir:
-
-- En lugar de `assign led[0] = btn;` usar `assign led[0] = ~btn;`  
-  para que el LED se encienda cuando el botón está presionado pero el pin lógico esté en 0.
-
-### 6.3 Añadir debounce (para labs posteriores)
-
-Como preparación para labs más avanzados se pueden hacer pruebas con el módulo `sync_and_debounce` del repositorio:
-
-1. Instanciar `sync_and_debounce_one` o `sync_and_debounce` para `btn`.
-2. Sustituir `btn` por su versión “debounced” en las asignaciones a los LEDs.
-
-Esto obliga a conectar:
-
-- `clk` (reloj).
-- `reset`.
-- La entrada `btn` cruda.
-- La salida debounced hacia la lógica combinacional.
-
-No es obligatorio en este lab, pero ayuda a entender cómo se integrará el tratamiento de rebotes en diseños siguientes.
+These can be added later if desired.
 
 ---
 
-## 7. Resumen
+## 6. Optional extensions
 
-En este lab se trabaja con:
+### 6.1 Try other logic operations
 
-- **Asignaciones combinacionales (`assign`)** en SystemVerilog.
-- **Operadores lógicos básicos** (`~`, `&`, `|`, `^`) aplicados a señales de 1 bit.
-- **Mapeo directo** de botones (`key`) a LEDs, para ver de forma inmediata el resultado lógico.
+Some examples:
 
-Este patrón de “leer entradas digitales y reflejarlas en LEDs” es una base muy útil para:
+- `led[3] = btn | en;` → ON if **either** button is pressed  
+- `led[4] = btn ^ en;` → ON if **exactly one** is pressed  
+- `led[5] = ~(btn & en);` → De Morgan practice  
 
-- Depurar señales internas.
-- Ver estados de máquinas de estados más adelante.
-- Entender intuitivamente cómo se comportan las operaciones booleanas en hardware real.
+### 6.2 Invert LED polarity
+
+If the board uses active-low LEDs:
+
+assign led[0] = ~btn;
+
+### 6.3 Add debounce
+
+To prepare for future labs:
+
+- Use `sync_and_debounce_one` before mapping `btn` to LEDs
+
+---
+
+## 7. Summary
+
+This lab reinforces:
+
+- **Combinational logic (`assign`)**
+- **Boolean operations** on single-bit signals
+- **Direct mapping** from digital inputs to LEDs
+
+This pattern is essential for:
+
+- Debugging  
+- Visualizing FSM states  
+- Understanding basic logic behavior on real hardware  

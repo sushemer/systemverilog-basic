@@ -1,128 +1,128 @@
-# 2.2.3 Buttons & Switches · Botones y switches
+# 2.2.3 Buttons & Switches · Buttons and switches
 ![alt text](Mult/image.png)
 
-Esta carpeta documenta el uso de **entradas digitales simples**:
+This folder documents the use of **simple digital inputs**:
 
-- Los botones integrados en la Tang Nano 9K (`KEY[0]`, `KEY[1]`).
-- Pulsadores o micro-switches externos, si se añaden en el protoboard.
+- The built-in buttons on the Tang Nano 9K (`KEY[0]`, `KEY[1]`).
+- External pushbuttons or micro-switches, if added on the breadboard.
 
-Los conceptos de esta sección también se aplican a otras teclas o botones usados en el proyecto, por ejemplo:
+The concepts in this section also apply to other keys/buttons used in the project, for example:
 
-- Las teclas del módulo **TM1638** (aunque la lectura concreta se documenta en `2_3_2_TM1638`).
-
----
-
-## Propósito
-
-Los botones y switches se utilizan para:
-
-- Cambiar de estado en una **FSM**.
-- Iniciar o detener contadores.
-- Cambiar modos de operación (por ejemplo, seleccionar qué se muestra en un display).
-
-Son una de las formas más sencillas de interactuar con la FPGA.
+- The keys on the **TM1638** module (although their specific reading is documented in `2_3_2_TM1638`).
 
 ---
 
-## Señales y pines lógicos
+## Purpose
 
-Ejemplos típicos de señales:
+Buttons and switches are used to:
 
-- `btn_a`, `btn_b` → botones de usuario.
-- `sw_mode` → switch de selección de modo.
+- Change states in a **FSM**.
+- Start or stop counters.
+- Change operating modes (e.g., select what is shown on a display).
 
-En la Tang Nano 9K, los botones integrados suelen mapearse como:
+They are one of the simplest ways to interact with the FPGA.
+
+---
+
+## Signals and logical pins
+
+Typical examples of signals:
+
+- `btn_a`, `btn_b` → user buttons.
+- `sw_mode` → mode-selection switch.
+
+On the Tang Nano 9K, the built-in buttons are usually mapped as:
 
 - `KEY[0]`
 - `KEY[1]`
 
-con sus pines físicos definidos en:
+with their physical pins defined in:
 
 - `2_1_Boards/2_1_1_Tang_Nano_9K/docs/pinout.md`
 - `2_1_Boards/2_1_1_Tang_Nano_9K/constr/tang-nano-9k.cst`
 
 ---
 
-## Conceptos clave
+## Key concepts
 
 ### Pull-up / Pull-down
 
-Un botón normalmente se conecta:
+A button is usually connected:
 
-- Entre la señal y **GND**, con una resistencia de **pull-up** a VCC, o
-- Entre la señal y **VCC**, con una resistencia de **pull-down** a GND.
+- Between the signal and **GND**, with a **pull-up** resistor to VCC, or
+- Between the signal and **VCC**, with a **pull-down** resistor to GND.
 
-En muchos casos:
+In many cases:
 
-- La placa ya incluye el pull-up/pull-down.
-- En botones externos, puede ser necesario añadirlos en el protoboard.
+- The board already includes the pull-up/pull-down.
+- With external buttons, you may need to add them on the breadboard.
 
-### Rebote (debouncing)
+### Bounce (debouncing)
 
-Los contactos mecánicos no cambian limpio de 0 a 1; “rebotan” durante unos milisegundos.  
-Para evitar que un solo clic cuente como varios, se usa **debouncing**:
+Mechanical contacts do not switch cleanly from 0 to 1; they “bounce” for a few milliseconds.  
+To prevent one click from counting as multiple presses, **debouncing** is used:
 
-- Por hardware (RC + Schmitt trigger, cuando aplica).
-- Por lógica digital (contadores, filtros por tiempo).
+- Hardware (RC + Schmitt trigger, when applicable).
+- Digital logic (counters, time filters).
 
-### Detección de flancos
+### Edge detection
 
-Muchas veces interesa detectar “cuando se presiona” (flanco de subida) o “cuando se suelta” (flanco de bajada), no el nivel constante.  
-Esto se puede hacer con:
+Often you only want to detect “when the button is pressed” (rising edge) or “when it is released” (falling edge), not the constant level.  
+This can be done with:
 
-- Registros que guarden el valor anterior.
-- Comparación entre valor actual y anterior.
+- Registers storing the previous value.
+- Comparing current vs. previous value.
 
 ---
 
-## Relación con otros dispositivos
+## Relation to other devices
 
 - **Rotary Encoder**  
-  El botón `ENC_SW` del encoder se trata igual que un botón normal:
-  - Necesita debouncing.
-  - Se puede usar para “aceptar” o “entrar” a una opción.
+  The `ENC_SW` button behaves the same way as a normal button:
+  - Needs debouncing.
+  - Can be used to “accept” or “enter” an option.
 
 - **TM1638**  
-  Las teclas del TM1638 también son entradas digitales, solo que su lectura se realiza:
-  - Mediante el protocolo propio del chip.
-  - A través de señales compartidas (`DIO`, `CLK`, `STB`).
+  The TM1638 keys are also digital inputs, only:
+  - They are read using the module’s communication protocol.
+  - They share signals (`DIO`, `CLK`, `STB`).
 
-Los conceptos de **pull-up**, **rebote** y **flancos** siguen siendo los mismos.
+Concepts of **pull-up**, **bounce**, and **edges** remain the same.
 
 ---
 
-## Relación con la teoría
+## Relation to theory
 
-Este dispositivo se apoya en los siguientes temas de `1_2_Theory`:
+This device relies on the following topics in `1_2_Theory`:
 
 - `1_2_4_Combinational_vs_Sequential.md`  
-  Lógica secuencial para memorizar estados y flancos.
+  Sequential logic to store states and edges.
 
 - `1_2_7_Finite_State_Machines.md`  
-  Uso de botones para avanzar o resetear estados.
+  Using buttons to advance or reset states.
 
 - `1_2_8_Debouncing_and_Edge_Detection.md`  
-  Técnicas para limpiar señales mecánicas y detectar flancos correctos.
+  Techniques to clean mechanical signals and detect correct edges.
 
 ---
 
-## Ejemplos, actividades y laboratorios relacionados
+## Related examples, activities, and labs
 
-Algunas ideas típicas:
+Typical ideas:
 
 - **Examples**
-  - Encender/apagar un LED con un botón.
-  - Cambiar entre dos patrones de LEDs con un switch.
+  - Turn a LED on/off with a button.
+  - Switch between two LED patterns with a switch.
 
 - **Activities**
-  - Implementar un contador que solo avance en flanco de subida de un botón.
-  - Crear una FSM de semáforo controlada por un botón de “peatón”.
+  - Implement a counter that only advances on the rising edge of a button.
+  - Create a traffic-light FSM controlled by a “pedestrian” button.
 
 - **Labs / Implementation**
-  - Menú controlado por botones:
-    - Un botón para avanzar opción.
-    - Otro para seleccionar/confirmar.
+  - Menu controlled by buttons:
+    - One button to move forward through options.
+    - Another to select/confirm.
 
-Los nombres exactos de Examples/Activities/Labs pueden ajustarse cuando se definan las carpetas correspondientes.
+Exact names of Examples/Activities/Labs may change when the corresponding folders are defined.
 
 ---

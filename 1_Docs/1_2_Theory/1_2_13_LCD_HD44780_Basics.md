@@ -1,163 +1,123 @@
 # LCD HD44780 basics
 
-Este documento introduce los conceptos básicos de los **LCD de caracteres**   basados en el controlador **HD44780** (típicamente 16x2, 20x4, etc.),   tal como se usan en este repositorio.
+This document introduces the basics of **character LCDs** based on the **HD44780** controller (e.g., 16x2, 20x4).
 
 ---
 
-## ¿Qué es un LCD de caracteres?
+## What is a character LCD?
 
-Un LCD de caracteres:
+A character LCD:
 
-- Muestra texto en una matriz de posiciones (por ejemplo, 16 columnas x 2 filas).
-- No dibuja gráficos libres (como una pantalla gráfica), sino caracteres predefinidos:
-  - Letras, números, símbolos.
-  - Algunos caracteres personalizados (en cantidad limitada).
+- Shows text in a matrix (16x2, 20x4, etc.)
+- Cannot draw arbitrary graphics  
+- Displays predefined characters:
+  - Letters, numbers, symbols  
+  - Some limited custom characters  
 
-Ejemplos de usos en este repositorio:
+Typical uses in this repo:
 
-- Mostrar mensajes (“HELLO”, “READY”, “ERROR”).
-- Mostrar contadores, medidas de sensor, estados de una FSM.
-- Menús sencillos (línea 1: título; línea 2: valor/estado).
-
----
-
-## Controlador HD44780
-
-El **HD44780** (o compatibles) es el controlador interno del LCD:
-
-- Se encarga de:
-  - Generar las señales adecuadas para los píxeles.
-  - Guardar los caracteres a mostrar en la memoria interna.
-  - Interpretar comandos (limpiar pantalla, mover cursor, etc.).
-
-Desde la FPGA se ve como un dispositivo con:
-
-- Entradas de control.
-- Un bus de datos (4 u 8 bits).
-- Algunas líneas adicionales (contraste, backlight) que suelen manejarse fuera de la FPGA.
+- Display messages (“HELLO”, “READY”, “ERROR”)  
+- Show counters or sensor measurements  
+- Simple menus  
 
 ---
 
-## Señales principales
+## HD44780 controller
 
-En modo paralelo clásico, las señales relevantes son:
+The HD44780:
 
-- `RS` (Register Select)
-  - `0` → se enviará un **comando** (clear, set cursor, etc.).
-  - `1` → se enviará **datos** (caracteres a mostrar).
+- Manages pixel driving  
+- Stores characters internally  
+- Interprets commands (clear, set cursor, etc.)
 
-- `E` (Enable)
-  - Pulso que indica al LCD que debe **capturar** los bits presentes en el bus de datos.
+From the FPGA side, it appears as:
 
-- `D[7:0]` (datos)
-  - Bus de 8 bits para comandos y datos.
-  - En muchos diseños se usa **solo 4 bits** (`D[7:4]`) para ahorrar pines.
-
-- `R/W`
-  - Selecciona lectura/escritura.
-  - En diseños simples se suele fijar a escritura (por ejemplo, conectado a GND) y no se lee desde el LCD.
-
-Además:
-
-- Pines de alimentación (VCC, GND).
-- Pin de contraste (a menudo controlado con potenciómetro).
-- Pines de backlight (para encender la iluminación trasera).
-
-En este repositorio, la configuración concreta (4 bits, 8 bits o I²C) se detalla en:
-
-- `2_devices/` → sección de LCD HD44780 / backpack I²C.
+- Control lines  
+- A data bus (4- or 8-bit)  
+- Optional contrast/backlight controls (external)
 
 ---
 
-## Modos de conexión: 8 bits vs 4 bits vs I²C
+## Main signals
 
-1. **Modo paralelo 8 bits**
-   - Se usan `D[7:0]` completos.
-   - Permite transferir comandos/datos en un solo ciclo de escritura.
-   - Requiere más pines de la FPGA.
+In parallel mode:
 
-2. **Modo paralelo 4 bits**
-   - Se usan solo `D[7:4]`.
-   - Cada byte se envía en **dos partes** (nibble alto y nibble bajo).
-   - Ahorra pines a costa de lógica ligeramente más compleja.
+- `RS`  
+  - 0 → command  
+  - 1 → data  
 
-3. **Backpack I²C (por ejemplo, con PCF8574)**
-   - El LCD se conecta a un expansor como PCF8574.
-   - La FPGA se comunica con el PCF8574 por I²C (`SCL`, `SDA`).
-   - El PCF8574 maneja las líneas `RS`, `E` y `D[7:4]`.
-   - Ahorra muchos pines de la FPGA: solo se usan las dos líneas de I²C.
+- `E`  
+  - Enable pulse to latch data  
 
-Este repositorio puede utilizar cualquiera de estos esquemas según el hardware disponible.
+- `D[7:0]`  
+  - Data bus (can be reduced to 4 bits: D7–D4)
 
----
+- `R/W`  
+  - Often tied to ground (write-only)
 
-## Inicialización básica
-
-Antes de mostrar texto, el LCD requiere una **secuencia de inicialización**, que incluye:
-
-- Configuración del modo (4 bits / 8 bits, número de líneas, tamaño de caracteres).
-- Encendido/apagado de display y cursor.
-- Limpieza de pantalla.
-- Posicionamiento inicial del cursor.
-
-Aunque los detalles exactos dependen del modo, la idea general es:
-
-1. Esperar el tiempo mínimo después de encender el LCD.
-2. Enviar una secuencia de comandos específicos.
-3. A partir de ahí, se puede escribir texto enviando:
-   - `RS = 1` + datos para caracteres.
-   - `RS = 0` + comandos para mover cursor o limpiar.
-
-En los ejemplos y labs del repositorio:
-
-- La secuencia de inicialización suele encapsularse en un **módulo controlador** (driver) para simplificar.
+Plus power, contrast, and backlight connections.
 
 ---
 
-## Escribir texto y mover el cursor
+## Connection modes: 8-bit, 4-bit, I²C
 
-Dos operaciones esenciales:
+1. **8-bit parallel**
+   - Uses all data lines  
+   - Faster, but uses more FPGA pins  
 
-- **Escribir caracteres:**
-  - Seleccionar `RS = 1`.
-  - Enviar el código ASCII (o del mapa del LCD) del carácter.
-  - Repetir para cada posición.
+2. **4-bit parallel**
+   - Sends each byte in two nibbles  
+   - Saves pins  
 
-- **Posicionar cursor:**
-  - Seleccionar `RS = 0`.
-  - Enviar comandos como:
-    - “Set DDRAM address” (dirección interna para fila/columna).
-    - “Clear display”.
-
-La relación entre (fila, columna) y direcciones internas la maneja el driver; en este repositorio se intenta encapsular esta complejidad.
+3. **I²C backpack** (e.g., PCF8574)
+   - FPGA uses only `SCL`/`SDA`  
+   - Backpack drives LCD signals  
+   - Uses far fewer FPGA pins  
 
 ---
 
-## Uso típico en este repositorio
+## Initialization
 
-Ejemplos y labs:
+LCD requires a specific init sequence:
 
-- `lcd` (example/activity):
-  - Mostrar “HELLO” en la primera línea.
-  - Mostrar un contador o un valor de sensor en la segunda línea.
+1. Wait after power-up  
+2. Send mode selection (4/8 bit, lines, font)  
+3. Turn display/cursor on or off  
+4. Clear display  
+5. Position cursor  
 
-- `lcd_menu_system` (lab avanzado):
-  - Usar la pantalla para un menú navegable:
-    - Botones ↑/↓/OK.
-    - Estados de la FSM que deciden qué texto mostrar.
-    - Visualización de medidas de potenciómetro, distancia, etc.
+This sequence is handled inside LCD driver modules in examples.
 
 ---
 
-## Relación con otros archivos de teoría
+## Writing text & cursor movement
 
-- `1_2_6_Timing_and_Dividers.md`  
-  → manejo de tiempos de espera entre comandos.
-- `1_2_7_Finite_State_Machines.md`  
-  → FSM para secuencias de inicialización y actualización de pantalla.
-- `1_2_9_Buses_Overview.md`  
-  → contexto sobre I²C cuando se usa con backpack PCF8574.
+- For characters:  
+  - RS = 1  
+  - Send character code  
 
-La documentación de pines, wiring y ejemplos concretos se complementa en:
+- For cursor commands:  
+  - RS = 0  
+  - Send command (set address, clear, etc.)
 
-- `2_devices/` → sección de LCD HD44780.
+Drivers abstract address mapping and command sequences.
+
+---
+
+## Typical usage in this repo
+
+Examples:
+
+- Display “HELLO”  
+- Show counters or sensor values  
+- Menu navigation (advanced labs)  
+
+---
+
+## Related theory
+
+- `1_2_6_Timing_and_Dividers.md` → delays between commands  
+- `1_2_7_Finite_State_Machines.md` → FSM for initialization sequences  
+- `1_2_9_Buses_Overview.md` → I²C (when backpack is used)  
+
+Device-specific wiring is documented in `2_devices/`.

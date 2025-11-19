@@ -1,37 +1,37 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// 3.12: Seven-segment HEX counter (multiplexado)
+// 3.12: Seven-segment HEX counter (manual multiplexing)
 //
-// Muestra un contador hexadecimal de 32 bits en los 8 dígitos del
-// display de 7 segmentos del TM1638, usando multiplexado manual.
-// - Cada dígito muestra 4 bits (un nibble) del contador.
-// - El contador incrementa a ~10 pasos por segundo.
-// - Los LEDs muestran el byte menos significativo del contador.
+// Displays a 32-bit hexadecimal counter on the 8 digits of the
+// TM1638 7-segment display, using manual multiplexing.
+// - Each digit shows 4 bits (one nibble) of the counter.
+// - The counter increments at ~10 steps per second.
+// - The LEDs show the least significant byte of the counter.
 
 module hackathon_top
 (
     input  logic       clock,
-    input  logic       slow_clock,   // no se usa en este ejemplo
+    input  logic       slow_clock,   // not used in this example
     input  logic       reset,
 
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (multiplexado)
-    output logic [7:0] abcdefgh,     // a b c d e f g h (punto)
-    output logic [7:0] digit,        // selección de dígito (one hot)
+    // 7-segment display (multiplexed)
+    output logic [7:0] abcdefgh,     // a b c d e f g h (dot)
+    output logic [7:0] digit,        // digit selection (one hot)
 
-    // Interfaz LCD (no usada aquí)
+    // LCD interface (not used here)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
     output logic [5:0] green,
     output logic [4:0] blue,
 
-    // GPIO (no usados aquí)
+    // GPIO (not used here)
     inout  logic [3:0] gpio
 );
     // --------------------------------------------------------------------
-    // Apagar periféricos no usados
+    // Turn off unused peripherals
     // --------------------------------------------------------------------
     assign red   = 5'h00;
     assign green = 6'h00;
@@ -40,10 +40,10 @@ module hackathon_top
     assign gpio  = 4'hz;
 
     // --------------------------------------------------------------------
-    // 1) Tick lento para incrementar el contador HEX
+    // 1) Slow tick to increment the HEX counter
     // --------------------------------------------------------------------
-    localparam int unsigned CLK_HZ   = 27_000_000;  // aprox. Tang Nano 9K
-    localparam int unsigned TICK_HZ  = 10;          // 10 incrementos/segundo
+    localparam int unsigned CLK_HZ   = 27_000_000;  // approx. Tang Nano 9K
+    localparam int unsigned TICK_HZ  = 10;          // 10 increments/second
     localparam int unsigned TICK_MAX = CLK_HZ / TICK_HZ;
 
     logic [31:0] tick_cnt;
@@ -63,7 +63,7 @@ module hackathon_top
     end
 
     // --------------------------------------------------------------------
-    // Contador hexadecimal de 32 bits
+    // 32-bit hexadecimal counter
     // --------------------------------------------------------------------
     logic [31:0] hex_counter;
 
@@ -75,13 +75,13 @@ module hackathon_top
         end
     end
 
-    // Mostrar el byte menos significativo en los LEDs (debug)
+    // Display least significant byte on LEDs (debug)
     always_comb begin
         led = hex_counter[7:0];
     end
 
     // --------------------------------------------------------------------
-    // 2) Multiplexado de los 8 dígitos del display
+    // 2) Multiplexing of the 8 display digits
     // --------------------------------------------------------------------
     logic [15:0] refresh_cnt;
 
@@ -93,10 +93,10 @@ module hackathon_top
         end
     end
 
-    // Usamos los bits más altos como índice de dígito (0..7)
+    // Use the upper bits as digit index (0..7)
     wire [2:0] digit_idx = refresh_cnt[15:13];
 
-    // Selección one-hot del dígito activo
+    // One-hot digit selection
     logic [7:0] digit_onehot;
 
     always_comb begin
@@ -115,7 +115,7 @@ module hackathon_top
 
     assign digit = digit_onehot;
 
-    // Seleccionar el nibble correspondiente al dígito actual
+    // Select the nibble corresponding to the active digit
     logic [3:0] current_nibble;
 
     always_comb begin
@@ -133,8 +133,8 @@ module hackathon_top
     end
 
     // --------------------------------------------------------------------
-    // 3) Conversión HEX → 7 segmentos
-    //    Convención de bits en abcdefgh:
+    // 3) HEX → 7-segment conversion
+    //    Bit convention in abcdefgh:
     //      bit 7: a
     //      bit 6: b
     //      bit 5: c
@@ -142,9 +142,9 @@ module hackathon_top
     //      bit 3: e
     //      bit 2: f
     //      bit 1: g
-    //      bit 0: h (punto)
+    //      bit 0: h (dot)
     //
-    //    1 = segmento encendido, 0 = apagado.
+    //    1 = segment on, 0 = off.
     // --------------------------------------------------------------------
     function automatic logic [7:0] hex_to_7seg(input logic [3:0] v);
         begin
@@ -165,7 +165,7 @@ module hackathon_top
                 4'hD: hex_to_7seg = 8'b0111_1010; // d
                 4'hE: hex_to_7seg = 8'b1001_1110; // E
                 4'hF: hex_to_7seg = 8'b1000_1110; // F
-                default: hex_to_7seg = 8'b0000_0000; // todo apagado
+                default: hex_to_7seg = 8'b0000_0000; // all off
             endcase
         end
     endfunction
@@ -174,7 +174,7 @@ module hackathon_top
 
     always_comb begin
         segs     = hex_to_7seg(current_nibble);
-        segs[0]  = 1'b0;    // punto decimal apagado
+        segs[0]  = 1'b0;    // decimal point off
         abcdefgh = segs;
     end
 

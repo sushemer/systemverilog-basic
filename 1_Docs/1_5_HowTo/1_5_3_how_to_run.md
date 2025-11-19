@@ -1,103 +1,95 @@
-# 1.5.3 How to run – Cómo simular, sintetizar y programar
+# 1.5.3 How to run – How to simulate, synthesize, and program
 
-Este documento explica **cómo correr los ejemplos** del repositorio:
+This document explains **how to run the examples** in the repository:
 
-- Simular (cuando haya testbench).
-- Sintetizar para la Tang Nano 9K.
-- Programar la FPGA y ver el resultado.
+- Simulate (when a testbench is available)
+- Synthesize for the Tang Nano 9K
+- Program the FPGA and see the result
 
-La idea es que puedas ir a **cualquier actividad/lab/implementación** y saber:
+The idea is that for **any activity/lab/implementation**, you know:
 
-- Qué script usar.
-- Desde qué carpeta ejecutarlo.
-- Qué esperar como resultado.
-
----
-
-## 0. Antes de empezar
-
-### Requisitos básicos
-
-- Repo clonado en tu PC (por ejemplo en `C:\Users\USUARIO\Documentos\GitHub\systemverilog-basic`).
-- Tang Nano 9K conectada por USB.
-- **Gowin EDA** instalada (por ejemplo en `C:\Gowin\Gowin_V1.9.xx...`).
-- Una terminal tipo **Git Bash / MSYS2 / WSL** donde puedas correr:
-  - `bash ...`
-  - herramientas de Gowin (`gw_sh.exe`, `programmer_cli.exe`) a través de los scripts.
-
-> Nota: El script de síntesis (`03_synthesize_for_fpga.bash`) suele detectar automáticamente la instalación de Gowin en `C:\Gowin\...`. Si la tiene en otro lugar, deberá ajustar el script.
+- Which script to use  
+- From which folder to run it  
+- What output to expect  
 
 ---
 
-## 1. Dónde parar (carpeta correcta)
+## 0. Before starting
 
-Cada **actividad/lab/implementación** tiene su propia carpeta, por ejemplo:
+### Basic requirements
+
+- Repository cloned locally  
+- Tang Nano 9K connected by USB  
+- **Gowin EDA** installed  
+- A Unix-like terminal (Git Bash / MSYS2 / WSL) able to run:
+  - bash ...
+  - Gowin tools (`gw_sh.exe`, `programmer_cli.exe`) through the scripts
+
+Note: The synthesis script (`03_synthesize_for_fpga.bash`) usually detects Gowin automatically under `C:\Gowin\...`. If installed elsewhere, adjust the script manually.
+
+---
+
+## 1. Correct working directory
+
+Each activity/lab/implementation has its own folder, for example:
 
 - `4_Activities/4_9_1_logic_gates_and_demorgan`
 - `4_Activities/4_9_8_sensors_and_tm1638_integration`
 - `5_Labs/5_1_counter_hello_world`
 
-Dentro de esa carpeta normalmente encontrará:
+Inside you will find:
 
-- `hackathon_top.sv` → TU módulo principal para esa práctica.
-- `fpga_project.tcl` → Proyecto de Gowin (usado por los scripts).
-- Scripts tipo:
-  - `01_simulate.bash`, `02_simulate_and_view.bash`
+- `hackathon_top.sv` → your main module  
+- `fpga_project.tcl` → Gowin project file  
+- Scripts:
+  - `01_simulate.bash`
+  - `02_simulate_and_view.bash`
   - `03_synthesize_for_fpga.bash`
-  - `04_program_fpga.bash` 
+  - `04_program_fpga.bash`
   - `05_run_gui_for_fpga_synthesis`
 
-**Regla práctica:**  
-Para correr algo de una práctica, **abre la terminal en la carpeta de esa práctica**.
+**Rule:**  
+Always run scripts **inside the folder** of that exercise.
 
-Ejemplo:
+Example:
 
-```bash
-cd /c/Users/USUARIO/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_8_sensors_and_tm1638_integration
-```
+cd /c/Users/YOUR_USER/Documents/GitHub/systemverilog-basic/4_Activities/4_9_8_sensors_and_tm1638_integration
 
 ---
 
-## 2. Flujo típico (rápido)
+## 2. Typical flow (quick)
 
-El flujo más habitual es:
-1. Sintetizar: `bash 03_synthesize_for_fpga.bash`
-2. Probar en la placa: mover teclas, sensores, etc.
+1. Synthesize:  
+bash 03_synthesize_for_fpga.bash
+2. Test on the board:
+   press keys, read sensors, check LEDs/displays.
 
 ---
 
-## 3. Síntesis para FPGA (Gowin)
+## 3. FPGA synthesis (Gowin)
 
-Este es el paso que **siempre** harás para ver algo en la placa.
+1. Open a terminal (Git Bash / MSYS2 / WSL).
+2. Go to the exercise folder:
 
-1. Abra su terminal (Git Bash / MSYS2 / WSL).
-2. Vaya a la carpeta de la práctica, por ejemplo:
+cd /c/Users/YOUR_USER/Documents/GitHub/systemverilog-basic/4_Activities/4_9_8_sensors_and_tm1638_integration
 
-   ```bash
-   cd /c/Users/TU_USUARIO/Documentos/GitHub/systemverilog-basic/4_Activities/4_9_8_sensors_and_tm1638_integration
-   ```
+3. Run:
 
-3. Ejecute:
+bash 03_synthesize_for_fpga.bash
 
-   ```bash
-   bash 03_synthesize_for_fpga.bash
-   ```
+### What to expect
 
-### ¿Qué debe observar?
-
-En la terminal verá algo como:
+Terminal output will show:
 
 - `GowinSynthesis start`
-- Listado de archivos analizados (`Analyzing Verilog file ...`)
+- List of analyzed RTL files
 - `Compiling module ...`
-- Al final, algo tipo `GowinSynthesis finish`
+- Final message `GowinSynthesis finish`
 
-Si hay problemas:
+Warnings:
+- Usually safe, but recommended to review.
 
-- **WARN** → advertencias (puede seguir, pero conviene revisar).
-- **ERROR** → se detiene, no se genera bitstream.
+Errors:
+- Stop the process; no bitstream generated.
 
-Para entender errores típicos, revisa luego `1_5_4_pitfalls` (precauciones y errores comunes).
-
----
-
+Check `1_5_4_troubleshooting_and_pitfalls.md` for common synthesis problems.

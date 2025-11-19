@@ -1,37 +1,37 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// 3.7: Binary counter (free‐running + variante controlada por teclas)
+// 3.7: Binary counter (free‐running + key-controlled variant)
 //
-// Idea general:
-// - Usar el reloj principal de la Tang Nano 9K para incrementar un contador grande.
-// - Mostrar los bits más significativos del contador en los LEDs, de modo que
-//   parpadeen a distintas frecuencias (efecto de “correr” en binario).
+// General idea:
+// - Use the main clock of the Tang Nano 9K to increment a wide counter.
+// - Display the most significant bits of the counter on the LEDs, so that
+//   they blink at different frequencies (binary “running” effect).
 
 module hackathon_top
 (
     input  logic       clock,
-    input  logic       slow_clock,  // no se usa en este ejemplo
+    input  logic       slow_clock,  // not used in this example
     input  logic       reset,
 
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display 7 segmentos (no usado aquí)
+    // 7-segment display (not used here)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no usada aquí)
+    // LCD interface (not used here)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
     output logic [5:0] green,
     output logic [4:0] blue,
 
-    // GPIO (no usados aquí)
+    // GPIO (not used here)
     inout  logic [3:0] gpio
 );
 
     // ------------------------------------------------------------------------
-    // Apagar periféricos que no usamos
+    // Turn off peripherals not used
     // ------------------------------------------------------------------------
     assign abcdefgh = 8'h00;
     assign digit    = 8'h00;
@@ -40,27 +40,27 @@ module hackathon_top
     assign green = 6'h00;
     assign blue  = 5'h00;
 
-    assign gpio  = 4'hz;   // Alta impedancia en GPIO
+    assign gpio  = 4'hz;   // High impedance on GPIO
 
     // ------------------------------------------------------------------------
-    // Ejemplo 1: Free-running binary counter
+    // Example 1: Free-running binary counter
     //
-    // Contador ancho que se incrementa en cada flanco de subida de "clock".
-    // Los bits más altos del contador se envían a los LEDs.
+    // Wide counter that increments on every rising edge of "clock".
+    // The most significant bits of the counter are sent to the LEDs.
     //
-    // Cambiando qué bits se muestran, cambias la velocidad aparente de parpadeo.
+    // By changing which bits are displayed, you change the apparent blink speed.
     // ------------------------------------------------------------------------
     
-    // Frecuencia aproximada del reloj de la Tang Nano 9K (MHz)
+    // Approximate clock frequency of the Tang Nano 9K (MHz)
     localparam int CLK_MHZ = 27;
 
-    // Número de bits suficiente para contar hasta 1 segundo:
-    //  cnt_max ≈ CLK_MHZ * 1e6 → necesitamos clog2(cnt_max) bits
+    // Number of bits needed to count up to 1 second:
+    //  cnt_max ≈ CLK_MHZ * 1e6 → we need clog2(cnt_max) bits
     localparam int W_CNT = $clog2(CLK_MHZ * 1_000_000);
 
     logic [W_CNT-1:0] cnt;
 
-    // Contador binario libre
+    // Free-running binary counter
     always_ff @(posedge clock or posedge reset) begin
         if (reset)
             cnt <= '0;
@@ -68,23 +68,23 @@ module hackathon_top
             cnt <= cnt + 1'b1;
     end
 
-    // Mostrar los 8 bits más significativos del contador en los LEDs.
-    // Esto hace que cada LED parpadee a una frecuencia distinta
-    // (el MSB es el más lento).
+    // Display the 8 most significant bits of the counter on the LEDs.
+    // This makes each LED blink at a different frequency
+    // (the MSB is the slowest).
     assign led = cnt[W_CNT-1 -: 8];
 
     // ------------------------------------------------------------------------
-    // Ejemplo 2 (opcional): counter controlado por teclas
+    // Example 2 (optional): key-controlled counter
     //
-    // - Comenta las líneas de "Ejemplo 1" (contadores/assign de arriba).
-    // - Descomenta el bloque siguiente.
-    // - El contador avanza sólo cuando se detecta un "pulso" de tecla.
+    // - Comment out the “Example 1” lines (counter/assign above).
+    // - Uncomment the block below.
+    // - The counter advances only when a key “pulse” is detected.
     // ------------------------------------------------------------------------
     /*
-    // Detectar si cualquier tecla está presionada
+    // Detect if any key is pressed
     wire any_key = |key;
 
-    // Registro para detección de flanco
+    // Register for edge detection
     logic any_key_r;
 
     always_ff @(posedge clock or posedge reset) begin
@@ -94,10 +94,10 @@ module hackathon_top
             any_key_r <= any_key;
     end
 
-    // Pulso de “transición” (aquí se detecta el flanco de liberación)
+    // “Transition” pulse (here release edge is detected)
     wire any_key_pulse = ~any_key & any_key_r;
 
-    // Contador de 8 bits controlado por teclas
+    // 8-bit key-controlled counter
     logic [7:0] cnt_key;
 
     always_ff @(posedge clock or posedge reset) begin

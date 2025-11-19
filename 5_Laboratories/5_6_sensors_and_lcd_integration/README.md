@@ -1,175 +1,179 @@
 # Lab 5.6 – Sensors + LCD integration
 
-## Objetivo
+## Objective
 
-Integrar **sensores físicos** con la **pantalla LCD 480×272** de la Tang Nano 9K para crear un pequeño “panel de nivel”:
+Integrate **physical sensors** with the **480×272 LCD panel** on the Tang Nano 9K to create a small “level gauge”:
 
-- Leer:
-  - Distancia relativa de un **HC-SR04**.
-  - Conteo de un **encoder rotatorio KY-040**.
-- Seleccionar el origen del dato con `key[1:0]`.
-- Visualizar el valor:
-  - Como una **barra vertical (gauge)** en el LCD.
-  - Como un patrón en `led[7:0]` (byte alto del valor).
+- Read:
+  - Relative distance from an **HC-SR04**.
+  - Count from a **KY-040 rotary encoder**.
+- Select the data source using `key[1:0]`.
+- Display the value:
+  - As a **vertical bar (gauge)** on the LCD.
+  - As a pattern on `led[7:0]` (high byte of the value).
 
-Al final del lab debería:
+By the end of this lab, you should:
 
-- Sentirse cómodo instanciando y conectando módulos de sensores.
-- Entender cómo escalar un valor de 16 bits a una altura de píxeles.
-- Usar `(x, y)` para dibujar gráficos simples dependientes de sensores.
-
----
-
-## Prerrequisitos
-
-- Haber realizado o revisado:
-
-  - **Lab 5.1 – blink_hello_world** (divisor de reloj).
-  - **Lab 5.3 – shift_register_patterns** (patrones en LEDs).
-  - Actividades con **LCD básico** (ej. `4_7_lcd_hello_and_basic_graphics`).
-  - Actividad de sensores + TM1638 (`4_8_sensors_and_tm1638_integration`).
-
-- Entender a nivel básico:
-
-  - Cómo el controlador de LCD genera `x` y `y`.
-  - Qué hace `ultrasonic_distance_sensor` y `rotary_encoder`.
+- Feel comfortable instantiating and wiring sensor modules.
+- Understand how to scale a 16-bit value into a pixel height.
+- Use `(x, y)` to draw simple sensor-driven graphics.
 
 ---
 
-## Hardware usado
+## Prerequisites
 
-- Tang Nano 9K con módulo **LCD 480×272**.
-- Módulos/sensores:
-  - **HC-SR04** (ultrasonido).
-  - **KY-040** (encoder rotatorio).
+Have completed or reviewed:
 
-### Mapeo sugerido (gpio)
+- **Lab 5.1 – blink_hello_world** (clock divider)
+- **Lab 5.3 – shift_register_patterns** (LED animations)
+- Basic LCD exercises (e.g., `4_7_lcd_hello_and_basic_graphics`)
+- Sensor + TM1638 integration (`4_8_sensors_and_tm1638_integration`)
 
-- `gpio[0]` → TRIG (HC-SR04).
-- `gpio[1]` → ECHO (HC-SR04).
-- `gpio[3]` → A (encoder).
-- `gpio[2]` → B (encoder).
+Understand:
 
-Revisa esquemáticos/pines de tu placa para confirmar.
+- How the LCD controller generates `x` and `y`
+- What `ultrasonic_distance_sensor` and `rotary_encoder` do
 
 ---
 
-## Señales y modos
+## Hardware used
+
+- Tang Nano 9K with **480×272 LCD**
+- Sensors:
+  - **HC-SR04** ultrasonic sensor
+  - **KY-040** rotary encoder
+
+### Suggested GPIO mapping
+
+- `gpio[0]` → TRIG (HC-SR04)
+- `gpio[1]` → ECHO (HC-SR04)
+- `gpio[3]` → A (encoder)
+- `gpio[2]` → B (encoder)
+
+Check your board’s pinout to confirm wiring.
+
+---
+
+## Signals and modes
 
 - `mode = key[1:0]`:
 
-  - `00` → usar `distance_rel` (ultrasonido).
-  - `01` → usar `encoder_value`.
-  - `10` → usar `distance_rel - encoder_value` (solo para probar).
-  - `11` → `sensor_value = 0`.
+  - `00` → use `distance_rel`
+  - `01` → use `encoder_value`
+  - `10` → `distance_rel - encoder_value` (experimental)
+  - `11` → `sensor_value = 0`
 
-- `sensor_value[15:0]`:
+- `sensor_value[15:0]`:  
+  Common bus feeding the gauge and LEDs.
 
-  - Bus común que alimenta el gauge y los LEDs.
+- `led[7:0]` = `sensor_value[15:8]`  
+  (upper byte of the 16-bit sensor value)
 
-- `led[7:0]`:
-
-  - `led = sensor_value[15:8]` (byte alto del valor del sensor).
-
-- `bar_height` (0..271):
-
-  - Versión escalada de `sensor_value` para mapear a la altura de la pantalla.
-  - Se toma `sensor_value[15:7]` y se recorta a `0..SCREEN_H-1`.
+- `bar_height` (0..271):  
+  Scaled version of the sensor value.  
+  Derived from `sensor_value[15:7]` and clamped to `0 .. SCREEN_H-1`.
 
 ---
 
-## Lógica de dibujo en el LCD
+## LCD drawing logic
 
-1. **Marco**  
-   Se dibuja un borde blanco de 2 píxeles alrededor de toda la pantalla.
+1. **Border**  
+   Draw a white 2-pixel border around the entire screen.
 
-2. **Fondo**  
-   Dentro del marco, un fondo con un **degradado suave** (ligeramente dependiente de `y`).
+2. **Background**  
+   Inside the border, draw a soft gradient (slightly dependent on `y`).
 
-3. **Barra vertical (gauge)**
+3. **Vertical gauge bar**
 
-   - Región de X:
-
-     - `BAR_X0 = 400`, `BAR_X1 = 440`.
-
-   - Altura:
-
-     - Desde la parte inferior (`y ≈ 271`) hacia arriba, según `bar_height`.
-
-   - Colores:
-
-     - Si `bar_height < THRESH_LOW`  → **verde** (nivel bajo).
-     - Si `bar_height < THRESH_HIGH` → **amarillo** (nivel medio).
-     - Si no                        → **rojo** (nivel alto).
+   - X-range:
+     - `BAR_X0 = 400`, `BAR_X1 = 440`
+   - Height:
+     - From the bottom (`y ≈ 271`) upward, based on `bar_height`
+   - Color rules:
+     - If `bar_height < THRESH_LOW` → **green**
+     - If `bar_height < THRESH_HIGH` → **yellow**
+     - Else → **red**
 
 ---
 
-## Procedimiento sugerido
+## Suggested procedure
 
-1. **Revise las instancias de sensores**
+### 1. Review sensor instances
+Locate the modules:
 
-   - Ubique `ultrasonic_distance_sensor` y `rotary_encoder` en el código.
-   - Confirme que el repo tiene sus archivos y que están incluidos en el proyecto.
+- `ultrasonic_distance_sensor`
+- `rotary_encoder`
 
-2. **Entienda `sensor_value`**
-
-   - Mire el `case (mode)` que asigna `sensor_value`.
-   - Pruebe mentalmente algunos casos:
-     - Solo ultrasónico.
-     - Solo encoder.
-     - Combinación (resta).
-
-3. **Analice el escalado a `bar_height`**
-
-   - Observe cómo se toman los bits altos `sensor_value[15:7]`.
-   - Entienda por qué se recorta a `SCREEN_H-1`.
-   - Piense: “si el sensor crece, la barra puede crecer hasta llenar la pantalla”.
-
-4. **Revise la lógica de dibujo**
-
-   - Siga el `always_comb` de RGB:
-     - Marco → fondo → barra.
-   - Identifique la condición de la barra:
-
-     ```sv
-     if ((x >= BAR_X0) && (x < BAR_X1))
-       if (y >= SCREEN_H_9B - bar_height)
-         // colorear según nivel
-     ```
-
-5. **Sintetice y pruebe en hardware**
-
-   - Compile y programe el FPGA.
-   - Seleccione modo:
-
-     - `mode = 00` → mueve un objeto delante del HC-SR04.
-     - `mode = 01` → gira el encoder en CW/CCW.
-     - `mode = 10` → experimenta con la combinación.
-
-   - Observe:
-     - Cambios en el **tamaño** y **color** de la barra.
-     - Patrón en `led[7:0]`.
+Verify that they exist in the repo and are included in the project.
 
 ---
 
-## Checklist de pruebas
+### 2. Understand `sensor_value`
+Analyze the `case (mode)` block assigning `sensor_value`.
 
-- [ ] El diseño sintetiza sin errores y programa la Tang Nano 9K.
-- [ ] Con `mode = 00`, mover un objeto frente al HC-SR04 cambia la barra.
-- [ ] Con `mode = 01`, girar el encoder modifica la barra de forma estable.
-- [ ] El color de la barra cambia (verde → amarillo → rojo) al variar el nivel.
-- [ ] `led[7:0]` cambia consistentemente con el nivel del sensor.
-- [ ] La pantalla muestra un marco blanco y un fondo uniforme cuando el sensor está “quieto”.
+Try mentally:
+
+- Ultrasonic only
+- Encoder only
+- Combined subtraction
 
 ---
 
-## Extensiones opcionales
+### 3. Review scaling to `bar_height`
+Observe:
 
-Si quieres llevarlo más lejos:
+- Taking the high bits `sensor_value[15:7]`
+- Clamping to screen height
+- The concept of mapping a wide numeric range to pixels
 
-- Mostrar el valor del sensor también en el **TM1638** (reutilizando `seven_segment_display`).
-- Dibujar **dos barras**: una para ultrasónico y otra para encoder.
-- Añadir una pequeña “zona segura” en verde y zonas de alerta en rojo en la pantalla.
-- Usar `slow_clock` para hacer parpadeos cuando el valor supere cierto umbral.
+---
 
-Este lab es básicamente su primer “instrument panel” simple: sensores reales + gráficos en pantalla. A partir de aquí ya puedes imaginar velocímetros, barras de volumen, indicadores de proximidad, etc. 
+### 4. Review LCD drawing logic
+
+Inside the RGB generation block:
+
+```sv
+if ((x >= BAR_X0) && (x < BAR_X1))
+  if (y >= SCREEN_H_9B - bar_height)
+    // draw bar using color thresholds
+```
+
+### 5. Synthesize and test
+
+Program the FPGA and test the modes:
+
+- `00` → Move an object in front of the HC-SR04.  
+- `01` → Rotate the encoder (CW/CCW).  
+- `10` → Experiment with the combined mode (`distance_rel - encoder_value`).  
+- `11` → Zero output.
+
+Observe:
+
+- How the **bar changes size** as the sensor value changes.
+- How the **bar changes color** (green → yellow → red).
+- How `led[7:0]` reflects the **high byte** of the sensor value.
+
+---
+
+## Test checklist
+
+- [ ] The design synthesizes and programs successfully on the Tang Nano 9K.
+- [ ] With `mode = 00`, moving an object in front of the HC-SR04 changes the bar.
+- [ ] With `mode = 01`, rotating the encoder updates the bar smoothly.
+- [ ] Bar color changes correctly according to thresholds.
+- [ ] `led[7:0]` changes consistently with the sensor value.
+- [ ] Screen shows a clean white border and stable background when sensors are idle.
+
+---
+
+## Optional extensions
+
+To take this lab further:
+
+- Display the sensor value on the **TM1638** using `seven_segment_display`.
+- Draw **two bars**: one for the ultrasonic sensor and one for the encoder.
+- Add “safe”, “warning”, and “danger” zones on the LCD gauge.
+- Use `slow_clock` to make the bar blink when above a safety threshold.
+
+This lab is essentially your first simple **instrument panel**: real sensors + graphical indicators.  
+From here, you can build mini-dashboards like speedometers, volume meters, proximity alerts, and more.

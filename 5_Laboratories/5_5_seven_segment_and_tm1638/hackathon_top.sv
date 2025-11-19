@@ -1,19 +1,19 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Lab 5.5 – Seven-segment + TM1638 playground
 //
-// Idea general:
-//   - Usar el módulo seven_segment_display del repo para controlar 8 dígitos.
-//   - Tratar key[7:0] y led[7:0] como interfaz lógica del módulo TM1638.
-//   - Practicar distintos modos de visualización:
-//       * Modo 0: contador hexadecimal libre (32 bits).
-//       * Modo 1: mostrar nibbles de key[7:0] como dos dígitos HEX.
-//       * Modo 2: patrón fijo "DEAD_BEEF".
-//       * Modo 3: número invertido (~counter).
-//   - Usar los puntos decimales (dots) como indicadores directos de key.
+// General idea:
+//   - Use the repository’s seven_segment_display module to control 8 digits.
+//   - Treat key[7:0] and led[7:0] as the logical interface of a TM1638-like module.
+//   - Practice several display modes:
+//       * Mode 0: free-running hexadecimal counter (32 bits).
+//       * Mode 1: show nibbles from key[7:0] as two HEX digits.
+//       * Mode 2: fixed pattern "DEAD_BEEF".
+//       * Mode 3: inverted number (~counter).
+//   - Use decimal points (dots) as direct indicators of key.
 //
-// Notas:
-//   - La lógica es intencionalmente sencilla para enfocarse en
-//     el uso de seven_segment_display y en el mapeo de nibbles a dígitos.
+// Notes:
+//   - The logic is intentionally simple to focus on the use of
+//     seven_segment_display and how to map nibbles to digits.
 //
 
 module hackathon_top
@@ -25,11 +25,11 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (interfaz abstracta tipo TM1638/dinámico)
+    // 7-segment display (TM1638-style dynamic interface)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no usada en este lab)
+    // LCD interface (not used in this lab)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
@@ -39,30 +39,30 @@ module hackathon_top
     inout  logic [3:0] gpio
 );
 
-    // No usamos LCD ni GPIO en este lab.
+    // We do not use LCD nor GPIO in this lab.
     assign red   = '0;
     assign green = '0;
     assign blue  = '0;
-    // gpio lo maneja el wrapper de la placa.
+    // gpio handled by wrapper.
 
     // -------------------------------------------------------------------------
-    // Modo de operación (2 bits desde key)
+    // Operation mode (2 bits from key)
     // -------------------------------------------------------------------------
     //
     //   mode = key[1:0]:
-    //     00 -> contador HEX
-    //     01 -> nibbles desde key[7:0]
-    //     10 -> patrón fijo DEAD_BEEF
-    //     11 -> número invertido (~counter)
+    //     00 -> HEX counter
+    //     01 -> nibbles from key[7:0]
+    //     10 -> fixed pattern DEAD_BEEF
+    //     11 -> inverted number (~counter)
 
     logic [1:0] mode;
     assign mode = key[1:0];
 
     // -------------------------------------------------------------------------
-    // Divisor de frecuencia para animaciones lentas (tick)
+    // Frequency divider for slow animations (tick)
     // -------------------------------------------------------------------------
 
-    localparam int W_DIV = 22;  // Ajusta para cambiar la velocidad del tick
+    localparam int W_DIV = 22;  // Adjust to change tick speed
 
     logic [W_DIV-1:0] div_cnt;
     logic             tick;
@@ -80,7 +80,7 @@ module hackathon_top
         end
 
     // -------------------------------------------------------------------------
-    // Contador base de 32 bits (para mostrar en HEX)
+    // Base 32-bit counter (for HEX display)
     // -------------------------------------------------------------------------
 
     logic [31:0] hex_counter;
@@ -92,14 +92,14 @@ module hackathon_top
             hex_counter <= hex_counter + 32'd1;
 
     // -------------------------------------------------------------------------
-    // Registro de número y puntos decimales para seven_segment_display
+    // Number register and dot register for seven_segment_display
     // -------------------------------------------------------------------------
 
     localparam int W_DIGITS = 8;
     localparam int W_NUM    = W_DIGITS * 4;  // 32 bits
 
-    logic [W_NUM-1:0]    number_reg; // 8 dígitos HEX
-    logic [W_DIGITS-1:0] dots_reg;   // puntos decimales (uno por dígito)
+    logic [W_NUM-1:0]    number_reg; // 8 HEX digits
+    logic [W_DIGITS-1:0] dots_reg;   // decimal points (one per digit)
 
     always_ff @(posedge clock or posedge reset)
         if (reset)
@@ -109,25 +109,25 @@ module hackathon_top
         end
         else
         begin
-            // dots: usamos directamente key[7:0]
-            //       1 = punto encendido en ese dígito.
+            // dots: use key[7:0] directly
+            //       1 = decimal point ON for that digit.
             dots_reg <= key;
 
-            // Actualizar number_reg según el modo cada vez que hay tick.
+            // Update number_reg according to mode when tick occurs.
             if (tick)
             begin
                 unique case (mode)
                     // ---------------------------------------------------------
-                    // Modo 0: contador hexadecimal libre (32 bits)
+                    // Mode 0: free-running HEX counter (32 bits)
                     // ---------------------------------------------------------
                     2'b00:
                     begin
-                        // Mostramos hex_counter tal cual (32 bits → 8 dígitos).
+                        // Display hex_counter directly (32 bits → 8 digits).
                         number_reg <= hex_counter;
                     end
 
                     // ---------------------------------------------------------
-                    // Modo 1: playground manual con key[7:0]
+                    // Mode 1: manual playground using key[7:0]
                     // ---------------------------------------------------------
                     //   - D0 = key[3:0]
                     //   - D1 = key[7:4]
@@ -138,18 +138,17 @@ module hackathon_top
                     end
 
                     // ---------------------------------------------------------
-                    // Modo 2: patrón fijo "DEAD_BEEF"
+                    // Mode 2: fixed pattern "DEAD_BEEF"
                     // ---------------------------------------------------------
-                    //   number_reg = 0xDEAD_BEEF (HEX clásico de debug).
+                    //   number_reg = 0xDEAD_BEEF
                     2'b10:
                     begin
                         number_reg <= 32'hDEAD_BEEF;
                     end
 
                     // ---------------------------------------------------------
-                    // Modo 3: número invertido (~hex_counter)
+                    // Mode 3: inverted number (~hex_counter)
                     // ---------------------------------------------------------
-                    //   - Para ver fácilmente que cambiamos de representación.
                     2'b11:
                     begin
                         number_reg <= ~hex_counter;
@@ -164,12 +163,12 @@ module hackathon_top
         end
 
     // -------------------------------------------------------------------------
-    // Mapeo a LEDs físicos (TM1638)
+    // LED mapping (TM1638)
     // -------------------------------------------------------------------------
     //
     // Idea:
-    //   - led[1:0] = mode (para ver rápidamente el modo activo).
-    //   - led[7:2] = bits bajos del contador (patrón "decorativo").
+    //   - led[1:0] = mode (to quickly see active mode).
+    //   - led[7:2] = low bits of the counter (decorative pattern).
     //
 
     always_comb
@@ -180,7 +179,7 @@ module hackathon_top
     end
 
     // -------------------------------------------------------------------------
-    // Instancia del driver seven_segment_display
+    // seven_segment_display driver instance
     // -------------------------------------------------------------------------
 
     seven_segment_display

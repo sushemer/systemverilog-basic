@@ -1,73 +1,71 @@
 # Modules and ports
 
-Este documento explica qué es un **módulo** en SystemVerilog y cómo se definen sus **puertos** (entradas, salidas y, cuando aplica, `inout`).
+This document explains what a **module** is in SystemVerilog and how its **ports** (inputs, outputs, and when applicable, `inout`) are defined.
 
-El objetivo es entender la “unidad básica” de un diseño en este repositorio.
-
----
-
-## 1. ¿Qué es un módulo?
-
-Un **módulo** representa un bloque de hardware:
-
-- Tiene un nombre (`module nombre ... endmodule`).
-- Define **puertos** para comunicarse con otros módulos o con el mundo externo.
-- Contiene señales internas y lógica que describe su comportamiento.
-
-En un diseño más grande:
-
-- Varios módulos se conectan entre sí en una estructura jerárquica.
-- Un módulo puede **instanciar** otros módulos como sub-bloques.
+The goal is to understand the “basic unit” of a design in this repository.
 
 ---
 
-## 2. Definición básica de un módulo
+## 1. What is a module?
 
-Estructura general:
+A **module** represents a hardware block:
 
-```sv
-module nombre_modulo (
-    // Puertos
+- It has a name (`module name ... endmodule`).
+- It defines **ports** to communicate with other modules or with the external world.
+- It contains internal signals and logic that describe its behavior.
+
+In a larger design:
+
+- Multiple modules connect to each other in a hierarchical structure.
+- A module can **instantiate** other modules as sub-blocks.
+
+---
+
+## 2. Basic module definition
+
+General structure:
+
+module module_name (
+    // Ports
     input  logic a,
     input  logic b,
     output logic y
 );
 
-    // Señales internas
+    // Internal signals
     // logic internal_signal;
 
-    // Lógica (assign, always_comb, always_ff, etc.)
+    // Logic (assign, always_comb, always_ff, etc.)
 
 endmodule
-```
 
-Elementos clave:
+Key elements:
 
-- `module nombre_modulo`  
-  Define el inicio del módulo.
-- Lista de puertos entre paréntesis `( ... )`.
-- Cuerpo del módulo: declaraciones internas y lógica.
-- `endmodule` marca el final.
+- `module module_name` marks the start of the module.
+- The list of ports goes inside parentheses.
+- The module body contains declarations and logic.
+- `endmodule` marks the end.
 
 ---
 
-## 3. Direcciones de puertos
+## 3. Port directions
 
-Los puertos definen **cómo fluye la información** entre módulos:
+Ports define **how information flows** between modules:
 
 - `input`  
-  - Señales que **entran** al módulo.
-  - El módulo **lee** estas señales.
+  - Signals that **enter** the module.  
+  - The module **reads** them.
+
 - `output`  
-  - Señales que **salen** del módulo.
-  - El módulo **las conduce** hacia afuera.
+  - Signals that **leave** the module.  
+  - The module **drives** them.
+
 - `inout`  
-  - Señales bidireccionales (casos especiales: buses tri-estado, ciertos periféricos).
-  - En este repositorio se usan poco; aparecen sobre todo como `gpio` en el top.
+  - Bidirectional signals (tri-state buses or certain peripherals).  
+  - Rare in this repository; mainly used for `gpio` in the top-level modules.
 
-Ejemplo de módulo combinacional simple (AND):
+Example combinational module (AND):
 
-```sv
 module and_gate (
     input  logic a,
     input  logic b,
@@ -75,31 +73,24 @@ module and_gate (
 );
     assign y = a & b;
 endmodule
-```
-
-- `a` y `b` son **entradas**.
-- `y` es **salida**.
 
 ---
 
-## 4. Ancho de puertos (vectores)
+## 4. Port width (vectors)
 
-Los puertos pueden ser:
+Ports may be:
 
-- **Escalares**: un solo bit, por ejemplo `logic a;`.
-- **Vectores**: varios bits, por ejemplo `logic [7:0] data;`.
+- **Scalars**: a single bit (e.g., `logic a;`)
+- **Vectors**: multiple bits (e.g., `logic [7:0] data;`)
 
-Sintaxis típica:
+Typical syntax:
 
-```sv
 input  logic       clk;        // 1 bit
 input  logic [7:0] key;        // 8 bits
 output logic [7:0] led;        // 8 bits
-```
 
-Ejemplo de sumador de 8 bits:
+8-bit adder example:
 
-```sv
 module adder_8bit (
     input  logic [7:0] a,
     input  logic [7:0] b,
@@ -107,17 +98,13 @@ module adder_8bit (
 );
     assign sum = a + b;
 endmodule
-```
-
-- `a`, `b`, `sum` son vectores de 8 bits (`[7:0]`).
 
 ---
 
-## 5. Señales internas vs. puertos
+## 5. Internal signals vs ports
 
-Dentro de un módulo se pueden declarar **señales internas**:
+Inside a module we can declare **internal signals**:
 
-```sv
 module example (
     input  logic       clk,
     input  logic       rst_n,
@@ -125,99 +112,88 @@ module example (
     output logic [7:0] out_data
 );
 
-    logic [7:0] reg_data;   // señal interna (registro)
-    logic [7:0] next_data;  // señal interna (combinacional)
+    logic [7:0] reg_data;   // internal register
+    logic [7:0] next_data;  // internal combinational signal
 
-    // Lógica combinacional para next_data
+    // Combinational logic
     always_comb begin
-        next_data = in_data + 8'd1;
+        next_data = in_data + 1;
     end
 
-    // Registro sincronizado al reloj
+    // Sequential logic
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)
-            reg_data <= 8'd0;
+            reg_data <= 0;
         else
             reg_data <= next_data;
     end
 
-    // Salida
     assign out_data = reg_data;
 
 endmodule
-```
 
-Diferencias:
+Differences:
 
-- **Puertos** (`in_data`, `out_data`) conectan el módulo con el exterior.
-- **Señales internas** (`reg_data`, `next_data`) solo viven dentro del módulo.
+- **Ports** connect the module to the outside world.
+- **Internal signals** live only inside the module.
 
 ---
 
-## 6. Instanciación de módulos
+## 6. Module instantiation
 
-Para usar un módulo dentro de otro, se **instancia**:
+To use a module inside another:
 
-```sv
 module top_example (
-    input  logic       a,
-    input  logic       b,
-    output logic       y
+    input  logic a,
+    input  logic b,
+    output logic y
 );
 
-    // Señal interna para conectar la salida del AND a algo más (si hiciera falta)
     logic y_internal;
 
-    // Instancia del módulo and_gate
     and_gate u_and (
-        .a (a),          // conecta puerto a  del módulo con señal a  de top_example
-        .b (b),          // conecta puerto b  con señal b
-        .y (y_internal)  // conecta puerto y  con señal y_internal
+        .a (a),
+        .b (b),
+        .y (y_internal)
     );
 
-    // En este ejemplo, la salida final es igual a y_internal
     assign y = y_internal;
 
 endmodule
-```
 
-Puntos importantes:
+Key points:
 
-- `and_gate u_and ( ... );`  
-  - `and_gate` es el **nombre del módulo** a instanciar.  
-  - `u_and` es el **nombre de la instancia** (puede ser cualquier identificador válido).
-- Conexiones por **nombre de puerto**: `.a (a)`  
-  - A la izquierda: `a` → nombre del puerto en `and_gate`.
-  - A la derecha: `a` → señal en `top_example`.
-
-> Es buena práctica usar conexión **por nombre** (`.puerto(señal)`) en lugar de posición, para evitar errores cuando cambie el orden de los puertos.
+- `and_gate` → name of the module.
+- `u_and` → name of the instance.
+- `.a(a)` → named connections (recommended).
 
 ---
 
-## 7. Módulos top-level en este repositorio
+## 7. Top-level modules in this repository
 
-En este proyecto aparecen dos tipos de top frecuentemente:
+Two types appear frequently:
 
-1. **Top de la tarjeta (board-specific)**  
-   - Vive en una carpeta tipo `boards/.../board_specific_top.sv`.
-   - Conecta:
-     - Pines físicos: reloj, GPIO, LCD, TM1638, etc.
-     - Con la lógica del proyecto (`hackathon_top`).
-   - Es el **top real** que ve la herramienta de síntesis (Gowin).
+### 1. Board-specific top (actual synthesis top)
 
-2. **Top lógico de actividades/labs (`hackathon_top`)**  
-   - En cada carpeta de `4_activities/` y `5_labs/` existe un `hackathon_top.sv`.
-   - Define puertos “lógicos” estándar:
-     - `clock`, `slow_clock`, `reset`
-     - `key[7:0]`, `led[7:0]`
-     - `abcdefgh`, `digit`
-     - `x`, `y`, `red`, `green`, `blue`
-     - `gpio[3:0]`
-   - Es donde el estudiante implementa la lógica de cada ejercicio.
+- Located in paths like `boards/.../board_specific_top.sv`
+- Connects physical pins:
+  - Clock, GPIO, LCD, TM1638, etc.
+- Instantiates the logical top (`hackathon_top`)
 
-Ejemplo simplificado de `hackathon_top`:
+### 2. Logical top for activities/labs (`hackathon_top`)
 
-```sv
+Found in each folder of `4_activities/` and `5_labs/`.
+
+Defines standard logical ports:
+
+- `clock`, `slow_clock`, `reset`
+- `key[7:0]`, `led[7:0]`
+- `abcdefgh`, `digit`
+- `x`, `y`, `red`, `green`, `blue`
+- `gpio[3:0]`
+
+Example:
+
 module hackathon_top (
     input  logic       clock,
     input  logic       slow_clock,
@@ -234,61 +210,45 @@ module hackathon_top (
     inout  logic [3:0] gpio
 );
 
-    // Aquí se escribe la lógica de la actividad / lab.
-    // Ejemplo: desactivar temporalmente lo que no se usa
     assign abcdefgh = '0;
     assign digit    = '0;
     assign red      = '0;
     assign green    = '0;
     assign blue     = '0;
 
-    // Lógica para LEDs como ejemplo mínimo
     always_comb begin
-        led = key;  // reflejar botones en LEDs
+        led = key;
     end
 
 endmodule
-```
 
-Ese `hackathon_top` será instanciado dentro del `board_specific_top` correspondiente a la Tang Nano 9K con TM1638 y LCD.
-
----
-
-## 8. Buenas prácticas con módulos y puertos
-
-Para mantener el código claro y reusable:
-
-1. **Definir puertos claramente**  
-   - Use `input`, `output`, `inout` con tipo explícito (`logic`).
-   - Indique el ancho (`[N-1:0]`) cuando aplique.
-
-2. **Separar combinacional y secuencial**  
-   - `always_comb` para lógica combinacional.
-   - `always_ff` para lógica secuencial (registros).
-
-3. **Evitar lógica compleja en los top-level**  
-   - Mantener `hackathon_top` como integrador de módulos y lógica principal.
-   - Colocar bloques reutilizables (contadores, decodificadores, drivers) en archivos separados cuando sea conveniente.
-
-4. **Usar instanciación por nombre**  
-   - `.puerto(señal)` facilita leer y revisar conexiones.
-   - Reduce errores cuando se cambian o agregan puertos.
-
-5. **Comentar puertos y módulos**  
-   - Añadir comentarios breves para explicar la función de cada puerto y módulo.
-   - Especialmente útil en módulos que controlan periféricos (TM1638, LCD, sensores).
+This `hackathon_top` is instantiated inside the corresponding `board_specific_top`.
 
 ---
 
-## 9. Relación con otros archivos de teoría
+## 8. Best practices for modules and ports
 
-Este documento se relaciona con:
+1. **Define ports clearly**  
+   Use `input/output/inout logic` and specify widths.
 
-- `1_2_1_HDL_and_FPGA_Basics.md`  
-  → contexto general de HDL y FPGA.
-- `1_2_2_Verilog_SystemVerilog_Overview.md`  
-  → sintaxis básica y diferencias entre Verilog y SystemVerilog.
-- `1_2_4_Combinational_vs_Sequential.md`  
-  → diferencia entre lógica combinacional y secuencial dentro de un módulo.
-- `1_2_5_Registers_and_Clock.md`  
-  → rol del reloj y los registros.
+2. **Separate combinational and sequential logic**  
+   - Use `always_comb` for combinational.
+   - Use `always_ff` for registers.
+
+3. **Avoid complex logic in top-level modules**  
+   Extract reusable blocks into separate modules.
+
+4. **Use named connections** in instantiations  
+   Safer and more readable.
+
+5. **Comment ports and modules**  
+   Useful for peripherals like TM1638, LCD, and sensors.
+
+---
+
+## 9. Related theory documents
+
+- `1_2_1_HDL_and_FPGA_Basics.md`
+- `1_2_2_Verilog_SystemVerilog_Overview.md`
+- `1_2_4_Combinational_vs_Sequential.md`
+- `1_2_5_Registers_and_Clock.md`

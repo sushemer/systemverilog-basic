@@ -1,34 +1,33 @@
-# 2.2 Sensors · Sensores y entradas
+# 2.2 Sensors · Sensors and inputs
 
-La carpeta `2_2_Sensors` agrupa los **dispositivos de entrada** que se usan en los ejemplos, actividades y laboratorios del repositorio.  
+The `2_2_Sensors` folder groups the **input devices** used in the examples, activities, and labs in the repository.
 
-Incluye:
+It includes:
 
-- El sensor ultrasónico **HC-SR04**.
-- El **rotary encoder** (perilla digital).
-- Los **botones/switches** (tanto los de la placa como el concepto que se reutiliza en teclas, p. ej. TM1638).
+- The **HC-SR04** ultrasonic sensor.
+- The **rotary encoder** (digital knob).
+- **Buttons/switches** (both those on the board and the conceptual ones reused in keys, e.g., TM1638).
 
-El objetivo es documentar, para cada sensor:
+The goal is to document, for each sensor:
 
-- Qué mide o qué función cumple.
-- Cómo se conecta a la Tang Nano 9K.
-- Qué señales lógicas intervienen.
-- En qué Examples / Activities / Labs se usa.
+- What it measures or what function it performs.
+- How it is connected to the Tang Nano 9K.
+- Which logical signals are involved.
+- In which Examples / Activities / Labs it is used.
 
 ---
 
-## Estructura de la carpeta
-
-```
+## Folder structure
+```text
 2_devices/
- └─ 2_2_Sensors/
-     ├─ 2_2_1_HC_SR04/
-     │   ├─ README.md
-     │   └─ assets/
-     ├─ 2_2_2_Rotary_Encoder/
-     │   ├─ README.md
-     │   └─ assets/
-     └─ 2_2_3_Buttons_Switches/
-         ├─ README.md
-         └─ assets/
+└─ 2_2_Sensors/
+├─ 2_2_1_HC_SR04/
+│ ├─ README.md
+│ └─ assets/
+├─ 2_2_2_Rotary_Encoder/
+│ ├─ README.md
+│ └─ assets/
+└─ 2_2_3_Buttons_Switches/
+├─ README.md
+└─ assets/
 ```

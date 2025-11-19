@@ -1,127 +1,129 @@
-# 2.3.3 LCD 16x2 · Display de texto
+# 2.3.3 LCD 16x2 · Text display
 ![alt text](Mult/image.png)
 
-El **LCD 16x2** es un display de texto de **2 filas** por **16 caracteres**.  
-Normalmente está basado en el controlador **HD44780** o compatible.
+The **LCD 16x2** is a text display with **2 lines** of **16 characters**.  
+It is usually based on the **HD44780** controller or compatible.
 
-En este repositorio se utiliza para:
+In this repository it is used to:
 
-- Mostrar mensajes y estados del sistema.
-- Visualizar mediciones (por ejemplo, distancia del HC-SR04).
-- Crear pequeñas interfaces de usuario con menús sencillos.
+- Show messages and system states.
+- Display measurements (e.g., HC-SR04 distance).
+- Create small user interfaces with simple menus.
 
 ---
 
-## Modos de conexión típicos
+## Typical connection modes
 
-### Modo paralelo (4 bits)
+### Parallel mode (4-bit)
 
-El LCD se controla con varias líneas:
+The LCD is controlled with several lines:
 
-- `LCD_RS` → Register Select (comando/datos).
+- `LCD_RS` → Register Select (command/data).
 - `LCD_EN` → Enable (latch).
-- `LCD_D[3:0]` → 4 líneas de datos.
-- `VCC`, `GND` → alimentación.
-- `VO` → contraste (normalmente a través de un potenciómetro).
+- `LCD_D[3:0]` → 4 data lines.
+- `VCC`, `GND` → power.
+- `VO` → contrast (usually via a potentiometer).
 
-En el código se pueden usar señales como:
+In code you may find signals such as:
 
 - `lcd_rs`
 - `lcd_en`
 - `lcd_data[3:0]`
 
-Este modo requiere más pines de la FPGA, pero el control es directo.
+This mode requires more FPGA pins, but control is direct.
 
-### Modo con backpack I²C
+### I²C backpack mode
 
-Algunos módulos traen un pequeño PCB que convierte I²C a las señales del HD44780.
+Some modules include a small PCB that converts I²C to HD44780 signals.
 
-En ese caso:
+In that case:
 
-- Se usan solo `SCL` y `SDA` hacia el backpack.
-- Internamente el backpack maneja `RS`, `EN` y `D[3:0]`.
-
----
-
-## Conceptos clave
-
-### Inicialización
-
-El LCD requiere una **secuencia de inicialización**:
-
-- Modo de datos (4 bits).
-- Número de líneas.
-- Encendido de display y cursor.
-- Limpieza de pantalla.
-
-Esta secuencia debe respetar ciertos tiempos entre comandos.
-
-### Escribir texto
-
-Una vez inicializado, se puede:
-
-- Enviar comandos para posicionar el cursor (por ejemplo, inicio de línea 1 o 2).
-- Enviar caracteres ASCII para que aparezcan en pantalla.
-
-Ejemplos de uso:
-
-- Línea 1 → mensaje fijo (“DISTANCIA:”).
-- Línea 2 → valor numérico y unidades (“  23 cm”).
+- Only `SCL` and `SDA` go to the backpack.
+- The backpack internally handles `RS`, `EN`, and `D[3:0]`.
 
 ---
 
-## Señales y pines lógicos
+## Key concepts
 
-Ejemplo de señales lógicas (modo 4 bits):
+### Initialization
+
+The LCD requires an **initialization sequence**:
+
+- Data mode (4-bit).
+- Number of lines.
+- Display and cursor enable.
+- Clear screen.
+
+This sequence must respect specific timing between commands.
+
+### Writing text
+
+Once initialized, you can:
+
+- Send commands to position the cursor (e.g., start of line 1 or 2).
+- Send ASCII characters to appear on screen.
+
+Example use:
+
+- Line 1 → fixed message (“DISTANCE:”).
+- Line 2 → numeric value and units (“  23 cm”).
+
+---
+
+## Logical signals and pins
+
+Example signals (4-bit mode):
 
 - `lcd_rs`
 - `lcd_en`
 - `lcd_d[3:0]`
 
-La asignación a pines físicos concretos se documenta en:
+The assignment to physical FPGA pins is documented in:
 
 - `2_1_Boards/2_1_1_Tang_Nano_9K/docs/pinout.md`
 - `2_1_Boards/2_1_1_Tang_Nano_9K/constr/tang-nano-9k.cst`
 
 ---
 
-## Relación con la teoría
+## Relationship with theory
 
-Este dispositivo se apoya en:
+This device relies on:
 
 - `1_2_3_Modules_and_Ports.md`  
-  Organización del módulo controlador del LCD.
+  Organization of the LCD controller module.
 
 - `1_2_4_Combinational_vs_Sequential.md`  
-  Lógica secuencial para enviar comandos en orden.
+  Sequential logic to send commands in order.
 
 - `1_2_5_Registers_and_Clock.md`  
-  Almacenamiento de datos a imprimir y control de tiempos.
+  Data storage and timing control.
 
 - `1_2_6_Timing_and_Dividers.md`  
-  Delays entre comandos de inicialización y escritura.
+  Delays between initialization and write commands.
 
 - `1_2_13_LCD_HD44780_Basics.md`  
-  Explica más detalles del protocolo y ejemplos simples.
+  More details about the protocol and simple examples.
 
 ---
 
-## Ejemplos, actividades y laboratorios relacionados
+## Related examples, activities, and labs
 
-Ideas típicas:
+Typical ideas:
 
 - **Examples**
-  - Mostrar “HELLO” en la línea 1.
-  - Mostrar un contador que se incrementa cada cierto tiempo.
+  - Display “HELLO” on line 1.
+  - Display a counter incrementing periodically.
 
 - **Activities**
-  - Mostrar distancia medida por HC-SR04 en la línea 2.
-  - Crear un mensaje que cambie según el estado de una FSM.
+  - Show HC-SR04 distance on line 2.
+  - Change the message based on FSM state.
 
 - **Labs / Implementation**
-  - Mini-proyecto con menú en línea 1 y valor en línea 2 (por ejemplo, modos o parámetros controlados por botones o encoder).
+  - Mini-project with:
+    - Menu on line 1  
+    - Value on line 2  
+    (e.g., modes or parameters controlled by buttons or encoder)
 
-Los nombres exactos de Examples/Activities/Labs se definirán más adelante.
+Exact names of Examples/Activities/Labs will be defined later.
 
 ---
-

@@ -1,40 +1,39 @@
-# 3.8 Shift register (registro de corrimiento)
+# 3.8 Shift register
 
-Este ejemplo implementa un **registro de corrimiento de 8 bits** usando:
+This example implements an **8-bit shift register** using:
 
-- Un contador que genera un pulso de habilitación lento (`enable`) a partir del reloj rápido.
-- Un registro `shift_reg[7:0]` que se desplaza cuando `enable = 1`.
-- Un bit de entrada (`button_on`) que se carga en un extremo del registro.
+- A counter that generates a slow enable pulse (`enable`) from the fast clock.
+- A register `shift_reg[7:0]` that shifts whenever `enable = 1`.
+- An input bit (`button_on`) that is injected into one side of the register.
 
-Los LEDs muestran el contenido del registro, de modo que puede verse un patrón
-que “se mueve” lentamente.
-
----
-
-## Objetivo
-
-Al finalizar este ejemplo, la persona usuaria podrá:
-
-- Entender el concepto de **registro de corrimiento** (`shift register`).
-- Implementar un **divisor de frecuencia** simple con un contador.
-- Observar cómo el patrón de bits se desplaza en el tiempo.
-- Usar entradas (botones) para inyectar bits al registro.
+The LEDs show the content of the register, allowing you to visualize a pattern that slowly “moves.”
 
 ---
 
-## Señales principales y mapeo
+## Objective
 
-### Entradas
+By the end of this example, the user will be able to:
+
+- Understand the concept of a **shift register**.
+- Implement a simple **frequency divider** using a counter.
+- Observe how a bit pattern shifts over time.
+- Use input buttons to inject bits into the register.
+
+---
+
+## Main signals and mapping
+
+### Inputs
 
 - `clock`  
-  Reloj principal de la FPGA (≈ 27 MHz en esta configuración de board).
+  Main FPGA clock (≈ 27 MHz on this board).
 
 - `reset`  
-  Reset asíncrono activo en alto para el contador y el registro.
+  Active-high asynchronous reset for both the counter and the register.
 
 - `key[7:0]`  
-  Teclas/botones de entrada.  
-  Se combinan con un OR para formar una sola señal:
+  Input buttons.  
+  They are OR-reduced to form a single signal:
 
   ```sv
   wire button_on = |key;

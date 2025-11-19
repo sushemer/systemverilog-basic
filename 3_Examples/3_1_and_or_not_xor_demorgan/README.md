@@ -1,51 +1,51 @@
-# 3.1 AND / OR / NOT / XOR + Leyes de De Morgan
+# 3.1 AND / OR / NOT / XOR + De Morgan's Laws
 
-Este ejemplo muestra el uso básico de compuertas lógicas (`AND`, `OR`, `NOT`, `XOR`)  
-y permite **verificar una de las leyes de De Morgan** usando los botones y LEDs de la Tang Nano 9K.
+This example demonstrates the basic use of logic gates (`AND`, `OR`, `NOT`, `XOR`)  
+and allows you to **verify one of De Morgan’s laws** using the buttons and LEDs of the Tang Nano 9K.
 
-La idea es:
+The idea is:
 
-- Usar dos entradas binarias `A` y `B` (botones o teclas).
-- Mostrar en diferentes LEDs el resultado de:
+- Use two binary inputs `A` and `B` (buttons or keys).
+- Display on different LEDs the result of:
   - `A AND B`
   - `A OR B`
   - `A XOR B`
   - `~(A & B)`
   - `(~A) | (~B)`
-- Comprobar que `~(A & B)` y `(~A) | (~B)` dan el mismo resultado para todas las combinaciones de `A` y `B`.
+- Confirm that `~(A & B)` and `(~A) | (~B)` produce the same result for all combinations of `A` and `B`.
 
 ---
 
-## Objetivo
+## Objective
 
-Al finalizar el ejemplo, la persona usuaria podrá:
+At the end of the example, the user will be able to:
 
-- Relacionar entradas físicas (botones) con señales lógicas `A` y `B`.
-- Implementar compuertas lógicas básicas en SystemVerilog.
-- Verificar experimentalmente una ley de De Morgan comparando dos expresiones lógicas equivalentes.
+- Relate physical inputs (buttons) to logical signals `A` and `B`.
+- Implement basic logic gates in SystemVerilog.
+- Experimentally verify a De Morgan law by comparing two equivalent logical expressions.
 
 ---
 
-## Archivos del ejemplo
+## Files in this example
 
-En esta carpeta se utilizan, al menos:
+This folder uses at least:
 
 - `fpga_top.sv`  
-  Módulo tope sintetizable para la Tang Nano 9K.  
-  Implementa las compuertas lógicas y las expresiones de De Morgan.
+  Synthesizable top module for the Tang Nano 9K.  
+  Implements the logic gates and the De Morgan expressions.
 
 ---
 
-## Señales y pines
+## Signals and pins
 
-Se asume que el archivo de constraints `tang-nano-9k.cst` mapea:
+It is assumed that the constraints file `tang-nano-9k.cst` maps:
 
-- Botones a entradas lógicas:
+- Buttons to logical inputs:
 
   - `KEY[0]` → `B`
   - `KEY[1]` → `A`
 
-- LEDs a salidas lógicas:
+- LEDs to logical outputs:
 
   - `LED[0]` → `A AND B`
   - `LED[1]` → `A OR B`
@@ -53,65 +53,62 @@ Se asume que el archivo de constraints `tang-nano-9k.cst` mapea:
   - `LED[3]` → `~(A & B)`
   - `LED[4]` → `(~A) | (~B)`
 
-En el código SystemVerilog se utilizan los vectores:
+In the SystemVerilog code, the following vectors are used:
 
-- `key[1:0]` como entradas (venidas de `KEY[1:0]`).
-- `led[4:0]` como salidas (mapeadas a `LED[4:0]`).
+- `key[1:0]` as inputs (coming from `KEY[1:0]`).
+- `led[4:0]` as outputs (mapped to `LED[4:0]`).
 
 A = `key[1]`  
 B = `key[0]`
 
 ---
 
-## Flujo sugerido de uso
+## Suggested usage flow
 
-1. **Revisar teoría asociada**
+1. **Review related theory**
 
-   Antes de este ejemplo, se recomienda leer en `1_2_Theory`:
+   Before this example, it is recommended to read in `1_2_Theory`:
 
    - `1_2_3_Modules_and_Ports.md`
    - `1_2_4_Combinational_vs_Sequential.md`
 
-2. **Abrir el proyecto en Gowin**
+2. **Open the project in Gowin**
 
-   - Crear o abrir un proyecto en Gowin IDE para la Tang Nano 9K.
-   - Añadir el archivo `fpga_top.sv` del ejemplo.
-   - Verificar que el módulo tope sea `fpga_top` (o el nombre que se haya configurado).
+   - Create or open a Gowin IDE project for the Tang Nano 9K.
+   - Add the example file `fpga_top.sv`.
+   - Ensure that the top module is `fpga_top` (or the configured name).
 
-3. **Verificar constraints**
+3. **Verify constraints**
 
-   - Asegurarse de que el proyecto usa el archivo de constraints:
+   - Ensure the project uses the constraints file:
 
      `2_1_Boards/2_1_1_Tang_Nano_9K/constr/tang-nano-9k.cst`
 
-   - Confirmar que `KEY[0]`, `KEY[1]` y `LED[4:0]` están asignados correctamente.
+   - Confirm that `KEY[0]`, `KEY[1]` and `LED[4:0]` are correctly assigned.
 
-4. **Sintetizar y programar**
+4. **Synthesize and program**
 
-   - Ejecutar la síntesis y place & route en Gowin.
-   - Programar la FPGA con el bitstream generado.
+   - Run synthesis and place & route in Gowin.
+   - Program the FPGA with the generated bitstream.
 
-5. **Probar en la placa**
+5. **Test on the board**
 
-   - Probar todas las combinaciones de `A` y `B` (botones):
+   - Test all combinations of `A` and `B` (buttons):
 
-    | A (`KEY[1]`) | B (`KEY[0]`) | LED0 = A & B | LED1 = A \| B | LED2 = A ^ B | LED3 = ~(A & B) | LED4 = (~A) \| (~B) |
-    |--------------|-------------|--------------|---------------|--------------|------------------|----------------------|
-    |      0       |      0      |      0       |       0       |      0       |        1         |          1           |
-    |      0       |      1      |      0       |       1       |      1       |        1         |          1           |
-    |      1       |      0      |      0       |       1       |      1       |        1         |          1           |
-    |      1       |      1      |      1       |       1       |      0       |        0         |          0           |
+     | A (`KEY[1]`) | B (`KEY[0]`) | LED0 = A & B | LED1 = A \| B | LED2 = A ^ B | LED3 = ~(A & B) | LED4 = (~A) \| (~B) |
+     |--------------|--------------|--------------|----------------|---------------|------------------|----------------------|
+     |      0       |      0       |      0       |       0        |       0       |        1         |          1           |
+     |      0       |      1       |      0       |       1        |       1       |        1         |          1           |
+     |      1       |      0       |      0       |       1        |       1       |        1         |          1           |
+     |      1       |      1       |      1       |       1        |       0       |        0         |          0           |
 
-
-   - Observar que `LED3` y `LED4` siempre tienen el mismo valor:  
-     esto verifica la ley de De Morgan:
+   - Observe that `LED3` and `LED4` always have the same value:  
+     this verifies De Morgan’s law:
 
      `~(A & B) = (~A) | (~B)`
 
+## Relationship to other repository elements
 
-## Relación con otros elementos del repositorio
-
-- **Teoría:**  
+- **Theory:**  
   `1_docs/1_2_Theory/1_2_3_Modules_and_Ports.md`  
   `1_docs/1_2_Theory/1_2_4_Combinational_vs_Sequential.md`
-

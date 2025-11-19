@@ -1,22 +1,22 @@
-# 1.1.2 Audience – ¿Para quién es este repositorio?
+# 1.1.2 Audience – Who is this repository for?
 
-Este material está pensado principalmente para:
+This material is mainly intended for:
 
-- Estudiantes de ingeniería (o carreras afines) que cursan una materia de **Electrónica Digital, Microcontroladores, Sistemas Digitales o Lógica Programable** y quieren practicar con una FPGA real.
-- Personas con experiencia básica en programación (C, Python, etc.) que desean dar el salto a **diseño digital con HDL (SystemVerilog)**.
-- Instructores que necesitan un conjunto de **ejemplos y prácticas reutilizables** para cursos cortos, talleres o clubes de diseño digital.
+- Engineering students (or related fields) taking courses in **Digital Electronics, Microcontrollers, Digital Systems, or Programmable Logic**, who want to practice using a real FPGA.
+- People with basic programming experience (C, Python, etc.) who want to transition into **digital design with HDL (SystemVerilog)**.
+- Instructors who need a set of **reusable examples and practices** for short courses, workshops, or digital design clubs.
 
-Se asume que la persona que lo usa:
+It is assumed that the user:
 
-- Tiene nociones básicas de lógica digital (AND, OR, NOT, flip-flops, contadores).
-- Puede instalar software en Windows o Linux (VS Code, Git, Gowin IDE, etc.).
-- Está dispuesta a leer y modificar código, correr scripts y revisar mensajes de error de síntesis.
+- Has basic knowledge of digital logic (AND, OR, NOT, flip-flops, counters).
+- Can install software on Windows or Linux (VS Code, Git, Gowin IDE, etc.).
+- Is willing to read and modify code, run scripts, and check synthesis error messages.
 
-Este repositorio **no** está pensado como un libro de teoría pura, sino como un complemento práctico:
+This repository is **not** intended as a pure theory book, but rather as a practical complement:
 
-- No reemplaza un curso completo de Electrónica Digital, pero ayuda a conectar la teoría con la práctica.
-- No pretende cubrir todo SystemVerilog, sino un subconjunto útil para diseñar y depurar módulos de complejidad baja a media: contadores, FSM, decodificadores, interfaces con sensores, drivers de display, etc.
+- It does not replace a complete Digital Electronics course, but helps connect theory with practice.
+- It does not aim to cover all of SystemVerilog, only a useful subset for designing and debugging small-to-medium modules: counters, FSMs, decoders, sensor interfaces, display drivers, etc.
 
-En resumen, está dirigido a quien quiera **aprender haciendo**, aprovechando una plataforma concreta (Tang Nano 9K + periféricos) y un flujo de trabajo (VS Code + Git + scripts + Gowin).
+In summary, it is intended for anyone who wants to **learn by doing**, using a concrete platform (Tang Nano 9K + peripherals) and a workflow (VS Code + Git + scripts + Gowin).
 
 ---

@@ -1,39 +1,36 @@
 # 1.2.4 Combinational vs sequential logic
 
-Este documento explica la diferencia entre **lógica combinacional** y **lógica secuencial**,  uno de los conceptos más importantes al diseñar con SystemVerilog y FPGA.
+This document explains the difference between **combinational logic** and **sequential logic**, one of the most important concepts when designing with SystemVerilog and FPGAs.
 
 ---
 
-## 1. Lógica combinacional
+## 1. Combinational logic
 
-La **lógica combinacional** es aquella en la que:
+**Combinational logic** is logic in which:
 
-- La salida depende **solo** de las entradas **en ese instante**.
-- No hay memoria explícita dentro del bloque.
-- Si las entradas cambian, las salidas cambian “de inmediato” (a nivel lógico, ignorando retardos físicos).
+- The output depends **only** on the inputs **at that moment**.
+- There is no explicit memory inside the block.
+- If the inputs change, the outputs change “immediately” (logically speaking, ignoring physical delays).
 
-Ejemplos típicos:
+Typical examples:
 
-- Compuertas lógicas (AND, OR, NOT, XOR).
-- Comparadores.
-- Multiplexores (`mux`).
-- Decodificadores.
+- Logic gates (AND, OR, NOT, XOR)
+- Comparators
+- Multiplexers (mux)
+- Decoders
 
-En SystemVerilog, la lógica combinacional suele describirse con:
+In SystemVerilog, combinational logic is usually described using:
 
-### 1.1 Asignaciones continuas
+### 1.1 Continuous assignments
 
-```sv
 assign y = a & b;
-assign z = (sel) ? d1 : d0;
-```
+assign z = sel ? d1 : d0;
 
-- `assign` crea una relación continua entre las señales.
-- Cada vez que cambia alguna de las señales del lado derecho, la herramienta actualiza el resultado.
+- `assign` creates a continuous relationship between signals.
+- Whenever any signal on the right-hand side changes, the tool updates the output.
 
-### 1.2 Bloques `always_comb`
+### 1.2 `always_comb` blocks
 
-```sv
 module mux2to1 (
     input  logic       sel,
     input  logic [7:0] a,
@@ -47,37 +44,35 @@ module mux2to1 (
             y = b;
     end
 endmodule
-```
 
-Características de `always_comb`:
+Characteristics of `always_comb`:
 
-- Se usa para describir lógica **sin memoria**.
-- La herramienta infiere automáticamente la sensibilidad (no es necesario escribir `@(*)`).
-- Si falta asignar alguna rama, la herramienta puede advertir que se está infiriendo un latch (lo cual suele indicar un problema).
+- Used to describe **memoryless** logic.
+- The tool automatically infers the sensitivity list (no need for `@(*)`).
+- If a branch is missing, the tool may infer a latch, which usually indicates an error.
 
 ---
 
-## 2. Lógica secuencial
+## 2. Sequential logic
 
-La **lógica secuencial** incluye **memoria**:
+**Sequential logic** includes **memory**:
 
-- La salida depende de:
-  - Las **entradas actuales**, y
-  - El **estado almacenado** en registros (flip-flops).
-- Se actualiza normalmente en el **flanco de un reloj** (`clk`).
+- The output depends on:
+  - The **current inputs**, and  
+  - The **stored state** in registers (flip-flops)
+- It normally updates on a **clock edge** (`clk`).
 
-Ejemplos típicos:
+Typical examples:
 
-- Contadores.
-- Registros de desplazamiento (shift registers).
-- Máquinas de estados (FSM).
-- Acumuladores y filtros digitales.
+- Counters  
+- Shift registers  
+- Finite State Machines (FSM)  
+- Accumulators and digital filters  
 
-En SystemVerilog, la lógica secuencial suele describirse con:
+In SystemVerilog, sequential logic is usually described with:
 
-### 2.1 Bloques `always_ff` con reloj
+### 2.1 `always_ff` clocked blocks
 
-```sv
 module counter_8bit (
     input  logic       clk,
     input  logic       rst_n,
@@ -85,35 +80,33 @@ module counter_8bit (
 );
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)
-            count <= 8'd0;           // Reset asíncrono: contador a cero
+            count <= 0;           // Asynchronous reset
         else
-            count <= count + 8'd1;   // En cada flanco de reloj, incrementa
+            count <= count + 1;   // Increment on each clock
     end
 endmodule
-```
 
-Características de `always_ff`:
+Characteristics of `always_ff`:
 
-- Se usa para describir **registros** (flip-flops).
-- La sensibilidad suele incluir:
-  - El flanco de reloj (`posedge clk` o `negedge clk`).
-  - Opcionalmente una señal de reset (`rst`, `rst_n`).
-- Se utiliza asignación **no bloqueante** (`<=`) para evitar problemas de orden de evaluación.
+- Used to describe **registers** (flip-flops).
+- Sensitivity list includes:
+  - A clock edge (`posedge clk` or `negedge clk`)
+  - Optionally a reset signal (`rst` or `rst_n`)
+- **Non-blocking assignments** (`<=`) must be used to avoid ordering issues.
 
 ---
 
-## 3. Combinar lógica combinacional y secuencial
+## 3. Combining combinational and sequential logic
 
-En la mayoría de los diseños reales, ambas se **combinan**:
+Most real-world designs **combine both**:
 
-- La lógica secuencial almacena el **estado**.
-- La lógica combinacional calcula:
-  - El **siguiente estado**.
-  - Las **salidas** en función del estado y las entradas.
+- Sequential logic stores the **state**
+- Combinational logic computes:
+  - The **next state**
+  - The **outputs** based on inputs and current state
 
-Ejemplo simplificado de contador con lógica combinacional de “siguiente valor”:
+Example:
 
-```sv
 module counter_with_next (
     input  logic       clk,
     input  logic       rst_n,
@@ -122,108 +115,73 @@ module counter_with_next (
 );
     logic [7:0] next_count;
 
-    // Lógica combinacional: cálculo del siguiente valor
     always_comb begin
         if (enable)
-            next_count = count + 8'd1;
+            next_count = count + 1;
         else
             next_count = count;
     end
 
-    // Lógica secuencial: registro que almacena count
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)
-            count <= 8'd0;
+            count <= 0;
         else
             count <= next_count;
     end
-
 endmodule
-```
 
-Separar “cálculo” (combinacional) y “memoria” (secuencial) ayuda a:
+Separating “calculation” (combinational) from “storage” (sequential) helps to:
 
-- Leer y depurar el código.
-- Evitar errores de inflexión de tipo (latches no deseados).
-- Visualizar mejor el flujo de datos.
-
----
-
-## 4. ¿Cómo distinguirlas al leer código?
-
-Al revisar un módulo, se puede usar el siguiente criterio:
-
-- **¿Hay un reloj (`clk`) en la sensibilidad?**
-  - Sí → se trata de lógica **secuencial** (registros).
-  - No, y se usa `always_comb` o `assign` → lógica **combinacional**.
-
-Ejemplos:
-
-- `assign`, `always_comb` → combinacional.
-- `always_ff @(posedge clk ...)` → secuencial.
-- `always_ff @(posedge clk or posedge rst)` → secuencial con reset.
-
-En este repositorio se recomienda:
-
-- Usar **solo** `always_comb` para lógica combinacional.
-- Usar **solo** `always_ff` para lógica secuencial.
-- Evitar `always @(*)` o `always @(posedge clk)` “genéricos” sin la palabra clave adecuada, para mantener el estilo consistente.
+- Improve readability
+- Avoid unintended latches
+- Visualize the data flow better
 
 ---
 
-## 5. Errores típicos al mezclar combinacional y secuencial
+## 4. How to distinguish them when reading code
 
-Algunos problemas comunes:
+A simple rule:
 
-1. **Usar lógica combinacional donde se necesitaba memoria**  
-   - Ejemplo: implementar un contador con `always_comb` en lugar de `always_ff`.  
-   - Resultado: la herramienta puede inferir lógica inestable o generar errores de síntesis.
+- **Does the sensitivity include a clock?**
+  - Yes → **Sequential logic**
+  - No, and it uses `always_comb` or `assign` → **Combinational logic**
 
-2. **Olvidar asignar todas las ramas en `always_comb`**  
-   - Si en un `case` o `if` no se cubren todas las posibilidades, la herramienta puede inferir un **latch**, que es un tipo de memoria no deseado en muchos diseños sincronizados.
+Examples:
 
-   Ejemplo problemático:
+- `assign`, `always_comb` → combinational  
+- `always_ff @(posedge clk ...)` → sequential  
+- `always_ff @(posedge clk or posedge rst)` → sequential with reset  
 
-   ```sv
-   always_comb begin
-       if (enable)
-           y = a;
-       // Falta el else → y mantiene el valor anterior → se infiere un latch
-   end
-   ```
+Repository conventions:
 
-   Versión corregida:
-
-   ```sv
-   always_comb begin
-       if (enable)
-           y = a;
-       else
-           y = '0; // o algún valor por defecto
-   end
-   ```
-
-3. **Usar asignaciones bloqueantes (`=`) en lógica secuencial**  
-   - En `always_ff` se recomienda usar siempre `<=` para describir registros.
-   - El uso incorrecto de `=` puede producir comportamientos inesperados al simular.
+- Use **only** `always_comb` for combinational logic  
+- Use **only** `always_ff` for sequential logic  
+- Avoid generic `always @(*)` or `always @(posedge clk)`  
 
 ---
 
-## 6. Relación con otros documentos de teoría
+## 5. Common mistakes
 
-Este tema se conecta directamente con:
+1. **Using combinational logic when memory is required**  
+   Example: implementing a counter in `always_comb` instead of `always_ff`.
+
+2. **Not assigning all branches in `always_comb`**  
+   → Tool infers a **latch** (unwanted memory).
+
+3. **Using blocking assignment (`=`) in sequential logic**  
+   → Can cause simulation mismatches and timing errors.
+
+---
+
+## 6. Relation to other theory documents
 
 - `1_2_3_Modules_and_Ports.md`  
-  → define cómo se estructuran los módulos y puertos donde vive esta lógica.
 - `1_2_5_Registers_and_Clock.md`  
-  → profundiza en el rol del reloj y los registros.
 - `1_2_6_Timing_and_Dividers.md`  
-  → muestra cómo el tiempo y los divisores de frecuencia afectan a la lógica secuencial.
-- `1_2_7_Finite_State_Machines.md`  
-  → ejemplo claro de combinación entre lógica combinacional (siguiente estado) y secuencial (estado actual).
+- `1_2_7_Finite_State_Machines.md`
 
-Comprender bien la diferencia entre lógica combinacional y secuencial es esencial para:
+Understanding this distinction is essential for:
 
-- Interpretar correctamente los ejemplos de `3_examples/`.
-- Completar las actividades de `4_activities/` sin inferir latches no deseados.
-- Diseñar labs e implementaciones (`5_labs/`, `6_implementation/`) que sean estables y fáciles de depurar.
+- Reading `3_examples/` correctly  
+- Solving `4_activities/` without inferring latches  
+- Designing stable and debuggable labs and implementations  

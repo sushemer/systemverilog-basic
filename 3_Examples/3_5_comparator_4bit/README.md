@@ -1,80 +1,75 @@
-# 3.5 Comparador de 4 bits (A vs B)
+# 3.5 4-bit Comparator (A vs B)
 
-Este ejemplo muestra un **comparador de 4 bits** implementado de dos maneras en SystemVerilog y permite verificar en hardware si un valor `A` es menor, igual o mayor que otro valor `B`, usando los botones/teclas de la Tang Nano 9K.
+This example demonstrates a **4-bit comparator** implemented in two ways in SystemVerilog and allows you to verify in hardware whether a value `A` is less than, equal to, or greater than another value `B`, using the buttons/keys of the Tang Nano 9K.
 
-La idea es:
+The idea is:
 
-- Formar dos números de 4 bits:
-  - `A[3:0]` a partir de `key[3:0]`
-  - `B[3:0]` a partir de `key[7:4]`
-- Evaluar las tres condiciones:
+- Build two 4-bit numbers:
+  - `A[3:0]` from `key[3:0]`
+  - `B[3:0]` from `key[7:4]`
+- Evaluate the three conditions:
   - `A == B`
   - `A > B`
   - `A < B`
-- Implementar el comparador de dos formas distintas:
-  - Usando los operadores relacionales (`==`, `>`, `<`).
-  - Usando una comparación **bit a bit en cascada** (como en un comparador digital clásico).
-- Mostrar las seis señales (dos versiones de eq/gt/lt) en los LEDs.
+- Implement the comparator in two different ways:
+  - Using relational operators (`==`, `>`, `<`).
+  - Using a **bit-by-bit cascading comparison** (like in a classic digital comparator).
+- Display the six signals (two versions of eq/gt/lt) on the LEDs.
 
 ---
 
-## Objetivo
+## Objective
 
-Al finalizar el ejemplo, la persona usuaria podrá:
+At the end of this example, the user will be able to:
 
-- Representar dos números de 4 bits usando las entradas `key[7:0]`.
-- Entender el funcionamiento de un **comparador de magnitud** (A vs B).
-- Ver la diferencia entre una descripción de alto nivel (`==`, `>`, `<`) y
-  una implementación **estructural por bits**.
-- Verificar que ambas implementaciones entregan el mismo resultado.
+- Represent two 4-bit numbers using the inputs `key[7:0]`.
+- Understand how a **magnitude comparator** works (A vs B).
+- See the difference between a high-level description (`==`, `>`, `<`) and a **structural bit-by-bit implementation**.
+- Verify that both implementations produce the same results.
 
 ---
 
-## Señales y mapeo a LEDs
+## Signals and LED mapping
 
-En el código se usa:
-
-- Entradas:
+- Inputs:
 
   - `A[3:0] = key[3:0]`
   - `B[3:0] = key[7:4]`
 
-- Salidas:
+- Outputs:
 
-  - Implementación 0 (alto nivel):
+  - Implementation 0 (high level):
 
-    - `eq0` → `LED[0]`  (1 cuando `A == B`)
-    - `gt0` → `LED[1]`  (1 cuando `A >  B`)
-    - `lt0` → `LED[2]`  (1 cuando `A <  B`)
+    - `eq0` → `LED[0]`  (1 when `A == B`)
+    - `gt0` → `LED[1]`  (1 when `A >  B`)
+    - `lt0` → `LED[2]`  (1 when `A <  B`)
 
-  - Implementación 1 (bit a bit):
+  - Implementation 1 (bitwise):
 
     - `eq1` → `LED[3]`
     - `gt1` → `LED[4]`
     - `lt1` → `LED[5]`
 
-  - `LED[6]` y `LED[7]` → no usados (0)
+  - `LED[6]` and `LED[7]` → not used (0)
 
-En cualquier combinación de `A` y `B`, se espera que:
+In any combination of `A` and `B`, exactly one of the following patterns must be true for each implementation:
 
-- Solo una de estas tres combinaciones sea cierta en cada implementación:
-  - `eqX = 1`, `gtX = 0`, `ltX = 0`  → A igual a B.
-  - `eqX = 0`, `gtX = 1`, `ltX = 0`  → A mayor que B.
-  - `eqX = 0`, `gtX = 0`, `ltX = 1`  → A menor que B.
+- `eqX = 1`, `gtX = 0`, `ltX = 0`  → A equal to B.
+- `eqX = 0`, `gtX = 1`, `ltX = 0`  → A greater than B.
+- `eqX = 0`, `gtX = 0`, `ltX = 1`  → A less than B.
 
-Y que la implementación 0 y la implementación 1 den **el mismo patrón**:
+And implementation 0 and implementation 1 must produce **the same pattern**:
 
 - `(eq0, gt0, lt0) = (eq1, gt1, lt1)`.
 
 ---
 
-## Flujo sugerido de uso
+## Suggested usage flow
 
-1. **Revisar teoría asociada**
+1. **Review associated theory**
 
-   Antes de este ejemplo, se recomienda repasar:
+   Before this example, it is recommended to review:
 
-   - Representación binaria de números.
-   - Comparadores de magnitud (A == B, A > B, A < B).
-   - Implementaciones estructurales por bits (como en comparadores 1-bit en cascada).
-
+   - Binary number representation.
+   - Magnitude comparators (A == B, A > B, A < B).
+   - Structural bitwise implementations (as in cascading 1-bit comparators).

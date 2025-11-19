@@ -1,104 +1,104 @@
 # Lab 5.3 – Shift register patterns (running lights / KITT)
 
-## Objetivo
+## Objective
 
-Diseñar y probar patrones de movimiento de luces usando un **registro de desplazamiento de 8 bits** conectado a los LEDs de la Tang Nano 9K.
+Design and test moving light patterns using an **8-bit shift register** connected to the Tang Nano 9K LEDs.
 
-Al final del lab deberías poder:
+By the end of this lab, you should be able to:
 
-- Generar un **tick lento** a partir del reloj de la FPGA.
-- Usar un **registro de desplazamiento** para crear animaciones en `led[7:0]`.
-- Cambiar entre varios patrones usando `key[1:0]`.
+- Generate a **slow tick** from the FPGA clock.
+- Use a **shift register** to create animations on `led[7:0]`.
+- Switch between several patterns using `key[1:0]`.
 
 ---
 
-## Prerrequisitos
+## Prerequisites
 
-- Haber realizado los labs:
-  - **5.1 blink_hello_world** (divisor de frecuencia).
-  - **5.2 buttons_and_debounce** (uso básico de entradas).
+- You should have completed:
+  - **5.1 blink_hello_world** (frequency divider)
+  - **5.2 buttons_and_debounce** (basic input usage)
 
-- Conocer:
+- You should understand:
   - `always_ff @(posedge clk ...)`
-  - Registros tipo `logic [7:0]`.
-  - Operadores de desplazamiento `<<` y `>>`.
+  - Registers such as `logic [7:0]`
+  - Shift operators `<<` and `>>`
 
 ---
 
-## Mapeo básico
+## Basic mapping
 
-- **Entradas**
-  - `clock`: reloj principal (~27 MHz).
-  - `reset`: reset global.
-  - `key[1:0]`: seleccionan el modo del patrón.
+- **Inputs**
+  - `clock`: main clock (~27 MHz)
+  - `reset`: global reset
+  - `key[1:0]`: selects the pattern mode
 
-- **Salidas**
-  - `led[7:0]`: muestran el patrón (shift register).
+- **Outputs**
+  - `led[7:0]`: display the pattern (shift register)
 
 ---
 
-## Modos de operación
+## Operation modes
 
 - `mode = key[1:0]`
 
-| Modo | key[1:0] | Comportamiento                           |
+| Mode | key[1:0] | Behavior                                |
 |------|----------|-------------------------------------------|
-| 0    | `00`     | Rotación circular a la izquierda          |
-| 1    | `01`     | Rotación circular a la derecha            |
-| 2    | `10`     | Patrón tipo **KITT / ping-pong**          |
-| 3    | `11`     | LEDs apagados (reservado para experimentos)|
+| 0    | `00`     | Circular left rotation                    |
+| 1    | `01`     | Circular right rotation                   |
+| 2    | `10`     | **KITT / ping-pong** pattern              |
+| 3    | `11`     | LEDs off (reserved for experiments)       |
 
 ---
 
-## Procedimiento sugerido
+## Suggested procedure
 
-1. **Revisa el divisor de frecuencia**
-   - Ubica el bloque con `W_DIV`, `div_cnt` y `step_en`.
-   - Cambia `W_DIV` si quieres animación más rápida o más lenta.
-   - Verifica en simulación (opcional) que `step_en` se active periódicamente.
+1. **Review the frequency divider**
+   - Locate the block with `W_DIV`, `div_cnt` and `step_en`
+   - Change `W_DIV` if you want a faster or slower animation
+   - Optionally simulate to check that `step_en` pulses periodically
 
-2. **Entiende el registro de desplazamiento**
-   - Observa cómo `pattern_reg` se actualiza solo cuando `step_en = 1`.
-   - Prueba primero con un solo modo (por ejemplo el de rotación izquierda).
+2. **Understand the shift register**
+   - Observe how `pattern_reg` updates only when `step_en = 1`
+   - First try implementing only one mode (e.g., left rotation)
 
-3. **Prueba en hardware**
-   - Programa la FPGA.
-   - Cambia `key[1:0]` y observa:
-     - En modo `00`: los LEDs parecen una luz que gira.
-     - En modo `01`: gira en sentido contrario.
-     - En modo `10`: la luz rebota de un extremo a otro (KITT).
-     - En modo `11`: todos apagados.
+3. **Test on hardware**
+   - Program the FPGA
+   - Change `key[1:0]` and observe:
+     - Mode `00`: LEDs rotate left
+     - Mode `01`: LEDs rotate right
+     - Mode `10`: the light bounces from one end to the other (KITT)
+     - Mode `11`: all LEDs off
 
-4. **Ajusta la velocidad**
-   - Modifica `W_DIV` (por ejemplo 20, 22, 24) y ve cómo cambia la velocidad.
-   - Elige una velocidad cómoda para el ojo (ni demasiado rápida ni demasiado lenta).
-
----
-
-## Checklist de pruebas
-
-- [ ] Tras un `reset`, solo `led[0]` está encendido.
-- [ ] En modo `00`, la luz recorre todos los LEDs en un círculo.
-- [ ] En modo `01`, recorre en sentido contrario.
-- [ ] En modo `10`, la luz va de `led[0]` a `led[7]` y regresa a `led[0]` sin “saltos”.
-- [ ] En modo `11`, todos los LEDs permanecen apagados.
-- [ ] Cambiar de modo no cuelga el patrón ni genera estados raros.
+4. **Adjust speed**
+   - Modify `W_DIV` (e.g., 20, 22, 24) and observe the effect
+   - Choose a visually comfortable speed (not too fast or too slow)
 
 ---
 
-## Extensiones opcionales
+## Test checklist
 
-Ideas para jugar más con este lab:
+- [ ] After `reset`, only `led[0]` is ON
+- [ ] In mode `00`, the light moves across all LEDs in a loop
+- [ ] In mode `01`, it moves in the opposite direction
+- [ ] In mode `10`, the light goes from `led[0]` to `led[7]` and back without skipping
+- [ ] In mode `11`, all LEDs remain OFF
+- [ ] Switching modes does not freeze or corrupt the pattern
 
-- Usar `key[2]` como **pausa**:
-  - Si `key[2] = 0`, el patrón se detiene.
-  - Si `key[2] = 1`, el patrón continúa.
+---
 
-- Crear un modo adicional donde:
-  - Combines un contador binario con el shift register:  
-    `led = pattern_reg ^ contador`.
+## Optional extensions
 
-- Sincronizar la dirección KITT con el valor de alguna tecla:
-  - Por ejemplo, si `key[3] = 1`, invertir el sentido.
+Some ideas to experiment further:
 
-Este lab es buena base para animaciones más avanzadas (barras de nivel, juegos simples, etc.).
+- Use `key[2]` as a **pause** control:
+  - If `key[2] = 0`, the pattern stops
+  - If `key[2] = 1`, the pattern runs
+
+- Create an additional mode where:
+  - You combine a binary counter with the shift register:  
+    `led = pattern_reg ^ counter`
+
+- Sync the KITT direction with another key:
+  - For example, invert the direction when `key[3] = 1`
+
+This lab is a great base for more advanced LED animations (bar graphs, small games, etc.).

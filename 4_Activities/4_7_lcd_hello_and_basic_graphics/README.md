@@ -1,293 +1,182 @@
-# 4.7 – LCD: “HELLO” y gráficas básicas
+# 4.6 – 7-Segment Display Playground
 
-En esta actividad se usa el **LCD 480×272** de la Tang Nano 9K para dibujar:
+This activity introduces a flexible playground for experimenting with the **7-segment display (TM1638)** using the `seven_segment_display` module already provided in the repository.
 
-- Un **marco** (borde) alrededor de la pantalla.
-- Una **banda central** donde se mostrará la palabra **“HELLO”** usando bloques (rectángulos).
-- Opcionalmente, una **barra de estado** en la parte inferior que cambie con las teclas.
+The goal is to let you try out:
 
-La idea es practicar cómo usar las coordenadas `(x, y)` y las señales de color `red/green/blue` para construir gráficos simples.
+- Hexadecimal counters  
+- Manual digit editing  
+- Scrolling patterns  
+- Moving bars  
+- Decimal point (dot) patterns  
+- Your own visual experiments  
 
----
-
-## Objetivo
-
-Al finalizar la actividad la persona usuaria podrá:
-
-- Entender cómo se generan las coordenadas `(x, y)` para cada píxel.
-- Dibujar **regiones rectangulares** en el LCD usando comparaciones de `x` y `y`.
-- Reservar una banda para texto y formar letras básicas con bloques.
-- Combinar varias condiciones para crear gráficos simples (marcos, barras, letras).
+All using **8 digits**, fully multiplexed.
 
 ---
 
-## Señales clave
+## Objectives
 
-El módulo `hackathon_top.sv` recibe:
+By the end of this activity, you should be able to:
 
-- `x[8:0]`, `y[8:0]`  
-  Coordenadas del píxel actual que el controlador de LCD está pintando.
-  - `x` va de `0` a `SCREEN_W-1` (0–479).
-  - `y` va de `0` a `SCREEN_H-1` (0–271).
-
-- `red[4:0]`, `green[5:0]`, `blue[4:0]`  
-  Intensidad de color del píxel actual en formato 5-6-5 bits.
-
-- `key[7:0]`  
-  Teclas físicas de la placa. En esta actividad se pueden usar, por ejemplo, para:
-  - Encender los LEDs (`led = key`).
-  - Cambiar el color de una barra de estado.
-
-El display de 7 segmentos (`abcdefgh`, `digit`) **no es el foco** de esta actividad y se deja apagado, aunque se puede reutilizar si se desea.
+1. Understand how multi-digit hexadecimal values are packed into the `number` bus.
+2. Control decimal points per digit using `dots`.
+3. Implement **multiple visualization modes** selected through `key[1:0]`.
+4. Use a frequency divider (`tick`) to animate patterns at human-readable speeds.
+5. Create your own effects by modifying the `TODO` sections in the template.
 
 ---
 
-## Estructura del código base
+## Hardware context
 
-La plantilla hace, en líneas generales, lo siguiente:
+This activity uses the board configuration:
 
-1. **Parámetros de pantalla**
+`tang_nano_9k_lcd_480_272_tm1638_hackathon`
 
-   Se declaran constantes con el ancho y alto del LCD:
-    ```sv
-   localparam int SCREEN_W = 480;  
-   localparam int SCREEN_H = 272;
-    ```
-2. **Inicialización de salidas no gráficas**
+However, **the LCD is not used**; the focus is entirely on the 7-segment driver.
 
-   - `led` suele conectarse directamente a `key` como debug simple:
-      ```sv
-     led = key;
-      ```
-   - `abcdefgh` y `digit` se ponen en cero para apagar el TM1638:
-      ```sv
-     abcdefgh = '0;  
-     digit    = '0;
-    ```
-3. **Lógica de video (bloque combinacional)**
+Relevant signals:
 
-   Un único `always_comb` decide el color del píxel según `(x, y)`:
-  ```sv
-   always_comb begin  
-       // Color por defecto (fondo)  
-       red   = 5'd0;  
-       green = 6'd0;  
-       blue  = 5'd0;  
-
-       // A partir de aquí se añaden condiciones:
-       // - marco
-       // - banda central
-       // - letras "HELLO"
-       // - barra de estado, etc.
-   end
-  ```
-Toda la actividad consiste en ir añadiendo condiciones dentro de este bloque para “pintar” zonas concretas de la pantalla.
+- **Outputs**
+  - `abcdefgh[7:0]` → segment lines (a–g + dot)
+  - `digit[7:0]` → one-hot digit enable for multiplexing
+- **Inputs**
+  - `clock` → ~27 MHz
+  - `reset`
+  - `key[7:0]` → used for mode selection and manual nibble input
+- **LEDs**
+  - Used only as indicators (optional)
 
 ---
 
-## Pasos sugeridos
+## Key ideas
 
-### 1. Dibujar fondo y marco
+### 1. The display driver accepts a 32-bit packed number
 
-Primero se recomienda definir un **fondo** (por ejemplo, un azul oscuro suave) y un **marco** blanco delgado alrededor de la pantalla.
+`number_reg` is structured as:
 
-1. Fondo base (dentro de `always_comb`):
+mode = key[1:0]
 
-   - Color por defecto, por ejemplo:
-    ```sv
-     red   = 5'd0;  
-     green = 6'd0;  
-     blue  = 5'd4;
-    ```
-   Esto hará que, si no se cumple ninguna condición especial, toda la pantalla sea azul oscuro.
 
-2. Marco blanco:
+### **Mode 0 — Free Hexadecimal Counter**
+A 32-bit counter increments on each `tick` and fills all 8 digits.
 
-   - Se puede usar una condición que detecte “cerca de los bordes”:
-    ```sv
-     if (x < 3 || x > SCREEN_W - 4 || y < 3 || y > SCREEN_H - 4) begin  
-         red   = 5'b11111;  
-         green = 6'b111111;  
-         blue  = 5'b11111;  
-     end
-    ```
-   - Con esto se dibuja un rectángulo fino alrededor de toda la pantalla.
+Useful for testing:
 
-**Sugerencia:** Probar solo con fondo + marco antes de pasar al texto, para confirmar que la lógica básica funciona.
+- multiplexing
+- speed
+- stable segment wiring
 
----
+### **Mode 1 — Manual test mode**
+You can place a manual nibble (`key[7:4]`) into one digit (default: digit 0).
 
-### 2. Reservar la banda central para el texto
+Ideas:
 
-Para escribir “HELLO” se recomienda reservar una **banda horizontal** en el centro de la pantalla:
+- Copy the nibble into multiple digits
+- Mirror values
+- Build simple patterns
 
-- Por ejemplo, tomar un rango de `y` alrededor de la mitad de la pantalla:
+### **Mode 2 — Scrolling or moving pattern**
+Using the `scroll_pos` index, you can:
 
-  - Centro aproximado: `SCREEN_H / 2` → 136.  
-  - Banda: de `y ≈ 90` a `y ≈ 180` (los valores exactos son a elección).
+- Move a bright digit across the display  
+- Create a bar animation  
+- Flash a specific pattern at different positions  
+- Build a scrolling text effect using duplicated patterns
 
-Dentro de esa banda se pueden usar colores diferentes (por ejemplo, fondo más claro) para que destaque el texto:
-```sv
-if (y >= Y_BAND_TOP && y <= Y_BAND_BOTTOM) begin  
-    // Fondo de la banda (por ejemplo, azul claro)  
-    red   = 5'd2;  
-    green = 6'd16;  
-    blue  = 5'd10;  
-end
-```
-Se recomienda:
+This is the mode with the most creative potential.
 
-- Definir constantes para los límites de la banda, por ejemplo:
-  ```sv
-  localparam int Y_BAND_TOP    = 90;  
-  localparam int Y_BAND_BOTTOM = 180;
-  ```
-- Usarlas en el bloque combinacional para mantener el código más legible.
+### **Mode 3 — Free mode**
+Reserved for your own experiments:
+
+- Fixed words (`DEAD_BEEF`, `C0FF_EE00`, etc.)
+- Alternating patterns
+- Visual alarms
+- Dot-only animations
+- Combined effects
 
 ---
 
-### 3. Formar la palabra “HELLO” con bloques
+## Suggested experiments
 
-La palabra “HELLO” se puede dibujar como una fuente muy simple de tipo “pixel art”, usando **rectángulos** para las barras verticales y horizontales de cada letra.
+Here are small, fast ideas you can try:
 
-Una forma práctica de organizar el espacio es:
+### **Hex bouncing**
+Reverse the direction of a moving bar when reaching D0 or D7.
 
-- Dividir la banda en “celdas” para cada letra.
-- Dejar un pequeño espacio entre letras.
+### **Scrolling text**
+Duplicate the pattern, then shift:
 
-Por ejemplo:
+extended = {pattern, pattern}
 
-- Definir un ancho de letra:
-  ```sv
-  localparam int LETTER_W = 40;  
-  localparam int LETTER_SPACING = 10;
-  ```
-- Calcular posiciones en X para cada letra:
+window = extended >> (scroll_pos * 4)
 
-  - Letra H: desde X_H_START hasta X_H_END.  
-  - Letra E: a continuación, dejando `LETTER_SPACING`.  
-  - Letra L1, L2, O: igual.
 
-Para cada letra se pueden usar condiciones separadas, por ejemplo:
 
-- **Letra H**:
+### **Dot wave**
+Animate dots independently:
 
-  - Dos barras verticales: izquierda y derecha.
-  - Una barra horizontal en el centro de la banda.
-  ```sv
-  if (x en la zona de la H  
-      y en la banda central  
-      y coincide con barras verticales u horizontal)  
-      → color de texto (por ejemplo, amarillo).
-  ```
-- **Letra E**:
+dots_reg = scroll_pos << 1;
 
-  - Barra vertical izquierda.
-  - Tres barras horizontales: arriba, centro y abajo.
 
-- **Letra L**:
-
-  - Barra vertical izquierda + barra horizontal inferior.
-
-- **Letra O**:
-
-  - Rectángulo “hueco”: barras izquierda, derecha, arriba y abajo.
-
-Para el color del texto se puede usar, por ejemplo:
-
-- Amarillo:  
-  ```sv
-  red   = 5'b11111;  
-  green = 6'b111111;  
-  blue  = 5'd0;
-  ```
-**Orden de prioridad dentro del always_comb:**
-
-1. Fondo.
-2. Banda central.
-3. Marco (si se quiere que tape la banda en los bordes).
-4. Letras “HELLO”.
-
-El último bloque que cumple la condición sobrescribe el color anterior.
+### **Two-layer animations**
+Use dots as one layer and digits as another.
 
 ---
 
-### 4. Barra de estado opcional
+## Testing guide
 
-En la parte inferior de la pantalla se puede agregar una **barra de estado** que dependa de `key`, por ejemplo:
+### Verify wiring and multiplexing
 
-- Rango de `y`:
+- Enter Mode 0
+- Ensure all digits light up properly
+- Enable some dots to check individual wiring
 
-  - Barra: de `SCREEN_H - 30` a `SCREEN_H - 1`.
+### Test manual entry
 
-- Color según alguna tecla:
+- Enter Mode 1
+- Change `key[7:4]` from 0 to F
+- Confirm each symbol appears correctly
 
-  - Si `key[0] == 1` → barra verde.
-  - Si `key[1] == 1` → barra roja.
-  - Si ninguna tecla está activa → barra gris.
+### Test scrolling
 
-Ejemplo de lógica:
-```sv
-if (y >= SCREEN_H - 30) begin  
-    // Barra de estado  
-    if (key[0]) begin  
-        red   = 5'd0;  
-        green = 6'b111111;  
-        blue  = 5'd0;  
-    end  
-    else if (key[1]) begin  
-        red   = 5'b11111;  
-        green = 6'd0;  
-        blue  = 5'd0;  
-    end  
-    else begin  
-        red   = 5'd8;  
-        green = 6'd8;  
-        blue  = 5'd8;  
-    end  
-end
-```
-Esta barra permite comprobar visualmente que las teclas están llegando correctamente al diseño.
+- Enter Mode 2
+- Confirm that movement is smooth and periodic
+- Adjust divider (`W_DIV`) to fine-tune speed
+
+### Test free mode
+
+- Enter Mode 3
+- Display a fixed known pattern to verify digit order
 
 ---
 
-## Pruebas sugeridas
+## Files involved
 
-1. **Fondo y marco**
+Inside:
 
-   - Compilar y cargar el diseño solo con:
-     - Fondo de un color uniforme.
-     - Marco blanco alrededor.
-   - Verificar que:
-     - No hay parpadeos extraños.
-     - El marco rodea correctamente los cuatro bordes.
+4_activities/4_6_seven_segment_playground/
 
-2. **Banda central sin texto**
 
-   - Activar la banda central con un color diferente.
-   - Verificar que la banda aparece en la zona esperada de la pantalla.
+You will find:
 
-3. **Texto “HELLO”**
-
-   - Añadir la lógica de las letras.
-   - Ajustar las coordenadas hasta que cada letra tenga forma razonable.
-   - Verificar que la palabra se mantiene centrada y legible.
-
-4. **Barra de estado con teclas**
-
-   - Presionar `key[0]`, `key[1]` y combinaciones.
-   - Confirmar que el color de la barra inferior cambia según el patrón definido.
+- `hackathon_top.sv` → activity template  
+- Uses:
+  - `labs/common/seven_segment_display.sv`
 
 ---
 
-## Extensiones opcionales
+## Summary
 
-Si se desea experimentar más:
+This activity is designed for:
 
-- Cambiar la palabra “HELLO” por otra (por ejemplo, “FPGA”, “HACK”, “DOJO”).
-- Añadir una segunda banda con otra palabra o símbolo.
-- Crear un pequeño “icono” (por ejemplo, un cuadrado que represente un personaje) y moverlo en X o Y con `key`.
-- Implementar un modo “invertido” donde, al presionar cierta tecla, se inviertan los colores de fondo y texto.
-- Usar el display de 7 segmentos para mostrar un contador de “frames” o un modo actual de dibujo.
+- practicing multi-digit 7-segment control,
+- learning how to pack and unpack hexadecimal digits,
+- using tick-based animation,
+- experimenting with display effects.
 
-Con esta actividad se refuerza la idea de que **cada píxel** del LCD se decide a partir de comparaciones sobre `(x, y)` y de la lógica combinacional en `hackathon_top.sv`, lo que sienta las bases para gráficos más complejos y animaciones en la FPGA.
+It is intentionally open-ended:  
+**you can add as many custom modes and visual effects as you want.**
+
+---
+

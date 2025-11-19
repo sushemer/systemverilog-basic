@@ -1,70 +1,67 @@
-# Documentación específica · Tang Nano 9K
+# Specific documentation · Tang Nano 9K
 
-La carpeta `docs` reúne la documentación específica de la **Tang Nano 9K** utilizada en este repositorio.
+The `docs` folder gathers the specific documentation for the **Tang Nano 9K** used in this repository.
 
-Su propósito es complementar al archivo de constraints y ofrecer información clara sobre:
+Its purpose is to complement the constraints file and provide clear information about:
 
-- Qué pines se usan y para qué.
-- Qué consideraciones de alimentación y niveles de voltaje hay que respetar.
-- Cómo es el flujo básico para programar la placa con Gowin.
+- Which pins are used and for what.
+- What power and voltage-level considerations must be respected.
+- What the basic flow is to program the board using Gowin.
 
 ---
 
-## Contenido
+## Contents
 
-Archivos principales:
+Main files:
 
 - `pinout.md`  
-  - Resumen de pines utilizados en el curso/taller.
-  - Tablas del tipo:
-    - Señal lógica → pin físico → uso (LED, botón, GPIO, etc.).
-  - Enfoque en los pines que se usan en Examples, Activities y Labs.
+  - Summary of the pins used in the course/workshop.  
+  - Tables of the form:
+    - Logical signal → physical pin → use (LED, button, GPIO, etc.).  
+  - Focus on the pins used in Examples, Activities, and Labs.
 
 - `power_notes.md`  
-  - Notas sobre alimentación y niveles de voltaje:
-    - IO de usuario a 3.3 V.
-    - Consideraciones al usar módulos de 5 V.
-    - Importancia del GND común.
-  - Advertencias para evitar daños a la placa o a los periféricos.
-
-
----
-
-## Cómo usar esta carpeta
-
-- Antes de conectar sensores o actuadores a la Tang Nano 9K:
-  - Revisar `pinout.md` para saber qué pines usar.
-  - Revisar `power_notes.md` para confirmar compatibilidad de voltajes.
-
-
-- Al crear nuevos Examples, Activities o Labs:
-  - Verificar que los pines elegidos coinciden con lo documentado aquí y con el archivo `constr/tang-nano-9k.cst`.
-  - Si se introduce un nuevo conjunto de pines de forma “oficial”, actualizar `pinout.md`.
+  - Notes on power and voltage levels:
+    - User IO at 3.3 V  
+    - Considerations when using 5 V modules  
+    - Importance of common GND  
+  - Warnings to avoid damaging the board or peripherals.
 
 ---
 
-## Relación con otras carpetas
+## How to use this folder
+
+- Before connecting sensors or actuators to the Tang Nano 9K:
+  - Review `pinout.md` to know which pins to use.
+  - Review `power_notes.md` to confirm voltage compatibility.
+
+- When creating new Examples, Activities, or Labs:
+  - Verify that the chosen pins match what is documented here and in the `constr/tang-nano-9k.cst` file.
+  - If a new set of pins is introduced “officially,” update `pinout.md`.
+
+---
+
+## Relation with other folders
 
 - `../constr/`  
-  - Depende del archivo `tang-nano-9k.cst`.  
-  - `pinout.md` y `power_notes.md` se basan en las asignaciones definidas ahí.
+  - Depends on the `tang-nano-9k.cst` file.  
+  - `pinout.md` and `power_notes.md` are based on the assignments defined there.
 
 - `3_examples/`, `4_activities/`, `5_labs/`, `6_implementation/`  
-  - Deben ser consistentes con los pines y notas documentadas en esta carpeta, para que el uso de la Tang Nano 9K sea coherente en todo el repositorio.
+  - Must be consistent with the pins and notes documented in this folder for coherent use of the Tang Nano 9K across the entire repository.
 
 ---
 
-## Actualización y mantenimiento
+## Updating and maintenance
 
-Si en algún momento:
+If at any point:
 
-- Se decide cambiar el estándar de pines (por ejemplo, usar otros GPIO para un periférico).
-- Se agrega un nuevo periférico conectado a la Tang Nano 9K.
+- The pin standard is changed (e.g., new GPIO for a peripheral), or  
+- A new peripheral connected to the Tang Nano 9K is added,
 
-entonces:
+then:
 
-1. Actualizar el archivo de constraints si es necesario.
-2. Documentar el cambio en `pinout.md` y/o `power_notes.md`.
+1. Update the constraints file if needed.  
+2. Document the change in `pinout.md` and/or `power_notes.md`.
 
-La idea es que cualquier estudiante o persona nueva pueda entender cómo usar la placa leyendo solo estos archivos.
-
+The idea is that any student or newcomer can understand how to use the board by reading only these files.

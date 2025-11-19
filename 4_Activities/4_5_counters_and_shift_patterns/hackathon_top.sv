@@ -1,15 +1,15 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// Actividad 4.5 – Contadores y patrones de desplazamiento en LEDs
+// Activity 4.5 – Counters and shift patterns on LEDs
 //
-// Idea general:
-//   - Usar el reloj principal para generar un "paso" lento (step_en).
-//   - Implementar al menos dos patrones en un vector de 8 LEDs:
-//       * Patrón 1: contador binario (free-running counter).
-//       * Patrón 2: bit que se desplaza (shift register / “running light”).
-//   - Seleccionar el patrón usando algunas teclas (key).
+// General idea:
+//   - Use the main clock to generate a slow “step” (step_en).
+//   - Implement at least two patterns in an 8-LED vector:
+//       * Pattern 1: binary counter (free-running counter).
+//       * Pattern 2: moving bit (shift register / “running light”).
+//   - Select the pattern using some keys (key).
 //
-// NOTA: Este archivo es una PLANTILLA de actividad.
-//       Debes completar y/o modificar las secciones marcadas como TODO.
+// NOTE: This file is an ACTIVITY TEMPLATE.
+//       You must complete and/or modify the sections marked as TODO.
 //
 
 module hackathon_top
@@ -21,11 +21,11 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (no usado en esta actividad)
+    // 7-segment display (not used in this activity)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no usada en esta actividad)
+    // LCD interface (not used in this activity)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
@@ -35,21 +35,21 @@ module hackathon_top
     inout  logic [3:0] gpio
 );
 
-    // En esta actividad no usamos display, LCD ni GPIO.
+    // In this activity we do not use display, LCD, or GPIO.
     assign abcdefgh = '0;
     assign digit    = '0;
     assign red      = '0;
     assign green    = '0;
     assign blue     = '0;
-    // gpio se maneja desde el wrapper de la placa
+    // gpio is handled by the board wrapper
 
     // -------------------------------------------------------------------------
-    // Divisor de frecuencia para generar pasos "lentos"
+    // Frequency divider to generate “slow” steps
     // -------------------------------------------------------------------------
     //
-    // La FPGA corre a ~27 MHz. Un contador de 24 bits tarda ~2^24 ciclos en
-    // desbordarse. Esto produce un pulso "step_en" que podemos usar como tick
-    // para avanzar los patrones de LEDs.
+    // The FPGA runs at ~27 MHz. A 24-bit counter takes ~2^24 cycles
+    // to overflow. This produces a “step_en” pulse that we can use as a tick
+    // to advance the LED patterns.
 
     localparam int W_DIV = 24;
 
@@ -64,78 +64,78 @@ module hackathon_top
 
     assign step_en = (div_cnt == '0);
 
-    // TODO (opcional):
-    // - Puedes cambiar W_DIV o la condición de step_en para acelerar o
-    //   desacelerar la animación.
+    // TODO (optional):
+    // - You can change W_DIV or the step_en condition to speed up or
+    //   slow down the animation.
 
     // -------------------------------------------------------------------------
-    // Patrones de LEDs
+    // LED patterns
     // -------------------------------------------------------------------------
 
-    // Modo de visualización seleccionado por teclas:
-    //   key[1:0] → modo de patrón.
+    // Display mode selected by keys:
+    //   key[1:0] → pattern mode.
     logic [1:0] mode;
     assign mode = key[1:0];
 
-    // Patrón 1: contador binario de 8 bits.
+    // Pattern 1: 8-bit binary counter.
     logic [7:0] counter_pattern;
 
-    // Patrón 2: registro de desplazamiento (running light / KITT).
+    // Pattern 2: shift register (running light / KITT).
     logic [7:0] shift_pattern;
 
-    // (Opcional) Patrón 3: puedes crear un patrón "ping-pong" o mezcla.
+    // (Optional) Pattern 3: you may create a “ping-pong” or mixed pattern.
     // logic [7:0] pingpong_pattern;
 
-    // Inicialización y actualización de patrones
+    // Initialization and update of patterns
     always_ff @(posedge clock or posedge reset)
         if (reset)
         begin
             counter_pattern <= 8'd0;
-            shift_pattern   <= 8'b0000_0001;  // Empieza con un solo bit encendido
+            shift_pattern   <= 8'b0000_0001;  // Starts with a single lit bit
             // pingpong_pattern <= 8'b0000_0001;
         end
         else if (step_en)
         begin
-            // Patrón 1: contador binario libre
+            // Pattern 1: free-running binary counter
             counter_pattern <= counter_pattern + 8'd1;
 
-            // Patrón 2: desplazamiento circular simple (ejemplo base)
-            // TODO: puedes cambiar esta lógica para:
-            //   - mover la luz sólo hacia un lado
-            //   - implementar un "ping-pong" (rebote)
-            //   - hacer un patrón más complejo
+            // Pattern 2: simple circular shift (base example)
+            // TODO: you can change this logic to:
+            //   - move the light only in one direction
+            //   - implement a “ping-pong” bounce
+            //   - create a more complex pattern
             shift_pattern <= { shift_pattern[6:0], shift_pattern[7] };
 
-            // TODO (opcional): implementar aquí un tercer patrón,
-            // por ejemplo ping-pong, usando otra variable.
+            // TODO (optional): implement here a third pattern,
+            // for example ping-pong, using another variable.
         end
 
     // -------------------------------------------------------------------------
-    // Selección de patrón hacia los LEDs
+    // Pattern selection to the LEDs
     // -------------------------------------------------------------------------
 
     logic [7:0] leds_next;
 
     always_comb
     begin
-        // Valor por defecto: contador binario
+        // Default value: binary counter
         leds_next = counter_pattern;
 
         unique case (mode)
-            2'b00: leds_next = counter_pattern;           // Modo 0: contador
-            2'b01: leds_next = shift_pattern;             // Modo 1: running light
+            2'b00: leds_next = counter_pattern;           // Mode 0: counter
+            2'b01: leds_next = shift_pattern;             // Mode 1: running light
             2'b10: leds_next = counter_pattern ^ shift_pattern;
-            // Modo 2: ejemplo → mezcla XOR de ambos patrones
-            2'b11: leds_next = ~counter_pattern;          // Modo 3: invertido
+            // Mode 2: example → XOR mix of both patterns
+            2'b11: leds_next = ~counter_pattern;          // Mode 3: inverted
         endcase
 
         // TODO:
-        // - Puedes redefinir cada modo para que use patrones distintos.
-        // - Por ejemplo:
-        //     00: contador
+        // - You may redefine each mode to use different patterns.
+        // - For example:
+        //     00: counter
         //     01: running light
         //     10: ping-pong
-        //     11: LEDs apagados o patrón especial
+        //     11: LEDs off or special pattern
     end
 
     assign led = leds_next;

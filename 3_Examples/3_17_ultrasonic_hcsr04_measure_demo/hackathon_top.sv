@@ -1,22 +1,22 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// 3.17: Ultrasonic distance – visualización en 7 segmentos, LEDs y LCD
+// 3.17: Ultrasonic distance – visualization on seven-segment display, LEDs, and LCD
 
 module hackathon_top
 (
-    // Relojes y reset
+    // Clocks and reset
     input  logic       clock,
-    input  logic       slow_clock,   // no usado en este ejemplo
+    input  logic       slow_clock,   // not used in this example
     input  logic       reset,
 
-    // Teclas de la tarjeta (reservadas para ejercicios futuros)
+    // Board keys (reserved for future exercises)
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (TM1638)
+    // Seven-segment display (TM1638)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz de la LCD
+    // LCD interface
     input  logic [8:0] x,            // 0..479
     input  logic [8:0] y,            // 0..271
 
@@ -28,14 +28,14 @@ module hackathon_top
 );
 
     // --------------------------------------------------------------------
-    // Parámetros de sistema y pantalla
+    // System and screen parameters
     // --------------------------------------------------------------------
     localparam int unsigned CLK_HZ        = 27_000_000;
     localparam int unsigned SCREEN_WIDTH  = 480;
     localparam int unsigned SCREEN_HEIGHT = 272;
 
     // --------------------------------------------------------------------
-    // Sensor ultrasónico: medida de distancia relativa
+    // Ultrasonic sensor: relative distance measurement
     // --------------------------------------------------------------------
     logic [15:0] distance;
 
@@ -51,28 +51,28 @@ module hackathon_top
     );
 
     // --------------------------------------------------------------------
-    // Visualización de la distancia
+    // Distance visualization
     // --------------------------------------------------------------------
-    // 1) LEDs: 8 bits menos significativos (debug rápido)
+    // 1) LEDs: 8 least-significant bits (quick debug)
     assign led = distance[7:0];
 
-    // 2) Display de 7 segmentos: muestra la distancia en decimal/hex
+    // 2) Seven-segment display: shows distance in decimal/hex
     seven_segment_display #(
-        .w_digit (8)   // 8 dígitos en el módulo de la tarjeta hackathon
+        .w_digit (8)   // 8 digits on the hackathon TM1638 module
     ) i_7segment (
         .clk      (clock),
         .rst      (reset),
-        .number   ({16'd0, distance}),  // extender a 32 bits
+        .number   ({16'd0, distance}),  // extend to 32 bits
         .dots     (8'b0000_0000),
         .abcdefgh (abcdefgh),
         .digit    (digit)
     );
 
     // --------------------------------------------------------------------
-    // Escalado de distancia a coordenada X en pantalla
+    // Scaling distance into an X coordinate on screen
     // --------------------------------------------------------------------
-    // Se usa parte alta de "distance" para mapearla al rango 0..(SCREEN_WIDTH-1).
-    // distance[15:7] son 9 bits → rango 0..511 aprox. Se satura a 479.
+    // Uses the upper portion of "distance" to map into 0..(SCREEN_WIDTH-1).
+    // distance[15:7] are 9 bits → approx. 0..511. Saturate to 479.
 
     logic [8:0] distance_x;  // 0..479
 
@@ -84,26 +84,26 @@ module hackathon_top
     end
 
     // --------------------------------------------------------------------
-    // Lógica de video: barra horizontal roja según la distancia
+    // Video logic: horizontal red bar based on distance
     // --------------------------------------------------------------------
-    // Se dibuja:
-    // - Fondo negro.
-    // - Una barra roja desde x=0 hasta x=distance_x alrededor de la mitad de la pantalla.
+    // Draws:
+    // - Black background.
+    // - A red bar from x=0 to x=distance_x around mid-height.
 
     localparam int unsigned BAR_HEIGHT = 20;
     localparam int unsigned BAR_Y_MID  = SCREEN_HEIGHT / 2;
 
     always_comb begin
-        // Fondo negro
+        // Black background
         red   = 5'd0;
         green = 6'd0;
         blue  = 5'd0;
 
-        // Barra roja horizontal centrada verticalmente
+        // Horizontal red bar centered vertically
         if ( (x <= distance_x) &&
              (y >= (BAR_Y_MID - (BAR_HEIGHT/2))) &&
              (y <= (BAR_Y_MID + (BAR_HEIGHT/2))) ) begin
-            red   = 5'd31;  // rojo máximo
+            red   = 5'd31;  // max red
             green = 6'd0;
             blue  = 5'd0;
         end

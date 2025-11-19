@@ -1,45 +1,45 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// 3.10: Hex counter en display de 7 segmentos
+// 3.10: Hex counter on 7-segment display
 //
-// Idea general:
-// - Generar un contador de 32 bits (cnt_2) que se incrementa a una frecuencia variable.
-// - Esa frecuencia se ajusta con dos teclas:
-//     * key[0] → hace el conteo MÁS lento (periodo más grande).
-//     * key[1] → hace el conteo MÁS rápido (periodo más pequeño).
-// - Mostrar el valor de cnt_2 en HEX en los 8 dígitos del display de 7 segmentos,
-//   usando el módulo seven_segment_display del repositorio.
+// General idea:
+// - Generate a 32-bit counter (cnt_2) that increments at a variable frequency.
+// - That frequency is adjusted using two buttons:
+//     * key[0] → makes the counting SLOWER (larger period).
+//     * key[1] → makes the counting FASTER (smaller period).
+// - Display the value of cnt_2 in HEX across the 8 digits of the 7-segment display,
+//   using the seven_segment_display module from the repository.
 //
-// Notas:
-// - Se asume reloj de ~27 MHz en la Tang Nano 9K.
-// - El módulo seven_segment_display ya está incluido en el proyecto por el
-//   board_specific_top (como en el repositorio original).
+// Notes:
+// - We assume a ~27 MHz clock on the Tang Nano 9K.
+// - The seven_segment_display module is already included by the
+//   board_specific_top (as in the original repository).
 
 module hackathon_top
 (
     input  logic       clock,
-    input  logic       slow_clock,   // no se usa en este ejemplo
+    input  logic       slow_clock,   // not used in this example
     input  logic       reset,
 
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (multiplexado)
+    // 7-segment display (multiplexed)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no usada aquí)
+    // LCD interface (not used here)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
     output logic [5:0] green,
     output logic [4:0] blue,
 
-    // GPIO (no usados aquí)
+    // GPIO (not used here)
     inout  logic [3:0] gpio
 );
 
     // ------------------------------------------------------------------------
-    // Apagar periféricos que no usamos (LCD, GPIO)
+    // Turn off peripherals not used (LCD, GPIO)
     // ------------------------------------------------------------------------
     assign red   = 5'h00;
     assign green = 6'h00;
@@ -48,48 +48,48 @@ module hackathon_top
     assign gpio  = 4'hz;
 
     // ------------------------------------------------------------------------
-    // Parámetros locales: reloj, dígitos y ancho del número a mostrar
+    // Local parameters: clock, digits, and width of the number to display
     // ------------------------------------------------------------------------
-    localparam int clk_mhz          = 27;          // Frecuencia aprox. del reloj en MHz
-    localparam int w_digit          = 8;           // 8 dígitos de 7 segmentos
-    localparam int w_display_number = w_digit * 4; // 4 bits por dígito hexadecimal
+    localparam int clk_mhz          = 27;          // Approx. clock frequency in MHz
+    localparam int w_digit          = 8;           // 8 seven-segment digits
+    localparam int w_display_number = w_digit * 4; // 4 bits per HEX digit
 
     // ------------------------------------------------------------------------
-    // Control de periodo (frecuencia) del contador principal
+    // Period (frequency) control of the main counter
     //
-    // period: número de ciclos de reloj que deben pasar para que cnt_2 se incremente.
-    // - min_period → frecuencia máxima.
-    // - max_period → frecuencia mínima.
+    // period: number of clock cycles that must elapse before cnt_2 increments.
+    // - min_period → highest frequency.
+    // - max_period → lowest frequency.
     //
-    // key[0] presionado  → period aumenta (conteo MÁS lento).
-    // key[1] presionado  → period disminuye (conteo MÁS rápido).
+    // key[0] pressed → period increases (slower counting)
+    // key[1] pressed → period decreases (faster counting)
     // ------------------------------------------------------------------------
 
     logic [31:0] period;
 
-    // Valores límite del periodo (en ciclos de reloj)
+    // Limits for the period (clock cycles)
     localparam int unsigned min_period =
-        clk_mhz * 1_000_000 / 50;   // aprox. 50 Hz base
+        clk_mhz * 1_000_000 / 50;   // approx. 50 Hz base
     localparam int unsigned max_period =
-        clk_mhz * 1_000_000 * 3;    // mucho más lento
+        clk_mhz * 1_000_000 * 3;    // much slower
 
     always_ff @(posedge clock or posedge reset) begin
         if (reset) begin
-            // Iniciar en el punto medio entre mínimo y máximo
+            // Start at midpoint between min and max
             period <= 32'((min_period + max_period) / 2);
         end
         else if (key[0] && (period != max_period)) begin
-            // Aumentar periodo → menor frecuencia de conteo
+            // Increase period → lower frequency
             period <= period + 32'd1;
         end
         else if (key[1] && (period != min_period)) begin
-            // Disminuir periodo → mayor frecuencia de conteo
+            // Decrease period → higher frequency
             period <= period - 32'd1;
         end
     end
 
     // ------------------------------------------------------------------------
-    // cnt_1: contador descendente que genera el "tick" para cnt_2
+    // cnt_1: down counter generating the "tick" for cnt_2
     // ------------------------------------------------------------------------
     logic [31:0] cnt_1;
 
@@ -98,18 +98,18 @@ module hackathon_top
             cnt_1 <= 32'd0;
         end
         else if (cnt_1 == 32'd0) begin
-            // Al llegar a 0, recarga con (period - 1)
-            // y genera un "tick" para cnt_2.
+            // When reaching 0, reload with (period - 1)
+            // and generate a "tick" for cnt_2.
             cnt_1 <= period - 32'd1;
         end
         else begin
-            // Cuenta hacia abajo
+            // Count down
             cnt_1 <= cnt_1 - 32'd1;
         end
     end
 
     // ------------------------------------------------------------------------
-    // cnt_2: contador principal de 32 bits
+    // cnt_2: main 32-bit counter
     // ------------------------------------------------------------------------
     logic [31:0] cnt_2;
 
@@ -118,20 +118,20 @@ module hackathon_top
             cnt_2 <= 32'd0;
         end
         else if (cnt_1 == 32'd0) begin
-            // Solo se incrementa cuando cnt_1 llega a 0
+            // Increment only when cnt_1 reaches 0
             cnt_2 <= cnt_2 + 32'd1;
         end
     end
 
-    // Mostrar los bits menos significativos de cnt_2 en los LEDs como debug
+    // Debug: display LSB of cnt_2 on LEDs
     assign led = cnt_2[7:0];
 
     // ------------------------------------------------------------------------
-    // Display de 7 segmentos en HEX
+    // 7-segment display in HEX
     //
-    // - w_display_number = 32 bits (8 dígitos * 4 bits/dígito).
-    // - Pasamos cnt_2 completo al módulo seven_segment_display.
-    // - dots = 0 => sin puntos encendidos.
+    // - w_display_number = 32 bits (8 digits × 4 bits each).
+    // - Pass cnt_2 to the seven_segment_display module.
+    // - dots = 0 → no decimal points enabled.
     // ------------------------------------------------------------------------
 
     seven_segment_display # (w_digit) i_7segment
@@ -143,6 +143,5 @@ module hackathon_top
         .abcdefgh ( abcdefgh                            ),
         .digit    ( digit                               )
     );
-
 
 endmodule

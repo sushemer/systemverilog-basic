@@ -1,62 +1,63 @@
 # Verilog / SystemVerilog overview
 
-Este documento presenta una visión rápida de **Verilog** y **SystemVerilog** y aclara:
+This document provides a quick overview of **Verilog** and **SystemVerilog** and clarifies:
 
-- Qué son.
-- En qué se parecen y se diferencian.
-- Qué **subconjunto práctico** vamos a usar dentro de este repositorio.
+- What they are.
+- How they are similar and different.
+- What **practical subset** we will use in this repository.
 
-El objetivo es dar contexto, **no** cubrir todo el estándar del lenguaje.
-
----
-
-## 1. Verilog en pocas palabras
-
-Verilog nació como un lenguaje para describir y simular hardware digital, pero orientado a:
-
-- **Módulos** con entradas y salidas.
-- **Señales** (`wire`, `reg` en Verilog clásico).
-- **Bloques de comportamiento** (`always`, `initial`).
-- **Asignaciones continuas** (`assign`) para lógica combinacional.
-- **Simulación de tiempo** (delays, eventos, etc.).
-
-Con Verilog se puede:
-
-- Modelar **combinacional** (sumadores, comparadores, muxes…).
-- Modelar **secuencial** (flip-flops, registros, FSMs).
-- Describir desde pequeños bloques hasta sistemas complejos.
+The goal is to give context, **not** to cover the full language standard.
 
 ---
 
-## 2. ¿Qué añade SystemVerilog?
+## 1. Verilog in a nutshell
 
-SystemVerilog extiende Verilog con:
+Verilog was created as a language to describe and simulate digital hardware, focusing on:
 
-- Tipos más claros como `logic` (en lugar de `reg`/`wire` en muchos casos).
-- Bloques especializados:
-  - `always_ff` para lógica secuencial.
-  - `always_comb` para lógica combinacional.
-- Estructuras de datos más ricas:
-  - `struct`, `enum`, `typedef`, `array` mejorados, etc.
-- Cosas avanzadas de verificación:
-  - Clases, randomización, assertions, interfaces, etc.
+- **Modules** with inputs and outputs.
+- **Signals** (`wire`, `reg` in classic Verilog).
+- **Behavioral blocks** (`always`, `initial`).
+- **Continuous assignments** (`assign`) for combinational logic.
+- **Time simulation** (delays, events, etc.).
 
-En este repositorio **no** usaremos las partes avanzadas de verificación (clases, random, etc.).  
-Nos enfocaremos en el **subconjunto “sintetizable”** que sí se convierte en hardware.
+With Verilog you can model:
+
+- **Combinational logic** (adders, comparators, muxes…).
+- **Sequential logic** (flip-flops, registers, FSMs).
+- Designs ranging from small blocks to complex systems.
 
 ---
 
-## 3. Subconjunto que usaremos en este repositorio
+## 2. What does SystemVerilog add?
 
-En la práctica, la mayoría de los ejemplos usan:
+SystemVerilog extends Verilog with:
 
-- Declaraciones de módulo:
+- Clearer types like `logic` (instead of `reg`/`wire` in many cases).
+- Specialized blocks:
+  - `always_ff` for sequential logic.
+  - `always_comb` for combinational logic.
+- Richer data structures:
+  - `struct`, `enum`, `typedef`, improved arrays, etc.
+- Advanced verification features:
+  - Classes, randomization, assertions, interfaces, etc.
+
+In this repository we **do not** use the advanced verification features.  
+We focus on the **synthesizable subset** that becomes hardware.
+
+---
+
+## 3. Subset used in this repository
+
+Most examples use:
+
+- Module declarations:
 
   ```sv
-  module nombre_modulo (
+  module module_name (
       input  logic clk,
       input  logic reset,
       input  logic [7:0] a,
       output logic [7:0] y
   );
   ```
+  

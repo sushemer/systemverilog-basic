@@ -1,78 +1,79 @@
-# Notas de alimentación y niveles lógicos · Tang Nano 9K
+# Power notes and logic levels · Tang Nano 9K
 
-Este documento resume las consideraciones básicas de **alimentación** y **niveles de señal** al usar la Tang Nano 9K con los ejemplos de este repositorio.
+This document summarizes the basic **power** and **signal-level** considerations when using the Tang Nano 9K with the examples in this repository.
 
-No es un reemplazo del datasheet, pero sí una guía rápida para evitar errores comunes.
-
----
-
-## 1. Niveles lógicos principales
-
-- La mayoría de las IO de usuario en la Tang Nano 9K trabaja a **3.3 V lógicos**.
-- En el archivo de constraints `tang-nano-9k.cst` se asume:
-  - `CLK`, `KEY[x]`, `LED[x]`, `GPIO[x]`, etc. como señales a 3.3 V.
-- Algunos pines especiales están marcados como **1.8 V** en el `.cst` original y **no se usan** en los ejemplos básicos.
-
-> Regla general:  
-> Tratar todas las IO de usuario como señales de 3.3 V salvo que la documentación oficial indique lo contrario.
+It is not a replacement for the datasheet, but a quick guide to avoid common mistakes.
 
 ---
 
-## 2. Alimentación de la placa
+## 1. Main logic levels
 
-En la mayoría de usos:
+- Most user IOs on the Tang Nano 9K operate at **3.3 V logic**.
+- In the `tang-nano-9k.cst` constraints file, signals such as:
+  - `CLK`, `KEY[x]`, `LED[x]`, `GPIO[x]`
+  are assumed to be 3.3 V.
+- Some special pins are marked as **1.8 V** in the original `.cst` and **are not used** in the basic examples.
 
-- La Tang Nano 9K se alimenta a través del **conector USB**.
-- Internamente regula los voltajes necesarios para la FPGA y la lógica.
-
-Recomendaciones:
-
-- Usar un puerto USB de PC o un cargador/Hub confiable.
-- Evitar conectar y desconectar módulos externos con la placa energizada, especialmente si hay duda sobre el voltaje.
-
----
-
-## 3. GND común
-
-Al conectar sensores y actuadores externos:
-
-- La fuente de 5 V (si se usa) y la Tang Nano 9K deben compartir **tierra (GND)**.
-- Siempre conectar `GND` del módulo externo a `GND` de la placa.
-
-Sin GND común:
-
-- Las señales no tienen referencia en común.
-- Es probable que la FPGA lea valores erróneos o se comporte de forma aleatoria.
+> General rule:  
+> Treat all user IOs as 3.3 V signals unless the official documentation states otherwise.
 
 ---
 
-## 4. Módulos de 5 V (sensores / actuadores)
+## 2. Board power
 
-Muchos módulos comerciales (HC-SR04, servos, algunos LCD, etc.) trabajan a **5 V de alimentación**, pero sus líneas de datos deben ser compatibles con la FPGA:
+In most cases:
 
-- **Hacia la FPGA (entrada)**:
-  - Nunca conectar directamente una salida de **5 V** a un pin de IO de la Tang Nano 9K.
-  - Usar **divisores resistivos** o **conversores de nivel**.
+- The Tang Nano 9K is powered through the **USB connector**.
+- Internally, it regulates the voltages required for the FPGA and logic.
 
-- **Desde la FPGA (salida)**:
-  - Una salida a 3.3 V suele ser interpretada como “alto lógico” por la mayoría de módulos de 5 V, pero se recomienda revisar el datasheet.
+Recommendations:
 
-Ejemplo:
+- Use a PC USB port or a reliable charger/hub.
+- Avoid connecting/disconnecting external modules while the board is powered, especially if voltage levels are uncertain.
+
+---
+
+## 3. Common GND
+
+When connecting external sensors or actuators:
+
+- The 5 V source (if used) and the Tang Nano 9K must share **ground (GND)**.
+- Always connect the external module’s `GND` to the board’s `GND`.
+
+Without common ground:
+
+- Signals have no common reference.
+- The FPGA is likely to read incorrect values or behave unpredictably.
+
+---
+
+## 4. 5 V modules (sensors/actuators)
+
+Many commercial modules (HC-SR04, servos, some LCDs, etc.) operate at **5 V supply**, but their data lines must be compatible with the FPGA:
+
+- **Towards the FPGA (input)**:
+  - Never connect a **5 V** output directly to a Tang Nano 9K IO pin.
+  - Use **voltage dividers** or **level shifters**.
+
+- **From the FPGA (output)**:
+  - A 3.3 V output is generally understood as “logic high” by most 5 V modules, but always check the datasheet.
+
+Example:
 
 - `HC-SR04`:
-  - `VCC` a 5 V.
-  - `TRIG` puede manejarse con 3.3 V desde la FPGA.
-  - `ECHO` debe reducirse de 5 V a 3.3 V (divisor resistivo o level shifter).
+  - `VCC` to 5 V.
+  - `TRIG` can be driven with 3.3 V.
+  - `ECHO` must be reduced from 5 V to 3.3 V (divider or level shifter).
 
 ---
 
-## 5. Limitaciones de corriente
+## 5. Current limitations
 
-- Los pines de IO de la FPGA están pensados para **señales lógicas**, no para manejar cargas de potencia.
-- No conectar:
-  - Motores directamente a pines de IO.
-  - Relés u otros actuadores que requieran corrientes altas sin usar drivers intermedios (transistores, MOSFET, etc.).
+- FPGA IO pins are designed for **logic signals**, not power loads.
+- Do NOT connect:
+  - Motors directly to IO pins.
+  - Relays or high-current actuators without intermediate drivers (transistors, MOSFETs, etc.).
 
-Los LEDs integrados de la placa suelen tener resistencias ya incluidas o un diseño pensado para uso directo, pero los LEDs externos deben llevar su propia resistencia limitadora.
+The onboard LEDs usually have built-in resistors or a safe design, but external LEDs must include their own current-limiting resistor.
 
 ---

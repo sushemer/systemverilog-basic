@@ -1,25 +1,25 @@
-# 1.1.1 Purpose – ¿Para qué existe este repositorio?
+# 1.1.1 Purpose – What is the purpose of this repository?
 
-Este repositorio recopila ejemplos, actividades y prácticas guiadas para aprender **SystemVerilog** usando la placa **Tang Nano 9K** y un conjunto de periféricos concretos:
+This repository gathers examples, activities, and guided practices to learn **SystemVerilog** using the **Tang Nano 9K** board and a set of specific peripherals:
 
-- Módulo **TM1638** (display de 7 segmentos + LEDs + teclas).
-- Sensor ultrasónico **HC-SR04**.
-- Encoders rotatorios (KY-040).
-- Potenciómetros (vía ADC externo).
-- Pantalla **LCD 480×272**.
+- **TM1638** module (7-segment display + LEDs + keys).
+- **HC-SR04** ultrasonic sensor.
+- Rotary encoders (KY-040).
+- Potentiometers (via external ADC).
+- **480×272 LCD** display.
 
-Su propósito principal es ofrecer un recorrido estructurado que vaya desde:
+Its main purpose is to offer a structured learning path that goes from:
 
-- Compuertas lógicas y módulos combinacionales sencillos.
-- Contadores, máquinas de estados (FSM) y PWM básicos.
-- Integración con periféricos reales (sensores, displays, módulos externos).
-- Mini–proyectos finales que conectan todo lo anterior.
+- Logic gates and simple combinational modules.
+- Counters, finite state machines (FSM), and basic PWM.
+- Integration with real peripherals (sensors, displays, external modules).
+- Final mini-projects that combine all of the above.
 
-Este repositorio está organizado para que puedas:
+This repository is organized so you can:
 
-- Reforzar la teoría con ejercicios pequeños y progresivos.
-- Conectar código de SystemVerilog con hardware real desde el inicio.
-- Reutilizar bloques (drivers, contadores, filtros, FSM, etc.) en distintas **activities**, **labs** e **implementations**.
-- Pasar de “probar cosas sueltas” a construir soluciones completas sobre una sola plataforma (Tang Nano 9K + periféricos).
+- Reinforce theory with small, progressive exercises.
+- Connect SystemVerilog code with real hardware from the beginning.
+- Reuse blocks (drivers, counters, filters, FSMs, etc.) across different **activities**, **labs**, and **implementations**.
+- Move from “trying isolated things” to building complete solutions on a single platform (Tang Nano 9K + peripherals).
 
 ---

@@ -1,109 +1,108 @@
-
-# 2.3.2 TM1638 · Módulo 7 segmentos + LEDs + teclas
+# 2.3.2 TM1638 · 7-segment module + LEDs + keys
 ![alt text](Mult/image.png)
 
-El módulo **TM1638** integra en una sola tarjeta:
+The **TM1638** module integrates on a single board:
 
-- 8 dígitos de 7 segmentos.
-- 8 LEDs individuales.
-- 8 teclas (buttons).
+- 8 digits of 7-segment display.
+- 8 individual LEDs.
+- 8 keys (buttons).
 
-Todo controlado por el chip **TM1638**, que se comunica con la FPGA mediante un protocolo síncrono sencillo.
+All controlled by the **TM1638** chip, which communicates with the FPGA through a simple synchronous protocol.
 
-En este repositorio se utiliza como una interfaz de usuario compacta para:
+In this repository it is used as a compact user interface to:
 
-- Mostrar números y estados.
-- Encender/apagar LEDs.
-- Detectar teclas presionadas.
+- Display numbers and states.
+- Turn LEDs on/off.
+- Detect pressed keys.
 
 ---
 
-## Señales y pines lógicos
+## Logical signals and pins
 
-El TM1638 utiliza tres líneas principales hacia la FPGA:
+The TM1638 uses three main lines to the FPGA:
 
-- `TM_DIO` → línea de datos (bidireccional).
-- `TM_CLK` → reloj de comunicación.
-- `TM_STB` → señal de “strobe” o selección del módulo.
+- `TM_DIO` → bidirectional data line.
+- `TM_CLK` → communication clock.
+- `TM_STB` → “strobe” or module-select signal.
 
-En el código se pueden usar nombres como:
+In code you may see names like:
 
 - `tm_dio`
 - `tm_clk`
 - `tm_stb`
 
-Estas líneas se conectan a pines `GPIO[x]` de la Tang Nano 9K y se documentan en:
+These lines connect to Tang Nano 9K `GPIO[x]` pins and are documented in:
 
 - `2_1_Boards/2_1_1_Tang_Nano_9K/docs/pinout.md`
 - `2_1_Boards/2_1_1_Tang_Nano_9K/constr/tang-nano-9k.cst`
 
 ---
 
-## Conceptos clave
+## Key concepts
 
-### Protocolo básico
+### Basic protocol
 
-El TM1638 se maneja enviando y recibiendo “frames” de bits a través de `TM_DIO`, sincronizados con `TM_CLK`, y usando `TM_STB` para indicar el inicio/fin de una operación.
+The TM1638 is controlled by sending and receiving bit “frames” through `TM_DIO`, synchronized by `TM_CLK`, and using `TM_STB` to indicate the start/end of an operation.
 
-Operaciones típicas:
+Typical operations:
 
-- Enviar comandos de configuración.
-- Escribir datos para los dígitos de 7 segmentos y LEDs.
-- Leer el estado de las teclas.
+- Send configuration commands.
+- Write data for 7-segment digits and LEDs.
+- Read the state of the keys.
 
-### Entradas y salidas en un mismo módulo
+### Inputs and outputs in the same module
 
-Aunque esta carpeta está en **Actuators**, el TM1638:
+Although this folder is in **Actuators**, the TM1638:
 
-- **Muestra información** (7 segmentos + LEDs).
-- **Recibe entradas** (teclas).
+- **Displays information** (7-segment digits + LEDs).
+- **Receives input** (keys).
 
-Las teclas del TM1638 se tratan como entradas digitales, pero su lectura concreta se hace:
+The TM1638 keys behave as digital inputs, but they are read:
 
-- A través de frames de datos.
-- Sobre la misma línea `TM_DIO`.
+- Through data frames.
+- Over the same `TM_DIO` line.
 
-Los conceptos de rebote y flancos se apoyan en `Buttons_Switches`, aunque aquí se gestionan a nivel de protocolo.
+Bounce and edge concepts follow `Buttons_Switches`, though handled here at the protocol level.
 
 ---
 
-## Relación con la teoría
+## Relationship with theory
 
-Este módulo se apoya en:
+This module relies on:
 
 - `1_2_3_Modules_and_Ports.md`  
-  Organización de módulos para el driver del TM1638.
+  Organization of modules for the TM1638 driver.
 
 - `1_2_4_Combinational_vs_Sequential.md`  
-  Lógica para manejar estados del protocolo.
+  Logic for handling protocol states.
 
 - `1_2_5_Registers_and_Clock.md`  
-  Registros para almacenar datos de display y lectura de teclas.
+  Registers to store display data and key states.
 
 - `1_2_6_Timing_and_Dividers.md`  
-  Generación de tiempos para el bus de comunicación.
+  Timing generation for the communication bus.
 
 - `1_2_9_Buses_Overview.md`  
-  Conceptos generales de comunicación serial.
+  General concepts of serial communication.
 
 ---
 
-## Ejemplos, actividades y laboratorios relacionados
+## Related examples, activities, and labs
 
-Ideas típicas:
+Typical ideas:
 
 - **Examples**
-  - Encender un patrón fijo en el display y LEDs.
-  - Leer las teclas y mostrar el número de tecla presionada.
+  - Turn on a fixed pattern on display and LEDs.
+  - Read the keys and show the pressed key number.
 
 - **Activities**
-  - Contador que aumenta/disminuye según la tecla pulsada.
-  - Mostrar en los dígitos el valor de un contador o una medición (por ejemplo, distancia del HC-SR04).
+  - Counter that increments/decrements depending on the key pressed.
+  - Show on digits the value of a counter or measurement (e.g., HC-SR04 distance).
 
 - **Labs / Implementation**
-  - Menú controlado por teclas TM1638, con estados mostrados en 7 segmentos.
-  - Panel de control para un mini-proyecto (por ejemplo, sistema de medidor con alarmas visuales).
+  - Menu controlled by TM1638 keys, with states shown on 7-segment displays.
+  - Control panel for a mini-project (e.g., measurement system with visual alarms).
 
-Los nombres exactos de Examples/Activities/Labs se definirán según la organización de las carpetas.
+Exact names of Examples/Activities/Labs will be defined when the folder organization is finalized.
 
 ---

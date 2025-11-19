@@ -1,44 +1,43 @@
 # 3.9 Seven-segment letters (FPGA)
 
-Este ejemplo muestra cómo **escribir letras en un display de 7 segmentos** usando:
+This example shows how to **display letters on a 7-segment display** using:
 
-- Un **registro de corrimiento one-hot** para seleccionar el dígito activo.
-- Una **tabla de codificación** para las letras `F`, `P`, `G`, `A`.
-- Multiplexeo rápido para que el ojo humano vea la palabra **"FPGA"** sólida.
-
----
-
-## Objetivo
-
-Al finalizar el ejemplo, la persona usuaria podrá:
-
-- Entender cómo funciona el multiplexeo de un display de 7 segmentos.
-- Implementar un **registro de corrimiento** para seleccionar dígitos.
-- Crear una tabla de **patrones de segmentos** para mostrar letras.
-- Ajustar la frecuencia de refresco hasta que las letras se vean “continuas”.
-
-![Mapa de segmentos](Mult/seven_segment_font_editor.jpg)
+- A **one-hot shift register** to select the active digit.
+- A **segment encoding table** for the letters `F`, `P`, `G`, `A`.
+- Fast multiplexing so the human eye perceives the word **"FPGA"** as stable.
 
 ---
 
-## Señales y mapeo
+## Objective
 
-### Entradas
+By the end of this example, the user will be able to:
+
+- Understand how multiplexing works on a 7-segment display.
+- Implement a **shift register** to select digits.
+- Create a table of **segment patterns** for letters.
+- Adjust the refresh rate so that the letters appear continuous.
+
+![Segment map](Mult/seven_segment_font_editor.jpg)
+
+---
+
+## Signals and mapping
+
+### Inputs
 
 - `clock`  
-  Reloj principal de la FPGA (~27 MHz en esta configuración).
+  Main FPGA clock (~27 MHz in this configuration).
 
 - `reset`  
-  Reset asíncrono (activa en alto) para contador y registro de corrimiento.
+  Active-high asynchronous reset for the counter and shift register.
 
 - `key[7:0]`  
-  No se utilizan en la versión básica, pero pueden servir para ejercicios posteriores
-  (cambiar letras, velocidad, etc.).
+  Not used in the basic version, but may be used in later exercises (change letters, speed, etc.).
 
-### Salidas
+### Outputs
 
 - `abcdefgh[7:0]`  
-  Bits de control de segmentos:
+  Segment bits:
 
   - `a` → bit 7  
   - `b` → bit 6  
@@ -47,9 +46,9 @@ Al finalizar el ejemplo, la persona usuaria podrá:
   - `e` → bit 3  
   - `f` → bit 2  
   - `g` → bit 1  
-  - `h` → bit 0 (punto decimal u otro uso)
+  - `h` → bit 0 (decimal point or custom use)
 
-  Los patrones se definen con un `typedef enum`:
+  Patterns are defined using an `enum`:
 
   ```sv
   typedef enum bit [7:0]

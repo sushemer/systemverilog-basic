@@ -1,121 +1,121 @@
-# 3.6 Adder/Subtractor de 3 bits (A ± B)
+# 3.6 3-bit Adder/Subtractor (A ± B)
 
-Este ejemplo implementa un **adder/subtractor de 3 bits** de dos maneras:
+This example implements a **3-bit adder/subtractor** in two ways:
 
-- **Implementación 0**: uso directo de los operadores aritméticos `+` y `-`.
-- **Implementación 1**: uso de un único sumador con la fórmula de **complemento a dos**:
+- **Implementation 0**: direct use of the arithmetic operators `+` and `-`.
+- **Implementation 1**: use of a single adder with the **two’s complement formula**:
 
+res = A + (B ⊕ M) + M
 
-`res = A + (B ⊕ M) + M`
+where `M = mode` (mode bit).
 
-donde `M = mode` (bit de modo).
-
-La placa Tang Nano 9K se utiliza en la configuración  
+The Tang Nano 9K board is used with the configuration  
 `tang_nano_9k_lcd_480_272_tm1638_hackathon`.
 
 ---
 
-## 1. Idea general
+## 1. General idea
 
-Se usan los botones `key[7:0]` para construir dos números de 3 bits y un bit de modo:
+The buttons `key[7:0]` are used to build two 3-bit numbers and one mode bit:
 
 - `A[2:0] = key[2:0]`
 - `B[2:0] = key[5:3]`
 - `mode   = key[7]`
 
-El comportamiento es:
+Behavior:
 
-- Si `mode = 0` → **suma**:  `A + B`
-- Si `mode = 1` → **resta**: `A - B`
+- If `mode = 0` → **addition**:  `A + B`
+- If `mode = 1` → **subtraction**: `A - B`
 
-El resultado se maneja como un número de **4 bits** (`[3:0]`):
+The result is a **4-bit number** (`[3:0]`):
 
-- 3 bits para el valor (0–7).
-- 1 bit extra para **carry/borrow**.
+- 3 bits for the value (0–7).
+- 1 extra bit for **carry/borrow**.
 
-Cada implementación produce un resultado de 4 bits, que se muestra en un grupo distinto de LEDs.
+Each implementation produces a 4-bit result which is displayed on a different group of LEDs.
 
-> Nota: `key[6]` no se utiliza en este ejemplo.
-
----
-
-## 2. Objetivo del ejemplo
-
-Al completar este ejemplo se busca que la persona usuaria pueda:
-
-- Representar dos números de 3 bits a partir de los botones de la placa.
-- Entender dos formas de implementar un **adder/subtractor**:
-  - implementación directa con `+` y `-`, y
-  - implementación unificada con un solo sumador y complemento a dos.
-- Comparar ambas implementaciones observando los resultados en los LEDs.
+Note: `key[6]` is not used in this example.
 
 ---
 
-## 3. Señales principales
+## 2. Objective of the example
 
-### Entradas
+Upon completing this example, the user will be able to:
+
+- Represent two 3-bit numbers using the board’s buttons.
+- Understand two ways to implement an **adder/subtractor**:
+  - direct implementation with `+` and `-`, and
+  - unified implementation with a single adder and two’s complement.
+- Compare both implementations by observing the results on the LEDs.
+
+---
+
+## 3. Main signals
+
+### Inputs
 
 - `A[2:0]` ← `key[2:0]`
 - `B[2:0]` ← `key[5:3]`
-- `mode`  ← `key[7]` (`0` = sumar, `1` = restar)
+- `mode`  ← `key[7]` (`0` = add, `1` = subtract)
 
-### Salidas (resumen)
+### Outputs (summary)
 
-- **Implementación 0** → `res0[3:0]`
-  - `res0[2:0]`: resultado de 3 bits.
-  - `res0[3]`  : bit de carry/borrow.
-- **Implementación 1** → `res1[3:0]`
-  - `res1[2:0]`: resultado de 3 bits.
-  - `res1[3]`  : bit de carry/borrow.
+- **Implementation 0** → `res0[3:0]`
+  - `res0[2:0]`: 3-bit result
+  - `res0[3]`  : carry/borrow bit
+- **Implementation 1** → `res1[3:0]`
+  - `res1[2:0]`: 3-bit result
+  - `res1[3]`  : carry/borrow bit
 
 ---
 
-## 4. Implementación 0 – Operadores aritméticos (`+` y `-`)
+## 4. Implementation 0 – Arithmetic operators (`+` and `-`)
 
-En esta versión se usa la lógica “de alto nivel”:
+This version uses “high-level” logic:
 
-- Si `mode = 0` → `res0 = A + B`
-- Si `mode = 1` → `res0 = A - B`
+- If `mode = 0` → `res0 = A + B`
+- If `mode = 1` → `res0 = A - B`
 
-Se obtienen 4 bits:
+We obtain 4 bits:
 
 - `s0[2:0] = res0[2:0]`
 - `c0      = res0[3]`
 
-Mapeo a LEDs:
+LED mapping:
 
 - `LED[0]` ← `s0[0]`
 - `LED[1]` ← `s0[1]`
 - `LED[2]` ← `s0[2]`
 - `LED[3]` ← `c0`
 
-Este grupo de LEDs muestra el resultado “tal cual” lo entrega el operador aritmético del lenguaje.
+This group of LEDs displays the “raw” result from the language’s arithmetic operator.
 
 ---
 
-## 5. Implementación 1 – Adder/Subtractor con complemento a dos
+## 5. Implementation 1 – Adder/Subtractor with two’s complement
 
-En esta versión se fuerza el uso de **un único sumador**, tanto para suma como para resta, aplicando complemento a dos sobre `B` cuando corresponde.
+This version forces the use of **a single adder** for both addition and subtraction,
+applying two’s complement on `B` when necessary.
 
-La ecuación utilizada es:
+The equation used is:
 
-`res1 = A + (B ⊕ {3{mode}}) + mode`
+res1 = A + (B ⊕ {3{mode}}) + mode
 
-Intuición:
+Intuition:
 
-- Si `mode = 0`:
+- If `mode = 0`:
   - `B ⊕ 000 = B`
   - `res1 = A + B + 0 = A + B`
-- Si `mode = 1`:
+- If `mode = 1`:
   - `B ⊕ 111 = ~B`
-  - `res1 = A + (~B) + 1 = A - B` (suma de complemento a dos)
+  - `res1 = A + (~B) + 1 = A - B` (two’s complement subtraction)
 
-De nuevo, se obtienen 4 bits:
+Again, we obtain 4 bits:
 
 - `s1[2:0] = res1[2:0]`
 - `c1      = res1[3]`
 
-Mapeo a LEDs:
+LED mapping:
 
 - `LED[4]` ← `s1[0]`
 - `LED[5]` ← `s1[1]`
@@ -124,14 +124,14 @@ Mapeo a LEDs:
 
 ---
 
-## 6. Lectura de resultados en la placa
+## 6. Reading results on the board
 
-En ejecución:
+During execution:
 
-- Los **LEDs 0–3** muestran el resultado de la **implementación 0**.
-- Los **LEDs 4–7** muestran el resultado de la **implementación 1**.
+- **LEDs 0–3** show the result of **implementation 0**.
+- **LEDs 4–7** show the result of **implementation 1**.
 
-Esto permite:
+This allows the user to:
 
-- Ver que ambos enfoques producen el mismo valor para todas las combinaciones de `A`, `B` y `mode`.
-- Estudiar cómo cambia el bit de carry/borrow cuando se pasa de suma a resta.
+- Confirm that both approaches produce the same value for all combinations of `A`, `B`, and `mode`.
+- Study how the carry/borrow bit changes when switching from addition to subtraction.

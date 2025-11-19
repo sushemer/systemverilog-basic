@@ -1,53 +1,52 @@
-# 1.2 Theory · Teoría breve y aplicada
+# 1.2 Theory · Short and applied theory
 
-La carpeta `1_2_Theory` reúne archivos de teoría **cortos y enfocados**.  
-Su intención es explicar los conceptos mínimos necesarios para poder:
+The `1_2_Theory` folder contains **short, focused theory files**.  
+Their purpose is to provide only the essential concepts needed to:
 
-- Entender qué hace cada ejemplo, actividad y laboratorio.
-- Tomar decisiones básicas de diseño al trabajar con la Tang Nano 9K.
-- Relacionar el lenguaje (Verilog/SystemVerilog) con hardware real (FPGA y periféricos).
+- Understand what each example, activity, and lab is doing  
+- Make basic design decisions when working with the Tang Nano 9K  
+- Connect the language (Verilog/SystemVerilog) with real hardware (FPGA + peripherals)  
 
-Cada archivo se centra en un tema específico y no pretende ser teoría completa ni formal, sino un complemento directo para el trabajo práctico.
-
----
-
-## Organización de la teoría
-
-Se recomienda leer los temas en el siguiente orden:
-
-1. **Fundamentos de contexto**
-   - `1_2_1_HDL_and_FPGA_Basics.md`  
-     Qué es un HDL, qué es una FPGA y en qué se diferencia de otros enfoques (por ejemplo, microcontroladores).
-   - `1_2_2_Verilog_SystemVerilog_Overview.md`  
-     Visión general del lenguaje, sintaxis básica y enfoque que usa este repositorio.
-
-2. **Fundamentos de descripción de hardware**
-   - `1_2_3_Modules_and_Ports.md`
-   - `1_2_4_Combinational_vs_Sequential.md`
-   - `1_2_5_Registers_and_Clock.md`
-   - `1_2_6_Timing_and_Dividers.md`
-   - `1_2_7_Finite_State_Machines.md`
-   - `1_2_8_Debouncing_and_Edge_Detection.md`
-   - `1_2_9_Buses_Overview.md`
-   - `1_2_10_PWM_Basics.md`
-
-3. **Periféricos básicos usados en el repositorio**
-   - `1_2_11_ADC_Basics.md`
-   - `1_2_12_Seven_Segment_Basics.md`
-   - `1_2_13_LCD_HD44780_Basics.md`
-   - `1_2_14_Ultrasonic_HCSR04_Basics.md`
-   - `1_2_15_Potentiometer_ADC_Basics.md`
-
-Cada archivo puede referenciar Examples, Activities y Labs relacionados para facilitar la transición de teoría a práctica.
+Each file focuses on a specific topic and is not meant to be complete or formal theory.  
+Instead, it is a direct complement to hands-on work.
 
 ---
 
-## Cómo usar esta carpeta
+## Theory organization
 
-- **Antes de un tema nuevo**  
-  Revisar el archivo de teoría asociado (por ejemplo, PWM antes de un dimmer de LED o un servo, ADC antes de usar potenciómetro o sensores analógicos).
+Suggested reading order:
 
-- **Durante un laboratorio**  
-  Consultar la teoría como referencia rápida ante dudas de sintaxis o de concepto.
+### 1. Context fundamentals
+- `1_2_1_HDL_and_FPGA_Basics.md`  
+- `1_2_2_Verilog_SystemVerilog_Overview.md`
 
-La idea es que la teoría se consulte **a demanda**, no como lectura lineal obligatoria.
+### 2. Hardware description fundamentals
+- `1_2_3_Modules_and_Ports.md`  
+- `1_2_4_Combinational_vs_Sequential.md`  
+- `1_2_5_Registers_and_Clock.md`  
+- `1_2_6_Timing_and_Dividers.md`  
+- `1_2_7_Finite_State_Machines.md`  
+- `1_2_8_Debouncing_and_Edge_Detection.md`  
+- `1_2_9_Buses_Overview.md`  
+- `1_2_10_PWM_Basics.md`
+
+### 3. Basic peripherals used in the repository
+- `1_2_11_ADC_Basics.md`  
+- `1_2_12_Seven_Segment_Basics.md`  
+- `1_2_13_LCD_HD44780_Basics.md`  
+- `1_2_14_Ultrasonic_HCSR04_Basics.md`  
+- `1_2_15_Potentiometer_ADC_Basics.md`
+
+Each file references related Examples, Activities, and Labs.
+
+---
+
+## How to use this folder
+
+- **Before starting a new topic**  
+  Read the corresponding theory file (e.g., PWM before LED dimmer, ADC before potentiometer use)
+
+- **During a lab**  
+  Use theory as a quick reference for syntax or concepts  
+
+The theory is intended to be used **on demand**, not as mandatory linear reading.

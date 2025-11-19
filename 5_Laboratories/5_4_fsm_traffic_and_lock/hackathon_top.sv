@@ -1,18 +1,18 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
 // Lab 5.4 – FSM: traffic light + sequence lock
 //
-// Idea general:
-//   - Dos máquinas de estados en el mismo diseño:
-//       1) Semáforo simple (R → G → Y → R) con tiempos configurables.
-//       2) Cerradura por secuencia de botones (A-B-A-B) que enciende un LED.
+// General idea:
+//   - Two state machines in the same design:
+//       1) Simple traffic light (R → G → Y → R) with configurable timing.
+//       2) Button-sequence lock (A-B-A-B) that turns on an LED.
 //
-//   - Estados del semáforo avanzan con slow_clock (~1 Hz).
-//   - La cerradura detecta flancos en dos teclas key[4] ("A") y key[5] ("B").
+//   - Traffic light states advance using slow_clock (~1 Hz).
+//   - The lock detects edges on two keys: key[4] ("A") and key[5] ("B").
 //   - LEDs:
-//       led[2] = rojo
-//       led[1] = amarillo
-//       led[0] = verde
-//       led[7] = lock (secuencia correcta)
+//       led[2] = red
+//       led[1] = yellow
+//       led[0] = green
+//       led[7] = lock (correct sequence)
 //
 
 module hackathon_top
@@ -24,11 +24,11 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (no usado en este lab)
+    // 7-segment display (not used in this lab)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no usada en este lab)
+    // LCD interface (not used in this lab)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
@@ -38,19 +38,19 @@ module hackathon_top
     inout  logic [3:0] gpio
 );
 
-    // No usamos 7 segmentos, LCD ni GPIO en este lab.
+    // We do not use 7-segment, LCD nor GPIO in this lab.
     assign abcdefgh = '0;
     assign digit    = '0;
     assign red      = '0;
     assign green    = '0;
     assign blue     = '0;
-    // gpio lo controla el wrapper de la placa.
+    // gpio is controlled by the board wrapper.
 
     // =========================================================================
-    // 1) FSM de semáforo (traffic light)
+    // 1) Traffic light FSM
     // =========================================================================
 
-    // Estados del semáforo
+    // Traffic light states
     typedef enum logic [1:0]
     {
         TRAFFIC_RED    = 2'd0,
@@ -60,14 +60,14 @@ module hackathon_top
 
     traffic_state_t traffic_state;
 
-    // Tiempos (en ticks de slow_clock)
-    localparam int T_RED    = 3;  // ~3 s (si slow_clock ~1 Hz)
+    // Timing (in slow_clock ticks)
+    localparam int T_RED    = 3;  // ~3 s (if slow_clock ~1 Hz)
     localparam int T_GREEN  = 3;  // ~3 s
     localparam int T_YELLOW = 1;  // ~1 s
 
-    logic [3:0] traffic_timer;  // suficiente para contar hasta 7
+    logic [3:0] traffic_timer;  // enough to count up to 7
 
-    // FSM + temporización usando slow_clock
+    // FSM + timing using slow_clock
     always_ff @(posedge slow_clock or posedge reset)
         if (reset)
         begin
@@ -118,7 +118,7 @@ module hackathon_top
             endcase
         end
 
-    // Salidas del semáforo
+    // Traffic light outputs
     logic red_on;
     logic yellow_on;
     logic green_on;
@@ -139,24 +139,24 @@ module hackathon_top
             TRAFFIC_YELLOW:
                 yellow_on = 1'b1;
 
-            default: ; // nada
+            default: ; // nothing
         endcase
     end
 
     // =========================================================================
-    // 2) FSM de cerradura por secuencia A-B-A-B
+    // 2) A-B-A-B sequence lock FSM
     // =========================================================================
 
-    // Mapeo de botones
-    //   key[4] -> botón A
-    //   key[5] -> botón B
+    // Button mapping
+    //   key[4] -> button A
+    //   key[5] -> button B
     logic btnA;
     logic btnB;
 
     assign btnA = key[4];
     assign btnB = key[5];
 
-    // Registros para detección de flancos (edge detect) en el dominio slow_clock
+    // Edge-detection registers (in slow_clock domain)
     logic btnA_q;
     logic btnB_q;
 
@@ -172,17 +172,17 @@ module hackathon_top
             btnB_q <= btnB;
         end
 
-    wire pulseA = btnA & ~btnA_q;  // flanco de subida en A
-    wire pulseB = btnB & ~btnB_q;  // flanco de subida en B
+    wire pulseA = btnA & ~btnA_q;  // rising edge on A
+    wire pulseB = btnB & ~btnB_q;  // rising edge on B
 
-    // Estados de la cerradura
+    // Lock FSM states
     typedef enum logic [2:0]
     {
-        LOCK_IDLE      = 3'd0, // esperando primer A
-        LOCK_A1        = 3'd1, // se vio A
-        LOCK_A1B2      = 3'd2, // se vio A,B
-        LOCK_A1B2A3    = 3'd3, // se vio A,B,A
-        LOCK_OPEN      = 3'd4  // secuencia A,B,A,B completa
+        LOCK_IDLE      = 3'd0, // waiting for first A
+        LOCK_A1        = 3'd1, // A detected
+        LOCK_A1B2      = 3'd2, // A,B detected
+        LOCK_A1B2A3    = 3'd3, // A,B,A detected
+        LOCK_OPEN      = 3'd4  // A,B,A,B complete
     } lock_state_t;
 
     lock_state_t lock_state;
@@ -195,16 +195,17 @@ module hackathon_top
         else
         begin
             unique case (lock_state)
-                // Espera A
+
+                // Waiting for A
                 LOCK_IDLE:
                 begin
                     if (pulseA)
                         lock_state <= LOCK_A1;
                     else if (pulseB)
-                        lock_state <= LOCK_IDLE; // error → queda en idle
+                        lock_state <= LOCK_IDLE; // error → stay in idle
                 end
 
-                // Se recibió A, ahora se espera B
+                // Saw A, now expecting B
                 LOCK_A1:
                 begin
                     if (pulseB)
@@ -213,7 +214,7 @@ module hackathon_top
                         lock_state <= LOCK_IDLE; // error → reset
                 end
 
-                // Se recibió A,B; ahora se espera A
+                // Saw A,B; now expecting A
                 LOCK_A1B2:
                 begin
                     if (pulseA)
@@ -222,7 +223,7 @@ module hackathon_top
                         lock_state <= LOCK_IDLE; // error → reset
                 end
 
-                // Se recibió A,B,A; ahora se espera B final
+                // Saw A,B,A; now expecting final B
                 LOCK_A1B2A3:
                 begin
                     if (pulseB)
@@ -231,7 +232,7 @@ module hackathon_top
                         lock_state <= LOCK_IDLE; // error → reset
                 end
 
-                // Cerradura abierta (LED de lock encendido hasta reset)
+                // Lock open (remains here until reset)
                 LOCK_OPEN:
                 begin
                     lock_state <= LOCK_OPEN;
@@ -242,28 +243,27 @@ module hackathon_top
             endcase
         end
 
-    // LED de lock encendido sólo en estado LOCK_OPEN
+    // Lock LED ON only in LOCK_OPEN
     logic lock_led;
     assign lock_led = (lock_state == LOCK_OPEN);
 
     // =========================================================================
-    // 3) Mapeo final a LEDs
+    // 3) Final LED mapping
     // =========================================================================
 
     always_comb
     begin
         led = 8'b0000_0000;
 
-        // Semáforo
-        led[0] = green_on;   // verde
-        led[1] = yellow_on;  // amarillo
-        led[2] = red_on;     // rojo
+        // Traffic light
+        led[0] = green_on;   // green
+        led[1] = yellow_on;  // yellow
+        led[2] = red_on;     // red
 
-        // Cerradura
+        // Lock
         led[7] = lock_led;
 
-
-        // Por simplicidad se dejan en 0.
+        // Others remain 0 by simplicity.
     end
 
 endmodule

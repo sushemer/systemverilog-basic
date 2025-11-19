@@ -1,181 +1,190 @@
-# 4_9_2 – Mux 4→1 + Decoder 2→4 (composición)
+# 4_9_2 – 4-to-1 Mux + 2-to-4 Decoder (composition)
 
-Esta solución corresponde a la actividad basada en `4_02_mux_and_decoder_composition`, pero ubicada en la carpeta de soluciones `4_9_solutions`.
+This solution corresponds to the activity based on `4_02_mux_and_decoder_composition`, but located in the `4_9_solutions` folder.
 
-Su propósito es mostrar una implementación completa y ordenada de:
+Its purpose is to show a complete and organized implementation of:
 
-- Un **decoder 2→4 one-hot**.
-- Un **multiplexor 4→1** construido a partir de:
-  - Las salidas one-hot del decoder.
-  - Compuertas AND.
-  - Una OR final.
-
----
-
-## Objetivo
-
-Practicar la **composición de bloques combinacionales**, pasando de señales de selección simples (`sel[1:0]`) a:
-
-1. Un vector one-hot `dec_out[3:0]` (decoder 2→4).
-2. Un mux 4→1 que usa ese one-hot para elegir uno de los bits de `data[3:0]`.
-
-Todo ello se visualiza en los LEDs de la placa para facilitar la verificación.
+- A **2-to-4 one-hot decoder**.
+- A **4-to-1 multiplexer** built from:
+  - The decoder’s one-hot outputs.
+  - AND gates.
+  - A final OR.
 
 ---
 
-## Mapeo de señales
+## Objective
 
-### Entradas desde `key`
+Practice **combinational block composition**, moving from simple selection signals (`sel[1:0]`) to:
+
+1. A one-hot vector `dec_out[3:0]` (2-to-4 decoder).
+2. A 4-to-1 mux that uses that one-hot value to select one of the `data[3:0]` bits.
+
+All outputs are visualized on the board’s LEDs for easy verification.
+
+---
+
+## Signal mapping
+
+### Inputs from `key`
 
 - `sel[1:0] = key[1:0]`  
-  Bits de selección del canal del mux (índice entre 0 y 3).
+  Selection bits for the mux (index 0 to 3).
 
 - `data[3:0] = key[5:2]`  
-  Datos de entrada al mux; cada bit representa un canal independiente.
+  Data inputs for the mux; each bit represents an independent channel.
 
-En el código típico dentro de `hackathon_top.sv`:
+In typical code inside `hackathon_top.sv`:
 
-    logic [1:0] sel;
-    logic [3:0] data;
+logic [1:0] sel;
+logic [3:0] data;
 
-    assign sel  = key[1:0];
-    assign data = key[5:2];
+assign sel  = key[1:0];
+assign data = key[5:2];
 
-### Salidas hacia `led`
+### Outputs to `led`
 
 - `led[3:0] = dec_out[3:0]`  
-  Muestran la salida del **decoder 2→4** (código one-hot).
+  Shows the **2-to-4 decoder** output (one-hot).
 
 - `led[4] = mux_y`  
-  Indica la salida del **mux 4→1**.
+  Shows the **4-to-1 mux** output.
 
 - `led[7:5]`  
-  No se usan en esta solución (quedan libres para extensiones o depuración).
+  Not used in this solution (available for extensions or debugging).
 
-Ejemplo de asignación final:
+Final assignment example:
 
-    assign led[3:0] = dec_out;
-    assign led[4]   = mux_y;
-    assign led[7:5] = 3'b000;  // libres en esta solución
+assign led[3:0] = dec_out;
+assign led[4]   = mux_y;
+assign led[7:5] = 3'b000;  // free in this solution
 
 ---
 
-## Diseño lógico
+## Logical design
 
-### 1. Decoder 2→4 one-hot
+### 1. 2-to-4 one-hot decoder
 
-El decoder toma `sel[1:0]` y genera `dec_out[3:0]` con codificación one-hot:
+The decoder takes `sel[1:0]` and generates `dec_out[3:0]` as one-hot encoding:
 
 - `sel = 2'b00 → dec_out = 4'b0001`
 - `sel = 2'b01 → dec_out = 4'b0010`
 - `sel = 2'b10 → dec_out = 4'b0100`
 - `sel = 2'b11 → dec_out = 4'b1000`
 
-Es importante inicializar `dec_out` a cero y luego asignar exactamente un bit en 1.  
-Una implementación típica en `always_comb` es:
+It is important to initialize `dec_out` to zero and then set exactly one bit.
 
-    logic [3:0] dec_out;
+Typical implementation in `always_comb`:
 
-    always_comb begin
-        dec_out = 4'b0000;  // valor por defecto
+logic [3:0] dec_out;
 
-        unique case (sel)
-            2'b00: dec_out = 4'b0001;
-            2'b01: dec_out = 4'b0010;
-            2'b10: dec_out = 4'b0100;
-            2'b11: dec_out = 4'b1000;
-            default: dec_out = 4'b0000;
-        endcase
-    end
+always_comb begin
+    dec_out = 4'b0000;  // default value
 
-Con esto se garantiza que, para cada valor válido de `sel`, solo un bit de `dec_out` está en 1.
+    unique case (sel)
+        2'b00: dec_out = 4'b0001;
+        2'b01: dec_out = 4'b0010;
+        2'b10: dec_out = 4'b0100;
+        2'b11: dec_out = 4'b1000;
+        default: dec_out = 4'b0000;
+    endcase
+end
 
----
-
-### 2. Mux 4→1 construido con decoder + AND + OR
-
-El mux 4→1 se construye **sin** usar directamente el operador condicional `?:` ni un `case` sobre `sel`.  
-En su lugar, se usan:
-
-1. Las salidas one-hot del decoder (`dec_out[3:0]`).
-2. Compuertas AND por cada canal.
-3. Una OR final para combinar los términos.
-
-Idea lógica:
-
-- `and0 = dec_out[0] & data[0]`
-- `and1 = dec_out[1] & data[1]`
-- `and2 = dec_out[2] & data[2]`
-- `and3 = dec_out[3] & data[3]`
-- `mux_y = and0 | and1 | and2 | and3`
-
-Esto se puede escribir así:
-
-    logic and0, and1, and2, and3;
-    logic mux_y;
-
-    always_comb begin
-        and0 = dec_out[0] & data[0];
-        and1 = dec_out[1] & data[1];
-        and2 = dec_out[2] & data[2];
-        and3 = dec_out[3] & data[3];
-
-        mux_y = and0 | and1 | and2 | and3;
-    end
-
-La clave es que, como `dec_out` es one-hot, **solo uno** de los términos AND puede ser 1 a la vez.  
-Por lo tanto, `mux_y` equivale a `data[sel]`, pero implementado mediante la composición:
-
-> selección (`sel`) → decoder 2→4 → AND con datos → OR final.
+This guarantees that exactly one bit is 1 for each valid sel.
 
 ---
 
-## Resumen de la solución
+### 2. 4-to-1 mux built with decoder + AND + OR
 
-La solución en `4_9_2` para `hackathon_top.sv` sigue típicamente este flujo:
+The 4→1 mux is built **without** using the `?:` operator or a `case`.  
+Instead, it uses:
 
-1. **Lectura de entradas desde `key`:**
-   - `sel` y `data` se obtienen de bits específicos de `key`.
+1. The decoder’s one-hot output.
+2. AND gates for each channel.
+3. A final OR combining the terms.
 
-2. **Decoder 2→4:**
-   - `always_comb` con `case (sel)` para generar `dec_out` en formato one-hot.
-   - Resultado visible en `led[3:0]`.
+Logical idea:
 
-3. **Mux 4→1:**
-   - Uso de `dec_out` y `data` para formar términos AND.
-   - OR de todos los términos para obtener `mux_y`.
-   - Resultado visible en `led[4]`.
+and0 = dec_out[0] & data[0]  
+and1 = dec_out[1] & data[1]  
+and2 = dec_out[2] & data[2]  
+and3 = dec_out[3] & data[3]  
+mux_y = and0 | and1 | and2 | and3
 
-4. **LEDs restantes (`led[7:5]`):**
-   - En esta solución se dejan en 0, pero se pueden usar para:
-     - Mostrar `sel`.
-     - Mostrar una copia de `data`.
-     - Añadir una señal de habilitación u otros estados de depuración.
+This can be written as:
+
+logic and0, and1, and2, and3;
+logic mux_y;
+
+always_comb begin
+    and0 = dec_out[0] & data[0];
+    and1 = dec_out[1] & data[1];
+    and2 = dec_out[2] & data[2];
+    and3 = dec_out[3] & data[3];
+
+    mux_y = and0 | and1 | and2 | and3;
+end
+
+Because the decoder is one-hot, only one AND term can be 1.  
+Therefore:
+
+mux_y = data[sel]
+
+but implemented through structural composition:
+
+selection → decoder → AND-masking → OR-final
 
 ---
 
-## Cómo probar en la placa
+## Solution summary
 
-1. Programar la Tang Nano 9K con el bitstream de esta solución.
-2. Ajustar las entradas:
-   - Cambiar `sel` con `key[1:0]` para elegir el canal (0–3).
-   - Cambiar los valores de `data[3:0]` con `key[5:2]`.
+The solution in `4_9_2` for `hackathon_top.sv` typically follows:
 
-3. Observar los LEDs:
-   - `led[3:0]`: muestran qué **canal está activo** según `sel` (salida del decoder one-hot).
-   - `led[4]`: muestra el bit de `data` seleccionado (`mux_y`).
+1. **Read inputs from `key`**  
+   sel and data extracted from specific bits.
 
-### Ejemplo de prueba
+2. **2-to-4 decoder**  
+   - `always_comb` with `case (sel)`  
+   - Output visible on `led[3:0]`
 
-- Si `data = 4'b1010` y `sel = 2'b10`:
-  - `dec_out = 4'b0100`
-  - El canal seleccionado es `data[2]`.
-  - `mux_y = data[2] = 1`
-  - En la placa:
-    - `led[2] = 1` (indica que el tercer canal está activo en el decoder).
-    - `led[4] = 1` (salida del mux).
+3. **4→1 mux**  
+   - AND between one-hot and each data bit  
+   - OR to produce final output  
+   - Output visible on `led[4]`
 
-Así se puede verificar rápidamente que:
+4. **Remaining LEDs (`led[7:5]`)**  
+   Left unused but available for extra debugging or experiments.
 
-- El decoder 2→4 genera el patrón one-hot correcto.
-- El mux 4→1, implementado mediante composición (decoder + AND + OR), selecciona el bit adecuado de `data`.
+---
+
+## How to test on the board
+
+1. Program the Tang Nano 9K with this solution.
+2. Adjust inputs:
+   - Change `sel` with `key[1:0]`
+   - Change `data[3:0]` with `key[5:2]`
+3. Observe LEDs:
+   - `led[3:0]`: active one-hot line  
+   - `led[4]`: selected data bit (`mux_y`)
+
+### Example test
+
+If:
+
+data = 4'b1010  
+sel  = 2'b10  
+
+Then:
+
+dec_out = 4'b0100  
+selected channel = data[2]  
+mux_y = 1
+
+On the board:
+
+led[2] = 1 (active decoder channel)  
+led[4] = 1 (mux output)
+
+This verifies:
+
+- The decoder produces correct one-hot output  
+- The 4→1 mux (decoder + AND + OR) selects the correct bit from data

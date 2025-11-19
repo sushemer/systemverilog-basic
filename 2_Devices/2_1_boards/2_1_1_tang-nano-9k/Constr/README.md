@@ -1,32 +1,32 @@
-
 # Constraints · Tang Nano 9K
 
-La carpeta `constr` contiene el archivo de **constraints** utilizado para la Tang Nano 9K en este repositorio.
+The `constr` folder contains the **constraints** file used for the Tang Nano 9K in this repository.
 
-Su objetivo es proporcionar una configuración de pines **estable y compartida** para todos los Examples, Activities, Labs e Implementation que usen esta placa.
+Its purpose is to provide a **stable and shared** pin configuration for all Examples, Activities, Labs, and Implementations that use this board.
 
 ---
 
-## Contenido
+## Contents
 
 - `tang-nano-9k.cst`  
-  Archivo de constraints estándar para la Tang Nano 9K.
+  Standard constraints file for the Tang Nano 9K.
 
-Incluye asignaciones de pines para señales como:
+It includes pin assignments for signals such as:
 
 - `CLK`
 - `KEY[0]`, `KEY[1]`
 - `LED[0]` … `LED[5]`
 - `GPIO[0]` … `GPIO[5]`
-- Señales asociadas a módulos más avanzados (LCD, audio, etc.), aunque no se usen en los primeros ejercicios.
+- And signals associated with more advanced modules (LCD, audio, etc.), even if they are not used in early exercises.
 
 ---
-## Relación con otros archivos
+
+## Relation with other files
 
 - `docs/pinout.md`  
-  Explica, en forma de tabla, cómo se mapean las señales lógicas del `.cst` a pines físicos de la FPGA.
+  Explains, in table form, how the logical signals in the `.cst` map to physical FPGA pins.
 
 - `docs/power_notes.md`  
-  Incluye advertencias de voltaje y nivel lógico que complementan la información del `.cst`.
+  Includes voltage and level warnings that complement the `.cst` file.
 
-Si se modifica el `.cst`, es importante revisar si también se deben actualizar estos documentos.
+If the `.cst` file is modified, it is important to check whether these documents should also be updated.

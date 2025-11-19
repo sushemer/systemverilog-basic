@@ -1,131 +1,131 @@
-# 2.4 Common · Protoboard y cableado
+# 2.4 Common · Protoboard and wiring
 
-La carpeta `2_4_Common` reúne notas generales sobre **protoboard**, **cableado** y **buenas prácticas** al conectar la Tang Nano 9K con los sensores y actuadores del repositorio.
+The `2_4_Common` folder gathers general notes on **protoboard**, **wiring**, and **best practices** when connecting the Tang Nano 9K with the sensors and actuators in the repository.
 
-No describe un dispositivo específico, sino reglas y recomendaciones que se aplican a:
+It does not describe a specific device; instead, it provides rules and recommendations that apply to:
 
-- HC-SR04.
-- Rotary encoder.
-- Botones/switches.
-- Displays de 7 segmentos.
-- Módulo TM1638.
-- LCD 16x2.
-
----
-
-## 1. Protoboard · Idea general
-
-El **protoboard** permite hacer conexiones temporales sin soldar.  
-Reglas típicas (modelo estándar):
-
-- Las **filas centrales** están unidas en grupos de 5 agujeros.
-- Las **líneas laterales** (marcadas con + y −) suelen ser rieles de alimentación:
-  - Una línea para **VCC**.
-  - Una línea para **GND**.
-
-Recomendaciones:
-
-- Reservar un riel para **3.3 V** (lógica de la FPGA).
-- Si se usa un módulo a 5 V (por ejemplo, HC-SR04), tener claro:
-  - Dónde están los 5 V.
-  - Cómo se adapta el nivel hacia la FPGA (especialmente en señales de entrada).
+- HC-SR04  
+- Rotary encoder  
+- Buttons/switches  
+- 7-segment displays  
+- TM1638 module  
+- LCD 16x2
 
 ---
 
-## 2. GND común
+## 1. Protoboard · General idea
 
-Regla básica para todo el repositorio:
+The **protoboard** allows temporary connections without soldering.  
+Typical rules (standard model):
 
-> **Todos los módulos deben compartir la misma GND que la Tang Nano 9K.**
+- The **central rows** are connected in groups of 5 holes.
+- The **side rails** (marked with + and −) are usually power rails:
+  - One rail for **VCC**
+  - One rail for **GND**
 
-Esto aplica a:
+Recommendations:
 
-- HC-SR04 (incluso si se alimenta a 5 V).
-- TM1638.
-- Rotary encoder.
-- LCD 16x2.
-- Cualquier otra placa o fuente auxiliar.
-
-Sin GND común:
-
-- Las referencias de voltaje no coinciden.
-- Las señales que “parecen” 0/1 en un módulo pueden no ser interpretadas correctamente por la FPGA.
+- Reserve one rail for **3.3 V** (FPGA logic).
+- If using a 5 V module (e.g., HC-SR04), be clear about:
+  - Where the 5 V rail is.
+  - How the level is adapted before reaching the FPGA (especially for input signals).
 
 ---
 
-## 3. Voltajes típicos
+## 2. Common GND
 
-- La **Tang Nano 9K** trabaja a **3.3 V** en sus pines de IO.
-- Algunos módulos (como HC-SR04, ciertos TM1638 o LCD 16x2) suelen trabajar a **5 V**.
+Basic rule for the entire repository:
 
-Regla general:
+> **All modules must share the same GND as the Tang Nano 9K.**
 
-- **Nunca** conectar directamente una salida de 5 V a una entrada de la FPGA sin revisar:
-  - Hoja de datos del módulo.
-  - Recomendaciones de adaptación de nivel.
+This applies to:
 
-Ejemplo importante:
+- HC-SR04 (even if powered at 5 V).
+- TM1638  
+- Rotary encoder  
+- LCD 16x2  
+- Any other board or auxiliary power source  
+
+Without a common GND:
+
+- Voltage references do not match.
+- Signals that “appear” 0/1 on one module may not be interpreted correctly by the FPGA.
+
+---
+
+## 3. Typical voltages
+
+- The **Tang Nano 9K** operates at **3.3 V** on its IO pins.
+- Some modules (HC-SR04, some TM1638, some 16x2 LCDs) often operate at **5 V**.
+
+General rule:
+
+- **Never** connect a 5 V output directly to an FPGA input without checking:
+  - Module datasheet  
+  - Level shifting recommendations  
+
+Important example:
 
 - **HC-SR04 → ECHO**:
-  - Normalmente sale a 5 V.
-  - Debe pasar por un divisor resistivo o level shifter antes de llegar a la FPGA.
+  - Usually outputs 5 V  
+  - Must pass through a resistor divider or level shifter before reaching the FPGA  
 
 ---
 
-## 4. Cables y organización
+## 4. Wires and organization
 
-Para facilitar la reproducción de los ejemplos:
+To make examples easier to reproduce:
 
-- Usar **cables cortos** cuando sea posible.
-- Evitar que los cables crucen por encima de la placa sin necesidad.
-- Mantener un código de colores aproximado (recomendado, no obligatorio):
-  - **Rojo** → VCC.
-  - **Negro** → GND.
-  - Otros colores → señales (`clk`, `tm_clk`, `lcd_rs`, etc.).
+- Use **short wires** when possible.
+- Avoid wires crossing over the board unnecessarily.
+- Maintain an approximate color code (recommendation, not mandatory):
+  - **Red** → VCC  
+  - **Black** → GND  
+  - Other colors → signals (`clk`, `tm_clk`, `lcd_rs`, etc.)  
 
-Sugerencia práctica:
+Practical suggestion:
 
-- Documentar en los READMEs de cada ejemplo/lab:
-  - A qué riel va cada VCC/GND.
-  - Qué color de cable se usó (opcional, pero ayuda en laboratorio).
+- Document in the READMEs of each example/lab:
+  - Which rail each VCC/GND goes to  
+  - What wire color was used (optional but helpful in lab)  
 
 ---
 
-## 5. Ejemplos típicos de montaje
+## 5. Typical mounting examples
 
 ### 5.1 HC-SR04
 
-- `VCC` → riel de **5 V** (fuente o módulo regulador).
-- `GND` → riel de **GND** común con la Tang Nano 9K.
-- `TRIG` → pin GPIO de la FPGA (3.3 V).
-- `ECHO` → pin GPIO **a través de** un divisor o level shifter.
+- `VCC` → **5 V** rail (power supply or regulator module)  
+- `GND` → **GND** rail shared with Tang Nano 9K  
+- `TRIG` → FPGA GPIO pin (3.3 V)  
+- `ECHO` → FPGA GPIO **through** a divider or level shifter  
 
 ### 5.2 Rotary encoder
 
-- `VCC` → riel de **3.3 V** (si el módulo lo permite; revisar especificación).
-- `GND` → riel de **GND**.
-- `ENC_A`, `ENC_B`, `ENC_SW` → pines de entrada de la FPGA.
+- `VCC` → **3.3 V** rail (if the module supports it; check specs)  
+- `GND` → GND rail  
+- `ENC_A`, `ENC_B`, `ENC_SW` → FPGA input pins  
 
-### 5.3 7 segmentos / TM1638 / LCD 16x2
+### 5.3 7-segment / TM1638 / LCD 16x2
 
-- Alimentación según módulo (3.3 V o 5 V, revisar siempre).
-- Señales de datos/control a pines GPIO de la Tang Nano 9K.
-- En su README correspondiente se detallan:
-  - Nombres de señales recomendados.
-  - Pines sugeridos.
-  - Notas adicionales (por ejemplo, brillo, contraste, etc.).
+- Power according to the module (3.3 V or 5 V — always verify)  
+- Data/control signals to FPGA GPIO pins  
+- Each module’s README includes:
+  - Recommended signal names  
+  - Suggested pins  
+  - Additional notes (brightness, contrast, etc.)  
 
 ---
 
-## 6. Archivos y assets comunes
+## 6. Common files and assets
 
-En esta carpeta se pueden incluir:
+This folder may include:
 
-- Esquemas simples de conexión (diagramas de protoboard).
-- Fotos de montajes de referencia.
-- Plantillas genéricas para wiring (por ejemplo, marcando rieles de 3.3 V, 5 V y GND).
+- Simple wiring diagrams (protoboard layouts)  
+- Reference photos of builds  
+- Generic wiring templates (e.g., marking 3.3 V, 5 V, GND rails)  
 
-Se recomienda mantener estos recursos ligeros y centrados en:
+These resources should be kept lightweight and focused on:
 
-- Claridad visual.
-- Reutilización en varios ejemplos y laboratorios.
+- Visual clarity  
+- Reusability across examples and labs  

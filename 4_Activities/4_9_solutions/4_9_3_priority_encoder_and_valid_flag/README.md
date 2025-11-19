@@ -1,221 +1,169 @@
-# 4_9_3 – Priority encoder 3→2 + bandera `valid`
+# 4_9_3 – Priority Encoder 3→2 + `valid` Flag
 
-Actividad basada en `4_03_priority_encoder_and_valid_flag`, ahora incluida en la carpeta de soluciones `4_9_solutions`.
+Activity based on `4_03_priority_encoder_and_valid_flag`, now included in the `4_9_solutions` folder.
 
-Esta solución muestra cómo implementar un **priority encoder** de 3 entradas con:
+This solution shows how to implement a **3-input priority encoder** with:
 
-- Entradas de petición: `req[2:0]`
-- Salida codificada: `idx[1:0]`
-- Bandera de validez: `valid` (indica si hay al menos una petición activa)
+- Request inputs: `req[2:0]`
+- Encoded output: `idx[1:0]`
+- Valid flag: `valid` (indicates if at least one request is active)
 
-La prioridad está definida como:
+Priority is defined as:
 
 > `req[2]` > `req[1]` > `req[0]`
 
-y todo se visualiza en los LEDs de la placa Tang Nano 9K.
+Everything is visualized on the Tang Nano 9K LEDs.
 
 ---
 
-## Objetivo
+## Objective
 
-El diseño final:
+The final design:
 
-1. Toma `req[2:0]` desde `key[2:0]`.
-2. Determina **qué entrada gana** según la prioridad (2, luego 1, luego 0).
-3. Produce:
-   - `idx[1:0]` → índice de la entrada ganadora (0, 1 o 2).
-   - `valid` → `1` si existe al menos una petición activa.
-4. Muestra en LEDs:
-   - Qué peticiones están activas.
-   - Qué índice ha ganado.
-   - Si hay o no una petición válida.
+1. Takes `req[2:0]` from `key[2:0]`.
+2. Determines **which input wins** according to priority (2, then 1, then 0).
+3. Produces:
+   - `idx[1:0]` → index of the winning input (0, 1, or 2).
+   - `valid` → `1` if at least one request is active.
+4. Displays on LEDs:
+   - The active requests.
+   - The winning index.
+   - Whether there is any valid request.
 
 ---
 
-## Mapeo de señales
+## Signal Mapping
 
-### Entradas (desde `key`)
+### Inputs (from `key`)
 
 - `req[2:0] = key[2:0]`  
-  Cada bit representa una fuente que “pide servicio” (1 = petición activa).
+  Each bit represents a source requesting service (1 = active request).
 
-En `hackathon_top.sv` típicamente:
+Typical declarations:
 
-    logic [2:0] req;
-    logic [1:0] idx;
-    logic       valid;
+logic [2:0] req;
+logic [1:0] idx;
+logic       valid;
 
-    assign req = key[2:0];
+assign req = key[2:0];
 
-### Salidas (hacia `led`)
+### Outputs (to `led`)
 
 - `led[2:0] = req[2:0]`  
-  Visualizan qué peticiones están activas.
+  Shows active requests.
 
 - `led[4:3] = idx[1:0]`  
-  Código binario del índice ganador.
+  Shows the winning index.
 
 - `led[7] = valid`  
-  Indica si hay **al menos una** petición activa.
+  Shows whether at least one request is active.
 
 - `led[6:5]`  
-  Quedan libres en esta solución (se pueden usar para extensiones o depuración).
+  Free (unused).
 
-Ejemplo habitual de asignación:
+Example:
 
-    assign led[2:0] = req;
-    assign led[4:3] = idx;
-    assign led[7]   = valid;
-    assign led[6:5] = 2'b00;  // no usados en esta solución
-
----
-
-## Comportamiento esperado
-
-La prioridad se refleja en la siguiente tabla:
-
-| `req`    | Gana | `idx` | `valid` |
-|----------|------|-------|---------|
-| 3'b000   | –    | 0     | 0       |
-| 3'b001   | 0    | 0     | 1       |
-| 3'b010   | 1    | 1     | 1       |
-| 3'b011   | 1    | 1     | 1       |
-| 3'b100   | 2    | 2     | 1       |
-| 3'b101   | 2    | 2     | 1       |
-| 3'b110   | 2    | 2     | 1       |
-| 3'b111   | 2    | 2     | 1       |
-
-Observaciones:
-
-- Si hay varias entradas activas, **gana siempre la de mayor índice**.
-- `valid = 1` siempre que `req` sea distinto de 0.
-- Cuando `req = 3'b000`, `valid = 0` y `idx` conserva su valor por defecto (recomendado: `2'd0`).
+assign led[2:0] = req;
+assign led[4:3] = idx;
+assign led[7]   = valid;
+assign led[6:5] = 2'b00;
 
 ---
 
-## Implementación lógica
+## Expected Behavior
 
-La lógica principal se implementa en un bloque `always_comb` con:
+Priority behavior:
 
-- Valores por defecto (sin peticiones).
-- Cadena de `if / else if` que respeta la prioridad.
+| req      | Winner | idx | valid |
+|----------|--------|-----|--------|
+| 000      | –      | 0   | 0      |
+| 001      | 0      | 0   | 1      |
+| 010      | 1      | 1   | 1      |
+| 011      | 1      | 1   | 1      |
+| 100      | 2      | 2   | 1      |
+| 101      | 2      | 2   | 1      |
+| 110      | 2      | 2   | 1      |
+| 111      | 2      | 2   | 1      |
 
-### 1. Valores por defecto
+Observations:
 
-Antes de revisar las peticiones, se inicializan las salidas:
-
-    always_comb begin
-        idx   = 2'd0;
-        valid = 1'b0;
-
-        // Lógica de prioridad...
-    end
-
-Esto asegura que, si no hay ninguna petición activa (`req = 3'b000`), el encoder deja:
-
-- `idx = 2'd0` (valor de referencia)
-- `valid = 1'b0`
-
-### 2. Cadena de prioridad `if / else if`
-
-El patrón de prioridad se implementa verificando primero la entrada de mayor prioridad:
-
-    always_comb begin
-        // Valores por defecto (sin petición)
-        idx   = 2'd0;
-        valid = 1'b0;
-
-        if (req[2]) begin
-            // Máxima prioridad: línea 2
-            idx   = 2'd2;
-            valid = 1'b1;
-        end
-        else if (req[1]) begin
-            // Segunda prioridad: línea 1
-            idx   = 2'd1;
-            valid = 1'b1;
-        end
-        else if (req[0]) begin
-            // Menor prioridad: línea 0
-            idx   = 2'd0;
-            valid = 1'b1;
-        end
-        // Si req = 3'b000, se conservan idx = 0 y valid = 0
-    end
-
-Con este patrón:
-
-- La **primera condición verdadera** determina qué entrada gana.
-- `valid` pasa a `1` en cuanto se detecta alguna petición.
-- Si todas las condiciones son falsas (`req = 3'b000`), `valid` permanece en `0`.
+- If multiple requests are active, the **highest index always wins**.
+- `valid = 1` whenever `req != 0`.
+- If `req = 000`, `valid = 0` and `idx` keeps its default value (`2'd0` recommended).
 
 ---
 
-## Conexión final a LEDs
+## Logic Implementation
 
-Una vez calculados `idx` y `valid`, se conectan a los LEDs según el mapeo acordado:
+The main logic is implemented in an `always_comb` block:
 
-    assign led[2:0] = req;   // peticiones actuales
-    assign led[4:3] = idx;   // índice ganador
-    assign led[7]   = valid; // bandera de validez
-    assign led[6:5] = 2'b00; // libres en esta solución
+### 1. Default values
 
-De este modo, se tiene siempre en la placa una visualización coherente de:
+always_comb begin  
+    idx   = 2'd0;  
+    valid = 1'b0;  
+end
 
-- Qué líneas están pidiendo servicio (`led[2:0]`).
-- Qué índice ha ganado (`led[4:3]`).
-- Si el sistema tiene trabajo pendiente (`led[7]`).
+Ensures clean fallback when no request is active.
 
----
+### 2. Priority chain
 
-## Pruebas sugeridas
+always_comb begin  
+    idx   = 0;  
+    valid = 0;  
 
-Para comprobar que el priority encoder cumple con la tabla de verdad:
+    if (req[2]) begin  
+        idx = 2;  
+        valid = 1;  
+    end  
+    else if (req[1]) begin  
+        idx = 1;  
+        valid = 1;  
+    end  
+    else if (req[0]) begin  
+        idx = 0;  
+        valid = 1;  
+    end  
+end
 
-1. Forzar `req` mediante `key[2:0]` en todas las combinaciones de `3'b000` a `3'b111`.
-2. Observar en la placa:
-
-   - `led[2:0]` mostrando el patrón actual de `req`.
-   - `led[4:3]` mostrando el valor de `idx`.
-   - `led[7]` encendiéndose solo cuando `valid = 1`.
-
-### Casos clave
-
-- `req = 3'b001`  
-  Se espera: `idx = 2'd0`, `valid = 1`.
-
-- `req = 3'b010`  
-  Se espera: `idx = 2'd1`, `valid = 1`.
-
-- `req = 3'b011` (entradas 1 y 0 activas)  
-  Debe ganar la de mayor prioridad (`req[1]`):  
-  `idx = 2'd1`, `valid = 1`.
-
-- `req = 3'b100`  
-  Se espera: `idx = 2'd2`, `valid = 1`.
-
-- `req = 3'b111` (todas activas)  
-  Debe ganar `req[2]`:  
-  `idx = 2'd2`, `valid = 1`.
-
-- `req = 3'b000`  
-  Se espera: `valid = 0` y `idx` en su valor por defecto (`2'd0`).
-
-Si todos estos casos se observan correctamente, el priority encoder está funcionando según lo especificado.
+- The **first true condition wins**.
+- `valid` becomes `1` on any active request.
 
 ---
 
-## Extensiones opcionales
+## LED Connection
 
-A partir de esta solución básica se pueden explorar varias mejoras:
+assign led[2:0] = req;  
+assign led[4:3] = idx;  
+assign led[7]   = valid;  
+assign led[6:5] = 2'b00;
 
-- **Uso de `casez` con “don’t care”**  
-  Implementar una versión alternativa del priority encoder utilizando `casez` y valores `x`/`z`, y verificar que produce la misma salida que la versión con `if / else if`.
+This provides a clear, hardware-friendly visualization.
 
-- **Visualización adicional en LEDs**  
-  Usar `led[6:5]` para mostrar, por ejemplo, una copia de `idx` o un indicador de modo de prueba.
+---
 
-- **Encoder de mayor tamaño**  
-  Extender el concepto a un priority encoder de 4→2 o 8→3 entradas, analizando cómo crece la cadena de prioridad y cómo se estructura el código.
+## Suggested Tests
 
-Con esta solución se ilustra un patrón muy común en diseños digitales: resolver conflictos de prioridad entre varias peticiones, generando un índice ganador y una bandera que indica si el sistema tiene trabajo pendiente.
+Cycle through all 8 possible request values (000 to 111) and verify:
+
+- `led[2:0]` matches the request.
+- `led[4:3]` outputs the correct winner index.
+- `led[7]` is ON only when at least one request is active.
+
+### Key cases
+
+req = 001 → idx=0, valid=1  
+req = 010 → idx=1, valid=1  
+req = 011 → idx=1, valid=1 (priority!)  
+req = 100 → idx=2, valid=1  
+req = 000 → valid=0
+
+---
+
+## Optional Extensions
+
+- Implement using `casez` with don’t-care bits.
+- Use `led[6:5]` for debugging or test modes.
+- Extend to a 4→2 or 8→3 priority encoder.
+
+This solution demonstrates a classic digital design pattern: managing prioritized requests and generating a valid flag.

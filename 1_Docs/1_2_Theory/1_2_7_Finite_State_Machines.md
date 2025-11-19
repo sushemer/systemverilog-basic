@@ -1,169 +1,103 @@
 # 1.2.7 Finite state machines (FSM)
 
-Este documento introduce las **máquinas de estados finitos (FSM)**,  una herramienta clave para controlar secuencias, menús, protocolos y lógica de decisión.
+This document introduces **Finite State Machines (FSMs)**, a key tool for controlling sequences, menus, protocols, and decision logic.
 
 ---
 
-## 1. ¿Qué es una FSM?
+## 1. What is an FSM?
 
-Una **FSM (Finite State Machine)** es un modelo donde:
+An **FSM** is a model where:
 
-- El sistema se encuentra siempre en **un estado actual** de un conjunto finito de estados posibles.
-- Según:
-  - El **estado actual** y
-  - Las **entradas**,
-- la FSM decide:
-  - El **siguiente estado**.
-  - Las **salidas** asociadas.
+- The system is always in **one current state** from a finite set of possible states.
+- Based on:
+  - The **current state**, and
+  - The **inputs**,  
+- The FSM determines:
+  - The **next state**  
+  - The **outputs** associated with it  
 
-Ejemplos típicos:
+Typical examples:
 
-- Semáforo (Rojo → Verde → Amarillo → Rojo).
-- Cerradura de combinación (secuencia correcta de botones).
-- Menús con botones (arriba/abajo/OK).
-- Control de protocolos (I²C, SPI, UART, etc., en versiones más avanzadas).
-
----
-
-## 2. Componentes básicos de una FSM
-
-Una FSM sincrónica típica tiene:
-
-1. **Conjunto de estados**  
-   Por ejemplo: `IDLE`, `READ`, `WAIT`, `DONE`.
-
-2. **Estado actual**  
-   Se guarda en un registro (lógica secuencial).
-
-3. **Lógica de siguiente estado**  
-   Decide a qué estado se debe pasar en el siguiente ciclo de reloj.
-
-4. **Lógica de salidas**  
-   Calcula las salidas de la FSM (dependiendo del estado y, a veces, de las entradas).
+- Traffic light (Red → Green → Yellow → Red)  
+- Combination lock (correct sequence of buttons)  
+- Button-based menus  
+- Protocol control (I²C, SPI, UART, etc.)
 
 ---
 
-## 3. Representación en SystemVerilog
+## 2. Basic components of an FSM
 
-En este repositorio se recomienda:
+A typical synchronous FSM has:
 
-- Definir los estados con `typedef enum`.
-- Usar:
-  - Un `always_ff` para el **estado actual**.
-  - Un `always_comb` para el **siguiente estado** y, si aplica, las salidas.
+1. **State set**  
+   e.g., `IDLE`, `READ`, `WAIT`, `DONE`.
 
-Ejemplo simplificado de FSM de semáforo:
-  ```sv
-    typedef enum logic [1:0] {
-        RED,
-        GREEN,
-        YELLOW
-    } state_t;
+2. **Current state**  
+   Stored in a register (sequential logic).
 
-    module fsm_traffic_light (
-        input  logic clk,
-        input  logic rst_n,
-        output logic led_R,
-        output logic led_G,
-        output logic led_Y
-    );
+3. **Next-state logic**  
+   Determines which state to go to on the next clock cycle.
 
-        state_t state, next_state;
-
-        // 1) Registro de estado actual
-        always_ff @(posedge clk or negedge rst_n) begin
-            if (!rst_n)
-                state <= RED;
-            else
-                state <= next_state;
-        end
-
-        // 2) Lógica de siguiente estado y salidas
-        always_comb begin
-            // Valores por defecto
-            next_state = state;
-            led_R      = 1'b0;
-            led_G      = 1'b0;
-            led_Y      = 1'b0;
-
-            unique case (state)
-                RED: begin
-                    led_R      = 1'b1;
-                    next_state = GREEN;
-                end
-
-                GREEN: begin
-                    led_G      = 1'b1;
-                    next_state = YELLOW;
-                end
-
-                YELLOW: begin
-                    led_Y      = 1'b1;
-                    next_state = RED;
-                end
-            endcase
-        end
-
-    endmodule
-  ```
-En este ejemplo, la FSM recorre los estados `RED → GREEN → YELLOW → RED` de forma cíclica.  
-En un diseño real se suele combinar con un **contador de tiempo** para que cada estado dure varios segundos.
+4. **Output logic**  
+   Determines the outputs (may depend on state alone or state + inputs).
 
 ---
 
-## 4. Tipos de FSM: Mealy y Moore (visión simple)
+## 3. Representation in SystemVerilog
 
-En la teoría clásica se distingue entre:
+Recommended style:
 
-- **Máquina de Moore**:
-  - Las salidas dependen **solo del estado actual**.
-  - Ejemplo: en el semáforo anterior, cada estado tiene LEDs fijos.
-- **Máquina de Mealy**:
-  - Las salidas dependen del estado y de las entradas.
-  - Ejemplo: una FSM que activa una señal solo cuando está en cierto estado y, además, se recibe un pulso externo.
+- Define states with `typedef enum`
+- Use:
+  - One `always_ff` block for the **current state**
+  - One `always_comb` block for **next state** and outputs
 
-En este repositorio no se enfatiza la diferencia formal, pero es útil saber que:
+Example traffic light FSM:
 
-- Muchas FSM de control sencillo se implementan como Moore.
-- Cuando se necesita reaccionar inmediatamente ante una entrada (sin esperar cambio de estado), se termina usando un estilo parecido a Mealy.
+(States RED → GREEN → YELLOW → RED in a loop)
 
----
-
-## 5. Relación con otras piezas del diseño
-
-Las FSM aparecen constantemente combinadas con:
-
-- **Contadores y divisores**:
-  - Para medir cuánto tiempo se permanece en un estado (ejemplo: semáforo).
-- **Debounce de botones**:
-  - Para que las entradas sean pulsos limpios y no múltiples flancos con ruido.
-- **Drivers de periféricos**:
-  - TM1638, LCD, sensores: el control interno suele seguir una secuencia (enviar comando, esperar, leer dato, etc.).
-
-Ejemplos concretos dentro del repositorio:
-
-- FSM de semáforo y “sequence lock” en los labs básicos.
-- Menús y modos de operación en labs con display TM1638 o LCD.
-- Implementaciones finales (reloj digital, radar ultrasónico) donde se gestionan varios estados globales.
+In real designs, a **counter** is often added so each state lasts multiple seconds.
 
 ---
 
-## 6. Buenas prácticas al diseñar FSM
+## 4. Moore vs Mealy (simple view)
 
-Al implementar FSM en SystemVerilog se recomienda:
+- **Moore machine:**  
+  Outputs depend **only on the current state**.  
+  (Most simple FSMs in this repo follow this style)
 
-- Nombrar los estados de forma clara (`IDLE`, `WAIT`, `ERROR`, etc.).
-- Usar `typedef enum logic [...]` en lugar de números “mágicos”.
-- Separar:
-  - Registro de estado (`always_ff`).
-  - Lógica de siguiente estado y salidas (`always_comb`).
-- Dar **valores por defecto** a salidas y `next_state` al inicio del `always_comb`.
-- Usar `unique case` o `priority case` cuando aplique, para detectar estados no cubiertos.
-- Evitar mezclar demasiada lógica no relacionada dentro de la misma FSM; es preferible tener varias FSM pequeñas pero claras.
+- **Mealy machine:**  
+  Outputs depend on **state + inputs**.  
+  Useful when immediate reaction to an input is required.
 
-Estos patrones aparecerán en:
+---
 
-- Labs con FSM de semáforo, cerradura y control de patrones.
-- Implementaciones de proyectos con menús y modos de operación.
-- Cualquier diseño donde se deba seguir una secuencia ordenada de acciones.
+## 5. Relationship with other design elements
 
+FSMs frequently interact with:
+
+- **Counters / dividers**: determine how long each state lasts  
+- **Debounced buttons**: avoid multi-triggering  
+- **Peripheral drivers**: many protocols are sequential (send command, wait, read, etc.)
+
+Examples in the repo:
+
+- Traffic light FSM  
+- Sequence-lock FSM  
+- Menus in TM1638 / LCD labs  
+- Project implementations (digital clock, ultrasonic radar)
+
+---
+
+## 6. Best practices
+
+- Give states descriptive names (`IDLE`, `WAIT`, `ERROR`, etc.)
+- Use `typedef enum logic [...]` instead of numeric codes
+- Separate:
+  - State register (`always_ff`)
+  - Next-state + output logic (`always_comb`)
+- Give **default values** to outputs and next_state
+- Prefer `unique case` to detect uncovered states
+- Keep FSMs focused; avoid overloading them with unrelated logic
+
+You'll see these patterns throughout activities, labs, and implementations.

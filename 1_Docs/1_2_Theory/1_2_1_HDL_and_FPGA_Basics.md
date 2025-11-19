@@ -1,119 +1,119 @@
 # HDL and FPGA basics
 
-Este documento introduce dos ideas fundamentales:
+This document introduces two fundamental ideas:
 
-- Qué es un **HDL** (Hardware Description Language).
-- Qué es una **FPGA** y cómo se diferencia de otros dispositivos programables.
-
----
-
-## 1. ¿Qué es un HDL?
-
-Un HDL (*Hardware Description Language*) es un lenguaje para describir **circuitos digitales**, no programas que se ejecutan paso a paso como en C, Python o Java.
-
-Con un HDL:
-
-- Se describen **señales**, **registros**, **módulos** y **conexiones**.
-- Se indica qué debe ocurrir en cada **borde de reloj** o cómo se combinan las señales.
-- El resultado final se puede sintetizar a **hardware real** (FPGA, ASIC).
-
-Ejemplos de HDL:
-
-- Verilog
-- SystemVerilog
-- VHDL
-- Otros lenguajes de hardware de alto nivel (Chisel, etc.)
-
-En este repositorio utilizamos principalmente **SystemVerilog** (una extensión moderna de Verilog).
+- What an **HDL** (Hardware Description Language) is.
+- What an **FPGA** is and how it differs from other programmable devices.
 
 ---
 
-## 2. ¿Qué es una FPGA?
+## 1. What is an HDL?
 
-Una FPGA (*Field Programmable Gate Array*) es un circuito integrado que puede configurarse después de fabricado.
+An HDL (Hardware Description Language) is a language for describing **digital circuits**, not programs that run step by step like in C, Python, or Java.
 
-En lugar de tener una lógica fija (como un microcontrolador con su CPU definida), una FPGA contiene:
+With an HDL:
 
-- **LUTs** (Look-Up Tables): pequeñas funciones lógicas configurables.
-- **Flip-flops / registros**: almacenamiento de 1 bit asociado al reloj.
-- **Bloques de memoria** (BRAM).
-- **Bloques especiales** (multiplicadores, PLL, etc.).
-- **Red de interconexión programable** que une todo lo anterior.
+- You describe **signals**, **registers**, **modules**, and **connections**.
+- You specify what happens on each **clock edge** or how signals combine.
+- The final result can be synthesized into **real hardware** (FPGA, ASIC).
 
-Al cargar un **bitstream** en la FPGA, se define:
+Examples of HDLs:
 
-- Qué hace cada LUT.
-- Cómo se conectan las señales.
-- Qué registros se usan y cómo.
+- Verilog  
+- SystemVerilog  
+- VHDL  
+- Other higher-level hardware languages (Chisel, etc.)
 
-Su código SystemVerilog termina transformándose en esa configuración interna.
-
----
-
-## 3. FPGA vs microcontrolador (visión rápida)
-
-| Aspecto                | FPGA                                      | Microcontrolador                           |
-|------------------------|-------------------------------------------|--------------------------------------------|
-| Modelo de ejecución    | Muchos bloques en paralelo.              | CPU que ejecuta instrucciones secuenciales. |
-| Flexibilidad           | Muy alta: la lógica puede cambiarse por completo. | Media: la CPU es fija, cambias el firmware. |
-| Tipo de tareas         | Señales de alta velocidad, interfaces personalizados, procesamiento paralelo. | Control general, lógica secuencial, periféricos integrados. |
-| Herramientas           | Sintetizador, place & route, bitstream.  | Compilador, linker, flasher de firmware.   |
-
-En este proyecto no usamos un microcontrolador externo; la **FPGA es el “cerebro” principal**.
+In this repository we primarily use **SystemVerilog** (a modern extension of Verilog).
 
 ---
 
-## 4. ¿Qué hace este repositorio?
+## 2. What is an FPGA?
 
-Este repositorio está pensado como un camino de aprendizaje con **ejemplos pequeños y prácticos** sobre la Tang Nano 9K:
+An FPGA (Field Programmable Gate Array) is an integrated circuit that can be configured after manufacturing.
 
-- Actividades de nivel básico (compuertas, mux, contadores).
-- Labs más integrados (debounce, FSM, sensores, display).
-- Implementaciones de proyectos más grandes (reloj, radar ultrasónico, etc.).
+Instead of having fixed logic (like a microcontroller with a predefined CPU), an FPGA contains:
 
-La idea es que pueda:
+- **LUTs** (Look-Up Tables): small configurable logic functions.
+- **Flip-flops / registers**: 1-bit storage elements tied to the clock.
+- **Memory blocks** (BRAM).
+- **Special blocks** (multipliers, PLL, etc.).
+- A **programmable interconnect network** that links everything.
 
-1. Ver el ejemplo corriendo en hardware real.
-2. Abrir el código SystemVerilog.
-3. Modificarlo y experimentar.
-4. Relacionar el código con los LEDs, displays y sensores conectados.
+When you load a **bitstream** into the FPGA, you define:
 
----
+- What each LUT does.
+- How signals are connected.
+- What registers exist and how they behave.
 
-## 5. ¿Qué no es este repositorio?
-
-- No es un curso completo de teoría digital (álgebra de Boole, mapas de Karnaugh, etc.), aunque se usan esos conceptos.
-- No pretende cubrir todo SystemVerilog ni todas las herramientas posibles.
-- No es una guía oficial de Gowin ni de la Tang Nano 9K.
-
-Se centra en:
-
-- Ejemplos pequeños y concretos.
-- Código comentado.
-- Estructura clara de carpetas.
-- Scripts simples para sintetizar y programar.
+Your SystemVerilog code becomes this internal configuration.
 
 ---
 
-## 6. ¿Cómo se relaciona con tu aprendizaje?
+## 3. FPGA vs. microcontroller (quick view)
 
-Este material se puede usar de varias formas:
+| Aspect                | FPGA                                       | Microcontroller                              |
+|-----------------------|---------------------------------------------|-----------------------------------------------|
+| Execution model       | Many blocks running in parallel.           | CPU executing sequential instructions.         |
+| Flexibility           | Very high—logic can change completely.     | Moderate—CPU is fixed, you change firmware.    |
+| Typical tasks         | High-speed signals, custom interfaces, parallel processing. | General control, sequential logic, built-in peripherals. |
+| Tools                 | Synthesizer, place-and-route, bitstream.   | Compiler, linker, firmware flasher.            |
 
-- Como apoyo a una asignatura de lógica o sistemas digitales.
-- Como introducción práctica a FPGAs si vienes de programación clásica (C, Python, etc.).
-- Como punto de partida para proyectos personales con FPGAs.
-
-Si ya tiene experiencia con microcontroladores, piense que en el FPGA como:
-
-- Un lugar donde, en lugar de escribir “un programa”, diseña **el circuito** que querría tener dentro del micro (o alrededor de él).
-- Muchas cosas suceden **en paralelo**, no en una secuencia fija de instrucciones.
+In this project we do not use an external microcontroller; the **FPGA is the main “brain.”**
 
 ---
 
-## 7. Siguiente paso
+## 4. What does this repository do?
 
-Para continuar con la teoría básica, puede leer:
+This repository provides a practical learning path with **small, hands-on examples** on the Tang Nano 9K:
 
-- `1_2_2_Verilog_SystemVerilog_Overview.md`: visión general del lenguaje.
-- `1_2_3_Modules_and_Ports.md`: cómo se estructuran los diseños en módulos.
-- `1_2_4_Combinational_vs_Sequential.md`: diferencia entre lógica combinacional y secuencial.
+- Basic activities (gates, muxes, counters).
+- More integrated labs (debounce, FSM, sensors, display).
+- Larger implementations (digital clock, ultrasonic radar, etc.).
+
+The idea is that you can:
+
+1. See the example running on real hardware.  
+2. Open the SystemVerilog code.  
+3. Modify it and experiment.  
+4. Relate the code to the LEDs, displays, and sensors.
+
+---
+
+## 5. What this repository is not
+
+- It is not a full digital theory course (Boolean algebra, Karnaugh maps, etc.), although those concepts appear.
+- It does not cover all of SystemVerilog or all possible tools.
+- It is not an official Gowin or Tang Nano 9K guide.
+
+Instead, it focuses on:
+
+- Small, concrete examples.
+- Commented code.
+- Clear folder structure.
+- Simple scripts for synthesis and programming.
+
+---
+
+## 6. How it fits into your learning
+
+You can use this material in different ways:
+
+- As support material for a course on logic or digital systems.
+- As a practical introduction to FPGAs if you come from software (C, Python, etc.).
+- As a starting point for personal FPGA projects.
+
+If you have microcontroller experience, think of an FPGA as:
+
+- A place where, instead of writing “a program,” you design **the circuit** you want inside (or around) the microcontroller.
+- Many things happen **in parallel**, not in a fixed instruction sequence.
+
+---
+
+## 7. Next step
+
+To continue with the basic theory, you can read:
+
+- `1_2_2_Verilog_SystemVerilog_Overview.md`
+- `1_2_3_Modules_and_Ports.md`
+- `1_2_4_Combinational_vs_Sequential.md`

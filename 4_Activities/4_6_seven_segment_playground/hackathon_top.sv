@@ -1,13 +1,13 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// Actividad 4.6 – Playground de display de 7 segmentos
+// Activity 4.6 – 7-segment display playground
 //
-// Idea general:
-//   - Usar el módulo seven_segment_display ya existente en el repo.
-//   - Jugar con distintos patrones usando los 8 dígitos del display.
-//   - Cambiar el contenido y los puntos decimales según teclas (key).
+// General idea:
+//   - Use the seven_segment_display module already existing in the repo.
+//   - Play with different patterns using the 8 digits of the display.
+//   - Change the content and the decimal points according to keys (key).
 //
-// NOTA: Esta es una PLANTILLA de actividad.
-//       Modifica y extiende la lógica marcada como TODO.
+// NOTE: This is an ACTIVITY TEMPLATE.
+//       Modify and extend the logic marked as TODO.
 //
 
 module hackathon_top
@@ -19,11 +19,11 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (TM1638 / dinámico)
+    // 7-segment display (TM1638 / dynamic)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no usada en esta actividad)
+    // LCD interface (not used in this activity)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
@@ -33,28 +33,28 @@ module hackathon_top
     inout  logic [3:0] gpio
 );
 
-    // En esta actividad no usamos LCD ni GPIO.
+    // In this activity we do not use LCD or GPIO.
     assign red   = '0;
     assign green = '0;
     assign blue  = '0;
-    // gpio se maneja desde el wrapper de la placa.
+    // gpio is handled from the board wrapper.
 
-    // Podemos usar los LEDs simplemente como indicador de modo.
-    // (Puedes cambiar esto si quieres que muestren otra cosa).
+    // We may use LEDs simply as a mode indicator.
+    // (You may change this if you want them to show something else.)
     // mode = key[1:0]
     logic [1:0] mode;
     assign mode = key[1:0];
 
-    assign led = { 6'b0, mode };  // Solo para saber en qué modo estamos.
+    assign led = { 6'b0, mode };  // Just to know which mode we are in.
 
     // -------------------------------------------------------------------------
-    // Divisor de frecuencia para animaciones lentas
+    // Frequency divider for slow animations
     // -------------------------------------------------------------------------
     //
-    // Genera un "tick" lento (tick) a partir del clock principal (~27 MHz).
-    // Cada vez que tick=1, actualizamos el contenido del display.
+    // Generates a “tick” from the main clock (~27 MHz).
+    // Each time tick=1, we update the display content.
 
-    localparam int W_DIV = 22;  // Ajusta para cambiar la velocidad
+    localparam int W_DIV = 22;  // Adjust to change speed
     logic [W_DIV-1:0] div_cnt;
     logic             tick;
 
@@ -71,30 +71,30 @@ module hackathon_top
         end
 
     // -------------------------------------------------------------------------
-    // Número y puntos decimales para el display de 7 segmentos
+    // Number and decimal points for the 7-segment display
     // -------------------------------------------------------------------------
     //
-    // El módulo seven_segment_display interpreta `number` como:
-    //   - 4 bits por dígito (nibble), en total w_digit * 4 bits.
-    //   - w_digit = 8  → number[31:0] = { D7, D6, D5, D4, D3, D2, D1, D0 }
+    // The seven_segment_display module interprets `number` as:
+    //   - 4 bits per digit (nibble), total w_digit * 4 bits.
+    //   - w_digit = 8 → number[31:0] = { D7, D6, D5, D4, D3, D2, D1, D0 }
     //       D0 = number[ 3: 0]
     //       D1 = number[ 7: 4]
     //       ...
     //       D7 = number[31:28]
     //
-    // Cada nibble representa un dígito hexadecimal (0–F).
+    // Each nibble represents a hexadecimal digit (0–F).
 
     localparam int W_DIGITS = 8;
     localparam int W_NUM    = W_DIGITS * 4;  // 32 bits
 
-    logic [W_NUM-1:0]   number_reg;  // Contenido de los 8 dígitos
-    logic [W_DIGITS-1:0] dots_reg;   // Puntos decimales (uno por dígito)
+    logic [W_NUM-1:0]    number_reg;  // 8-digit content
+    logic [W_DIGITS-1:0] dots_reg;    // Decimal points (one per digit)
 
     // -------------------------------------------------------------------------
-    // Lógica principal de playground
+    // Main playground logic
     // -------------------------------------------------------------------------
 
-    // (Opcional) Un índice de posición para animaciones de desplazamiento
+    // (Optional) A position index for scrolling animations
     logic [2:0] scroll_pos;
 
     always_ff @(posedge clock or posedge reset)
@@ -106,84 +106,84 @@ module hackathon_top
         end
         else
         begin
-            // Ejemplo base: usar key[7:0] para controlar puntos decimales.
-            // Puedes cambiar esta lógica si quieres otra cosa.
-            dots_reg <= key;  // 1 = punto encendido en cada dígito
+            // Base example: use key[7:0] to control decimal points.
+            // You may change this logic if you want something else.
+            dots_reg <= key;  // 1 = dot ON for each digit
 
             if (tick)
             begin
-                // Pequeño contador de posición para modos de scroll
+                // Small position counter for scroll modes
                 scroll_pos <= scroll_pos + 3'd1;
 
                 unique case (mode)
                     // ---------------------------------------------------------
-                    // Modo 0: contador hexadecimal libre en todos los dígitos
+                    // Mode 0: free hexadecimal counter on all digits
                     // ---------------------------------------------------------
                     2'b00:
                     begin
-                        // TODO: puedes cambiar la velocidad de suma,
-                        // o limitar el rango del contador.
+                        // TODO: you may change the increment speed,
+                        // or limit the counter range.
                         number_reg <= number_reg + 32'd1;
                     end
 
                     // ---------------------------------------------------------
-                    // Modo 1: playground manual
+                    // Mode 1: manual playground
                     // ---------------------------------------------------------
-                    // Idea sugerida:
-                    //   - Mostrar en el dígito menos significativo (D0)
-                    //     el valor de key[7:4] como dígito HEX.
-                    //   - Dejar el resto de dígitos en cero o con un patrón fijo.
+                    // Suggested idea:
+                    //   - Show in least significant digit (D0)
+                    //     the value of key[7:4] as a HEX digit.
+                    //   - Keep the other digits in zero or fixed patterns.
                     2'b01:
                     begin
-                        // Conserva el valor anterior de todos los dígitos
-                        // y solo actualiza D0.
+                        // Keep previous content for all digits
+                        // and update only D0.
                         number_reg[3:0] <= key[7:4];
 
                         // TODO:
-                        // - Cambia aquí para copiar key[7:4] a otro dígito.
-                        // - O usa distintas combinaciones de teclas para llenar
-                        //   todos los dígitos con valores HEX.
+                        // - Change this to copy key[7:4] to another digit.
+                        // - Or use combinations of keys to fill all digits
+                        //   with HEX values.
                     end
 
                     // ---------------------------------------------------------
-                    // Modo 2: "barra" o dígito que se desplaza
+                    // Mode 2: “bar” or digit that scrolls
                     // ---------------------------------------------------------
-                    // Idea sugerida:
-                    //   - Mover un dígito "lleno" (por ejemplo 0xF)
-                    //     a lo largo de los 8 dígitos, usando scroll_pos.
+                    // Suggested idea:
+                    //   - Move a “full” digit (e.g., 0xF)
+                    //     across the 8 digits using scroll_pos.
                     2'b10:
                     begin
-                        // Plantilla: todos los dígitos en 0
+                        // Template: all digits at 0
                         number_reg <= '0;
 
                         // TODO:
-                        // - Usa scroll_pos para seleccionar qué nibble activar.
-                        //   Por ejemplo:
+                        // - Use scroll_pos to select which nibble to activate.
+                        //   For example:
                         //      case (scroll_pos)
                         //        3'd0: number_reg[ 3: 0] = 4'hF;
                         //        3'd1: number_reg[ 7: 4] = 4'hF;
                         //        ...
                         //      endcase
                         //
-                        // - También puedes hacer un patrón simétrico
-                        //   (ej: desde los extremos hacia el centro).
+                        // - You may also create a symmetric pattern
+                        //   (e.g., from ends toward center).
                     end
 
                     // ---------------------------------------------------------
-                    // Modo 3: modo libre
+                    // Mode 3: free mode
                     // ---------------------------------------------------------
-                    // Espacio para que definas tu propio experimento:
-                    //   - Mostrar un patrón fijo (0xDEAD_BEEF, 0xC0FFEE, etc.).
-                    //   - Alternar entre dos palabras/patrones.
-                    //   - Hacer "scroll" de texto hexadecimal.
+                    // Space to define your own experiment:
+                    //   - Show a fixed pattern (0xDEAD_BEEF, 0xC0FFEE, etc.)
+                    //   - Alternate between two words/patterns.
+                    //   - Implement HEX text scrolling.
                     2'b11:
                     begin
                         // TODO:
-                        // - Implementa aquí tu propio efecto.
-                        //   Por ejemplo:
+                        // - Implement your own effect here.
+                        //   For example:
                         //     number_reg <= 32'hDEAD_BEEF;
                         //
-                        // - O usa scroll_pos para desplazamiento de hex.
+                        // - Or use scroll_pos for HEX scrolling.
                         number_reg <= number_reg;
                     end
                 endcase
@@ -191,7 +191,7 @@ module hackathon_top
         end
 
     // -------------------------------------------------------------------------
-    // Instancia del driver de display de 7 segmentos
+    // Instance of the 7-segment display driver
     // -------------------------------------------------------------------------
 
     seven_segment_display

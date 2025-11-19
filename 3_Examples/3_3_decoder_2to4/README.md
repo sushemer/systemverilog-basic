@@ -1,73 +1,73 @@
-# 3.3 Decoder 2→4 (decodificador binario 2 a 4 líneas)
+# 3.3 Decoder 2→4 (binary 2-to-4 line decoder)
 
-Este ejemplo muestra un **decoder 2→4** (decodificador binario de 2 bits a 4 salidas)
-implementado de varias formas en SystemVerilog y permite ver en la Tang Nano 9K
-cómo una entrada de 2 bits selecciona **exactamente una** de las 4 salidas (one-hot).
+This example shows a **2→4 decoder** (binary decoder from 2 bits to 4 lines)  
+implemented in several ways in SystemVerilog, and allows you to observe on the Tang Nano 9K  
+how a 2-bit input selects **exactly one** of the 4 outputs (one-hot).
 
-La idea es:
+The idea is:
 
-- Usar una entrada binaria de 2 bits `in[1:0]` formada por `A` y `B`.
-- Generar 4 salidas `Y[3:0]` donde solo una está en `1` según el valor de `in`:
+- Use a 2-bit binary input `in[1:0]` composed of `A` and `B`.
+- Generate 4 outputs `Y[3:0]` where only one is `1` depending on `in`:
   - `in = 00` → `Y = 0001`
   - `in = 01` → `Y = 0010`
   - `in = 10` → `Y = 0100`
   - `in = 11` → `Y = 1000`
-- Implementar el mismo decoder 2→4 de **cuatro maneras** distintas:
-  - Con AND/NOT (ecuaciones lógicas “tediosas”).
-  - Con `case`.
-  - Con desplazamiento (`shift`).
-  - Con indexado de bits.
+- Implement the same 2→4 decoder in **four different ways**:
+  - Using AND/NOT (tedious logic equations)
+  - Using `case`
+  - Using shift (`<<`)
+  - Using bit indexing
 
 ---
 
-## Objetivo
+## Objective
 
-Al finalizar el ejemplo, la persona usuaria podrá:
+At the end of the example, the user will be able to:
 
-- Relacionar entradas físicas (`key[1:0]`) con una palabra binaria `in[1:0]`.
-- Entender el comportamiento de un **decoder 2→4** (salida one-hot).
-- Implementar un decoder combinacional de diferentes maneras en SystemVerilog.
-- Observar en la placa cómo se activa exactamente una salida para cada valor de entrada.
+- Relate physical inputs (`key[1:0]`) to a binary word `in[1:0]`.
+- Understand the behavior of a **2→4 decoder** (one-hot output).
+- Implement a combinational decoder in different ways in SystemVerilog.
+- See on the board how exactly one output is active for each input value.
 
 ---
 
-## Señales y pines
+## Signals and pins
 
-En el código SystemVerilog se usan:
+The SystemVerilog code uses:
 
-- `key[7:0]` como entradas digitales desde la tarjeta.
-- `led[7:0]` como salidas hacia los LEDs.
+- `key[7:0]` as digital inputs from the board.
+- `led[7:0]` as outputs to the board LEDs.
 
-Para este ejemplo, el mapeo lógico es:
+Logical mapping:
 
-- **Entrada del decoder:**
+- **Decoder input:**
 
   - `in[1:0]` = `{ key[1], key[0] }`
 
-- **Salidas visibles en LEDs:**
+- **Visible LEDs:**
 
-  - `LED[0]` → bit 0 de `in` (LSB)
-  - `LED[1]` → bit 1 de `in` (MSB)
+  - `LED[0]` → bit 0 of `in` (LSB)
+  - `LED[1]` → bit 1 of `in` (MSB)
 
-  Así, `LED[1:0]` muestran el valor binario actual de `in`.
+  Thus, `LED[1:0]` display the binary value of `in`.
 
   - `LED[5:2]` → bits `dec3[3:0]`  
-    (salida one-hot del decoder implementado por indexado)
-  - `LED[7:6]` → no se usan (se quedan en 0)
+    (one-hot output of the decoder implemented via indexing)
+  - `LED[7:6]` → unused (remain 0)
 
-De este modo, puedes ver:
+This allows you to see:
 
-- En `LED[1:0]` el valor binario de la entrada.
-- En `LED[5:2]` qué línea del decoder está activa (one-hot).
+- On `LED[1:0]`: the binary value of the input  
+- On `LED[5:2]`: which decoder line is active (one-hot)
 
 ---
 
-## Flujo sugerido de uso
+## Suggested usage flow
 
-1. **Revisar teoría asociada**
+1. **Review related theory**
 
-   Antes de este ejemplo, se recomienda repasar en la parte teórica:
+   Before this example, it is recommended to review:
 
-   - Módulos y puertos (cómo declarar entradas/salidas).
-   - Diferencia entre lógica combinacional y secuencial.
-   - Concepto de **decoder** o **demultiplexor** (one-hot outputs).
+   - Modules and ports (how to declare inputs/outputs)
+   - Difference between combinational and sequential logic
+   - Concept of **decoder** or **demultiplexer** (one-hot outputs)

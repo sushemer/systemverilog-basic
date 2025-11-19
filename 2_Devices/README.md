@@ -1,24 +1,24 @@
-# 2. Devices · Hardware base
+# 2. Devices · Base hardware
 
-La carpeta `2_devices` reúne toda la información relacionada con el **hardware físico** utilizado en el repositorio:
+The `2_devices` folder gathers all information related to the **physical hardware** used in the repository:
 
-- La placa **FPGA Tang Nano 9K**.
-- Los **sensores** (entradas).
-- Los **actuadores** (salidas).
-- Notas comunes de **protoboard y cableado**.
-- Convenciones para mantener el hardware documentado y reproducible.
+- The **Tang Nano 9K FPGA** board  
+- **Sensors** (inputs)  
+- **Actuators** (outputs)  
+- Common notes on **protoboard and wiring**  
+- Conventions to keep hardware documented and reproducible  
 
-El objetivo es que, antes de cablear algo o modificar constraints, sea posible:
+The goal is that before wiring anything or modifying constraints, it is possible to:
 
-- Ver **qué dispositivos** se utilizan.
-- Entender **cómo se conectan** a la Tang Nano 9K.
-- Adoptar las mismas **convenciones de nombres y wiring** en ejemplos, actividades y laboratorios.
+- See **which devices** are used  
+- Understand **how they connect** to the Tang Nano 9K  
+- Adopt the same **naming and wiring conventions** in examples, activities, and labs  
 
 ---
 
-## 2.1 Boards · Placas
+## 2.1 Boards · Boards
 
-Ruta principal:
+Main path:
 
     2_devices/
      └─ 2_1_Boards/
@@ -32,32 +32,31 @@ Ruta principal:
 
 ### 2.1.1 Tang Nano 9K
 
-Placa FPGA principal utilizada en todo el repositorio.
+Main FPGA board used in the entire repository.
 
-- **Propósito**  
-  Plataforma base para todas las activities, labs e implementations.  
-  Todos los ejemplos de SystemVerilog están pensados para esta placa y este archivo de constraints.
+- **Purpose**  
+  Base platform for all activities, labs, and implementations.  
+  All SystemVerilog examples are designed for this board and this constraints file.
 
-- **Archivos clave**
+- **Key files**
   - `docs/pinout.md`  
-    Resumen de pines relevantes (reloj, GPIO, LCD, TM1638, pines de expansión, etc.).
+    Summary of relevant pins (clock, GPIO, LCD, TM1638, expansion pins, etc.)
   - `docs/power_notes.md`  
-    Notas de alimentación, niveles de voltaje y consideraciones de seguridad.
+    Notes on power, voltage levels, and safety considerations
   - `docs/programming.md`  
-    Cómo programar la Tang Nano 9K (Gowin Programmer, scripts, modo de conexión).
+    How to program the Tang Nano 9K (Gowin Programmer, scripts, connection mode)
   - `constr/tang-nano-9k.cst`  
-    Archivo de constraints de Gowin.  
-    Es la **fuente única de verdad** para el mapeo:
-    - Señales lógicas (`clock`, `gpio`, `tm1638_*`, `lcd_*`, etc.).
-    - A pines físicos de la FPGA.
+    Gowin constraints file — the **single source of truth** for mapping:
+    - Logical signals (`clock`, `gpio`, `tm1638_*`, `lcd_*`, etc.)  
+    - To physical FPGA pins  
 
-> Recomendación: antes de cambiar wiring en protoboard o asignaciones de pines, revisar siempre este `.cst`.
+> Recommendation: always check this `.cst` before changing wiring or pin assignments.
 
 ---
 
-## 2.2 Sensors · Entradas
+## 2.2 Sensors · Inputs
 
-Los sensores se organizan en subcarpetas dentro de:
+Sensors are organized under:
 
     2_devices/
      └─ 2_2_Sensors/
@@ -65,34 +64,34 @@ Los sensores se organizan en subcarpetas dentro de:
          ├─ 2_2_Y_Sensor_B/
          └─ ...
 
-Cada sensor debería contar, idealmente, con:
+Each sensor should ideally contain:
 
-- Un archivo `README.md` o similar describiendo:
-  - Propósito del sensor.
-  - Pines relevantes (VCC, GND, señales de datos).
-  - Tipo de interfaz (digital simple, PWM, SPI, I²C, trigger/echo, etc.).
-- Referencias a su **datasheet** o a documentación externa.
-- Esquemas simples o fotos del wiring (cuando sea relevante).
+- A `README.md` describing:
+  - The sensor purpose  
+  - Relevant pins  
+  - Interface type (digital, PWM, SPI, I²C, trigger/echo, etc.)
+- Links to its datasheet or external documentation  
+- Simple wiring diagrams or photos when useful  
 
-Sensores previstos en este repositorio (ejemplos):
+Sensors expected in this repository:
 
 - **HC-SR04 (ultrasonic distance)**  
-  - Señales principales: `TRIG`, `ECHO`, `VCC`, `GND`.  
-  - Consideraciones de nivel: `ECHO` suele ser 5 V y requiere adaptación a 3.3 V.
-- **Encoder rotatorio (KY-040 o similar)**  
-  - Señales típicas: `CLK`, `DT`, `SW`, `VCC`, `GND`.  
-  - Usado para navegación por menús o ajuste de valores.
-- **Potenciómetro + ADC externo**  
-  - Potenciómetro como divisor de voltaje hacia un ADC.  
-  - ADC comunicándose por SPI o I²C con la FPGA.
+  - Signals: `TRIG`, `ECHO`, `VCC`, `GND`  
+  - Level notes: `ECHO` is usually 5 V → requires level shifting
+- **Rotary encoder (KY-040 or similar)**  
+  - Signals: `CLK`, `DT`, `SW`, `VCC`, `GND`  
+  - Used for menu navigation or value adjustment
+- **Potentiometer + external ADC**  
+  - Potentiometer acts as voltage divider  
+  - ADC communicates via SPI or I²C  
 
-Si se considera necesario, se pueden añadir imágenes de wiring en una subcarpeta `Mult/` dentro de cada sensor (por ejemplo, `2_2_1_HC_SR04/Mult/`).
+Images may be stored in a `Mult/` folder inside each sensor directory.
 
 ---
 
-## 2.3 Actuators · Salidas
+## 2.3 Actuators · Outputs
 
-Los actuadores se organizan en:
+Actuators are organized under:
 
     2_devices/
      └─ 2_3_Actuators/
@@ -100,40 +99,44 @@ Los actuadores se organizan en:
          ├─ 2_3_Y_LCD_480x272/
          └─ ...
 
-Ejemplos típicos:
+Typical examples:
 
-- **TM1638** (módulo con 7 segmentos, LEDs y teclas)
-  - Señales principales: `VCC`, `GND`, `STB`, `CLK`, `DIO`.
-  - Se utiliza como salida (7 segmentos, LEDs) y como entrada (teclas).
-- **LCD 480×272** (4.3")  
-  - Conexiones de datos, sincronía y backlight.
-  - Utilizada como salida gráfica principal en algunos labs/implementations.
-- **Buzzer / altavoz sencillo** (si aplica en ejemplos de sonido).
-- **Servos o motores** (si se añaden ejercicios de PWM más adelante).
+- **TM1638** (7-segment display + LEDs + keys)  
+  - Signals: `VCC`, `GND`, `STB`, `CLK`, `DIO`  
+  - Used as both output (display) and input (keys)
 
-Cada subcarpeta de actuador debería documentar:
+- **LCD 480×272 (4.3")**  
+  - Data, sync, and backlight connections  
+  - Used as graphical output in some labs/implementation
 
-- Tensiones de trabajo.
-- Conectores y numeración de pines.
-- Cualquier nota especial de protección (resistencias, transistores, etc.).
+- **Buzzer / small speaker** (for sound examples)
 
-Al igual que con los sensores, se recomienda una subcarpeta `Mult/` para fotos de conexión cuando sean útiles.
+- **Servos / motors** (if added for PWM exercises)
+
+Each actuator folder should document:
+
+- Working voltages  
+- Connectors and pin numbering  
+- Protection notes (resistors, transistors, etc.)
+
+Recommended: subfolder `Mult/` for wiring photos.
 
 ---
 
-## 2.4 Protoboard y cableado
+## 2.4 Protoboard and wiring
 
-Algunos dispositivos se conectan mediante protoboard.  
-Por ello, esta sección (o subcarpeta asociada) puede recoger:
+Some devices use protoboard wiring.  
+This section may include:
 
-- Recomendaciones de uso de protoboard:
-  - Distribución de rieles de alimentación.
-  - Buenas prácticas para separar señales de potencia y de datos.
-- Esquemas o fotos de ejemplos típicos:
-  - Tang Nano 9K en una base + protoboard con potenciómetro y HC-SR04.
-  - Distribución de 3.3 V / 5 V, según el caso.
+- General protoboard recommendations  
+  - Power rail distribution  
+  - Separation of power and data signals  
 
-Siempre que se añadan imágenes, se sugiere usar un patrón similar a:
+- Example diagrams/photos:
+  - Tang Nano 9K on base + protoboard with potentiometer and HC-SR04  
+  - 3.3 V / 5 V rail distribution  
+
+Images should follow the pattern:
 
     2_devices/
      └─ 2_4_Breadboard/
@@ -142,6 +145,3 @@ Siempre que se añadan imágenes, se sugiere usar un patrón similar a:
              └─ base_wiring_side.jpg
 
 ---
-
-
-

@@ -1,114 +1,114 @@
-# 3.2 Multiplexor 2:1 (mux 2:1)
+# 3.2 Multiplexer 2:1 (mux 2:1)
 
-Este ejemplo muestra un **multiplexor 2:1** implementado de varias maneras
-en SystemVerilog y permite **verificar que todas las implementaciones son equivalentes**
-usando los botones y LEDs de la Tang Nano 9K.
+This example shows a **2:1 multiplexer** implemented in several ways  
+in SystemVerilog and allows you to **verify that all implementations are equivalent**  
+using the buttons and LEDs of the Tang Nano 9K.
 
-La idea es:
+The idea is:
 
-- Usar tres entradas binarias:
-  - `d0` (dato de entrada 0)
-  - `d1` (dato de entrada 1)
-  - `sel` (señal de selección)
-- Implementar el mux 2:1 de cuatro formas:
+- Use three binary inputs:
+  - `d0` (data input 0)
+  - `d1` (data input 1)
+  - `sel` (selection signal)
+- Implement the 2:1 mux in four ways:
   - `always_comb` + `if / else`
-  - Operador condicional `?:`
-  - Sentencia `case`
-  - Expresión con compuertas lógicas (`&`, `|`, `~`)
-- Comprobar que todas las salidas son iguales para cualquier combinación de `d0`, `d1` y `sel`.
+  - Conditional operator `?:`
+  - `case` statement
+  - Logic gate expression (`&`, `|`, `~`)
+- Check that all outputs match for any combination of `d0`, `d1`, and `sel`.
 
 ---
 
-## Objetivo
+## Objective
 
-Al finalizar el ejemplo, la persona usuaria podrá:
+At the end of the example, the user will be able to:
 
-- Relacionar entradas físicas (switches / teclas) con señales lógicas `d0`, `d1` y `sel`.
-- Entender el comportamiento de un **multiplexor 2:1**.
-- Implementar la misma función combinacional de diferentes maneras en SystemVerilog.
-- Verificar experimentalmente que todas las implementaciones de un mux 2:1 son equivalentes.
+- Relate physical inputs (switches / keys) to logical signals `d0`, `d1`, and `sel`.
+- Understand the behavior of a **2:1 multiplexer**.
+- Implement the same combinational function in different ways in SystemVerilog.
+- Experimentally verify that all mux implementations are equivalent.
 
 ---
 
-## Señales y pines
+## Signals and pins
 
-En el código SystemVerilog se utilizan los vectores:
+In the SystemVerilog code, the following vectors are used:
 
-- `key[7:0]` como entradas (conectadas a llaves / botones físicos).
-- `led[7:0]` como salidas (conectadas a LEDs en la placa).
+- `key[7:0]` as inputs (connected to switches / buttons).
+- `led[7:0]` as outputs (connected to LEDs).
 
-En este ejemplo se hace el siguiente mapeo lógico:
+Logical mapping:
 
-- Entradas del mux:
+- Mux inputs:
 
   - `d0` ← `key[0]`
   - `d1` ← `key[1]`
   - `sel` ← `key[7]` (selector)
 
-- Salidas mostradas en LEDs:
+- Outputs shown on LEDs:
 
   - `LED[0]` → `d0`
   - `LED[1]` → `d1`
   - `LED[2]` → `sel`
-  - `LED[3]` → salida del mux implementado con `if / else` (`y_if`)
-  - `LED[4]` → salida del mux implementado con operador ternario `?:` (`y_tern`)
-  - `LED[5]` → salida del mux implementado con `case` (`y_case`)
-  - `LED[6]` → salida del mux implementado con compuertas lógicas (`y_gate`)
-  - `LED[7]` → no se usa (puede quedar en 0)
+  - `LED[3]` → mux output implemented with `if / else` (`y_if`)
+  - `LED[4]` → mux output implemented with ternary operator `?:` (`y_tern`)
+  - `LED[5]` → mux output implemented with `case` (`y_case`)
+  - `LED[6]` → mux output implemented with logic gates (`y_gate`)
+  - `LED[7]` → unused (can remain 0)
 
-A nivel de comportamiento, el mux 2:1 cumple:
+Behavior:
 
-- Si `sel = 0` → salida `y = d0`
-- Si `sel = 1` → salida `y = d1`
+- If `sel = 0` → output `y = d0`
+- If `sel = 1` → output `y = d1`
 
-Si todas las implementaciones son correctas, los LEDs 3, 4, 5 y 6 **siempre deberán tener el mismo valor**.
-
----
-
-## Flujo sugerido de uso
-
-1. **Revisar teoría asociada**
-
-   Antes de este ejemplo, se recomienda leer en la parte de teoría:
-
-   - Introducción a módulos y puertos (`Modules and Ports`).
-   - Diferencia entre lógica combinacional y secuencial (`Combinational vs Sequential`).
-   - Opcional: un apartado de multiplexores si existe en tu repo (`Multiplexers`).
-
-2. **Sintetizar y programar**
-
-   - Ejecutar síntesis, place & route y generación del bitstream.
-   - Programar la FPGA con el bitstream generado.
-
-3. **Probar en la placa**
-
-   - Probar varias combinaciones de `d0`, `d1` y `sel`:
-
-     | d0 (`key[0]`) | d1 (`key[1]`) | sel (`key[7]`) | y esperada (`mux`) |
-     |---------------|---------------|----------------|--------------------|
-     |      0        |      0        |      0         |         0          |
-     |      0        |      1        |      0         |         0          |
-     |      1        |      0        |      0         |         1          |
-     |      1        |      1        |      0         |         1          |
-     |      0        |      0        |      1         |         0          |
-     |      0        |      1        |      1         |         1          |
-     |      1        |      0        |      1         |         0          |
-     |      1        |      1        |      1         |         1          |
-
-   - En todos los casos, verifica en la placa que:
-
-     - `LED[0]` y `LED[1]` coinciden con `d0` y `d1`.
-     - `LED[2]` coincide con `sel`.
-     - `LED[3]`, `LED[4]`, `LED[5]` y `LED[6]` **siempre tienen el mismo valor**.
+If all implementations are correct, LEDs 3, 4, 5, and 6 **should always match**.
 
 ---
 
-## Relación con otros elementos del repositorio
+## Suggested usage flow
 
-- **Teoría (docs sugeridos):**
-  - Conceptos básicos de módulos y puertos.
-  - Lógica combinacional vs secuencial.
-  - Multiplexores y otras funciones combinacionales.
+1. **Review related theory**
 
-- **Ejemplos relacionados:**
-  - `3.1 AND / OR / NOT / XOR + Leyes de De Morgan`.
+   Recommended theory before this example:
+
+   - Introduction to modules and ports
+   - Difference between combinational and sequential logic
+   - Optional: multiplexers topic if available in your repo
+
+2. **Synthesize and program**
+
+   - Run synthesis, place & route, and generate the bitstream.
+   - Program the FPGA with the generated bitstream.
+
+3. **Test on the board**
+
+   Try several combinations of `d0`, `d1`, and `sel`:
+
+   | d0 (`key[0]`) | d1 (`key[1]`) | sel (`key[7]`) | expected y (mux) |
+   |---------------|---------------|----------------|------------------|
+   |      0        |      0        |      0         |        0         |
+   |      0        |      1        |      0         |        0         |
+   |      1        |      0        |      0         |        1         |
+   |      1        |      1        |      0         |        1         |
+   |      0        |      0        |      1         |        0         |
+   |      0        |      1        |      1         |        1         |
+   |      1        |      0        |      1         |        0         |
+   |      1        |      1        |      1         |        1         |
+
+   Confirm:
+
+   - `LED[0]` and `LED[1]` match `d0` and `d1`
+   - `LED[2]` matches `sel`
+   - `LED[3]`, `LED[4]`, `LED[5]`, and `LED[6]` **always match**
+
+---
+
+## Relationship with other repository elements
+
+- **Theory (suggested docs):**
+  - Basic concepts of modules and ports
+  - Combinational vs sequential logic
+  - Multiplexers and other combinational blocks
+
+- **Related examples:**
+  - `3.1 AND / OR / NOT / XOR + De Morgan’s Laws`

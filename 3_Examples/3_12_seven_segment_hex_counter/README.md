@@ -1,61 +1,61 @@
-# 3.12 Seven-segment HEX counter (multiplexado)
+# 3.12 Seven-segment HEX counter (multiplexed)
 
-Este ejemplo muestra cómo implementar **un contador hexadecimal de 32 bits** en el display de 7 segmentos del TM1638, haciendo **el multiplexado “a mano”**:
+This example shows how to implement a **32-bit hexadecimal counter** on the TM1638 7-segment display, performing the **multiplexing manually**:
 
-- El contador `hex_counter` es de 32 bits.
-- Cada dígito de 7 segmentos muestra 4 bits (un nibble) del contador.
-- Se usan los 8 dígitos del display para mostrar el valor completo en HEX.
-- Los LEDs muestran el byte menos significativo del contador como debug.
+- The counter `hex_counter` is 32 bits.
+- Each 7-segment digit displays 4 bits (one nibble) of the counter.
+- All 8 digits of the display are used to show the full value in HEX.
+- The LEDs show the least significant byte of the counter for debugging.
 
-Es el siguiente paso natural después de:
+It is the next natural step after:
 
-- `3_11_seven_segment_basics` (un solo dígito, sin multiplex).
-- `3_10_hex_counter_7seg` (usa el módulo `seven_segment_display` ya hecho).
+- `3_11_seven_segment_basics` (one digit, no multiplexing).
+- `3_10_hex_counter_7seg` (uses the already-built `seven_segment_display` module).
 
-Aquí la persona usuaria controla explícitamente:
+Here the user explicitly controls:
 
-- Qué dígito está activo (one-hot en `digit`).
-- Qué nibble va a segmentos según el dígito activo.
-- La velocidad de conteo y de refresco del display.
-
----
-
-## Objetivo
-
-Al finalizar este ejemplo, la persona usuaria podrá:
-
-- Entender el **principio de multiplexado** de displays de 7 segmentos.
-- Implementar un contador HEX de 32 bits mostrado en 8 dígitos.
-- Separar claramente:
-  - Lógica de conteo (contador lento).
-  - Lógica de refresco de display (contador rápido).
-  - Lógica de decodificación HEX → 7 segmentos.
+- Which digit is active (one-hot in `digit`).
+- Which nibble goes to segments depending on the active digit.
+- The counting speed and the display refresh speed.
 
 ---
 
-## Señales y pines relevantes
+## Objective
 
-### Entradas
+At the end of this example, the user will be able to:
+
+- Understand the **multiplexing principle** of 7-segment displays.
+- Implement a 32-bit HEX counter shown across 8 digits.
+- Clearly separate:
+  - Counting logic (slow counter).
+  - Display refresh logic (fast counter).
+  - HEX → 7-segment decoding logic.
+
+---
+
+## Relevant signals and pins
+
+### Inputs
 
 - `clock`  
-  Reloj principal (≈ 27 MHz en la Tang Nano 9K).
+  Main clock (~27 MHz on the Tang Nano 9K).
 
 - `reset`  
-  Reset asíncrono activo en alto.
+  Active-high asynchronous reset.
 
 - `key[7:0]`  
-  No se usa en la lógica principal de este ejemplo (queda disponible para extensiones).
+  Not used in the main logic of this example (available for extensions).
 
-### Salidas
+### Outputs
 
 - `led[7:0]`  
 
   - `led = hex_counter[7:0];`  
-    Muestra el byte menos significativo del contador en binario, útil como depuración rápida.
+    Shows the least significant byte of the counter in binary, useful for quick debugging.
 
 - `abcdefgh[7:0]`  
 
-  Bits de segmentos:
+  Segment bits:
 
     Bit 7 → a  
     Bit 6 → b  
@@ -64,239 +64,210 @@ Al finalizar este ejemplo, la persona usuaria podrá:
     Bit 3 → e  
     Bit 2 → f  
     Bit 1 → g  
-    Bit 0 → h (punto decimal)
+    Bit 0 → h (decimal point)
 
-  Convención (en este ejemplo):
+  Convention:
 
-  - `1` = segmento encendido.
-  - `0` = segmento apagado.
+  - `1` = segment ON  
+  - `0` = segment OFF
 
-  El punto decimal (h) se deja apagado en todos los dígitos (`segs[0] = 1'b0`).
+  The decimal point (h) is left OFF in all digits (`segs[0] = 1'b0`).
 
 - `digit[7:0]`  
 
-  Selección **one-hot** del dígito activo:
+  **One-hot** digit selection:
 
-    0000_0001 → Dígito 0  
-    0000_0010 → Dígito 1  
-    0000_0100 → Dígito 2  
-    0000_1000 → Dígito 3  
-    0001_0000 → Dígito 4  
-    0010_0000 → Dígito 5  
-    0100_0000 → Dígito 6  
-    1000_0000 → Dígito 7  
+    0000_0001 → Digit 0  
+    0000_0010 → Digit 1  
+    0000_0100 → Digit 2  
+    0000_1000 → Digit 3  
+    0001_0000 → Digit 4  
+    0010_0000 → Digit 5  
+    0100_0000 → Digit 6  
+    1000_0000 → Digit 7  
 
-  En cada instante solo un bit de `digit` está en 1; los demás permanecen en 0.
+  Only one bit of `digit` is active at a time.
 
 - `red`, `green`, `blue`  
-  Forzados a 0 (LCD apagado en este ejemplo).
+  Forced to 0 (LCD off in this example).
 
 - `gpio[3:0]`  
-  Alta impedancia (`'z`), sin uso.
+  High impedance (`'z`), unused.
 
 ---
 
-## Estructura interna del diseño
+## Internal design structure
 
-A grandes rasgos, el diseño se organiza en varios bloques:
+The design is organized into several blocks:
 
-1. Generación de un **tick lento** para incrementar el contador HEX.
-2. Contador de 32 bits `hex_counter`.
-3. Lógica de **refresco rápido** para multiplexado (selección de dígito).
-4. Selección del nibble a mostrar según el dígito activo.
-5. Decodificador HEX → 7 segmentos.
-6. Construcción de las señales `abcdefgh` y `digit`.
+1. Generation of a **slow tick** to increment the HEX counter.  
+2. 32-bit counter `hex_counter`.  
+3. **Fast refresh logic** for multiplexing (digit selection).  
+4. Selection of the nibble to display depending on the active digit.  
+5. HEX → 7-segment decoder.  
+6. Construction of outputs `abcdefgh` and `digit`.
 
 ---
 
-### 1. Tick lento para el contador
+### 1. Slow tick for the counter
 
-Se genera un pulso (`tick_100ms`) aproximadamente cada 100 ms usando el reloj principal:
+A pulse (`tick_100ms`) is generated approximately every 100 ms using the main clock:
 
-localparam int unsigned CLK_HZ   = 27_000_000;
-localparam int unsigned TICK_HZ  = 10;          // 10 incrementos/seg
+localparam int unsigned CLK_HZ   = 27_000_000;  
+localparam int unsigned TICK_HZ  = 10;          // 10 increments/sec  
 localparam int unsigned TICK_MAX = CLK_HZ / TICK_HZ;
 
-logic [31:0] tick_cnt;
+logic [31:0] tick_cnt;  
 logic        tick_100ms;
 
-always_ff @(posedge clock or posedge reset) begin
-    if (reset) begin
-        tick_cnt    <= 32'd0;
-        tick_100ms  <= 1'b0;
-    end else if (tick_cnt == TICK_MAX - 1) begin
-        tick_cnt    <= 32'd0;
-        tick_100ms  <= 1'b1;
-    end else begin
-        tick_cnt    <= tick_cnt + 32'd1;
-        tick_100ms  <= 1'b0;
-    end
+always_ff @(posedge clock or posedge reset) begin  
+    if (reset) begin  
+        tick_cnt    <= 32'd0;  
+        tick_100ms  <= 1'b0;  
+    end else if (tick_cnt == TICK_MAX - 1) begin  
+        tick_cnt    <= 32'd0;  
+        tick_100ms  <= 1'b1;  
+    end else begin  
+        tick_cnt    <= tick_cnt + 32'd1;  
+        tick_100ms  <= 1'b0;  
+    end  
 end
 
-- `tick_cnt` cuenta ciclos de `clock`.
-- Cuando `tick_cnt` llega a `TICK_MAX - 1`, se genera un pulso de un ciclo en `tick_100ms` y se reinicia el contador.
-- `tick_100ms` es la **señal de enable** para el contador de 32 bits.
+- `tick_cnt` counts clock cycles.  
+- When it reaches `TICK_MAX - 1`, a one-cycle pulse is generated on `tick_100ms`.  
+- `tick_100ms` is the **enable** for the 32-bit counter.
 
-Se puede cambiar `TICK_HZ` para hacer el conteo más rápido o más lento.
+You may change `TICK_HZ` to adjust the counting speed.
 
 ---
 
-### 2. Contador hexadecimal de 32 bits
+### 2. 32-bit hexadecimal counter
 
-Usando el tick lento como enable, se implementa el contador principal:
+Using the slow tick as enable:
 
 logic [31:0] hex_counter;
 
-always_ff @(posedge clock or posedge reset) begin
-    if (reset) begin
-        hex_counter <= 32'h0000_0000;
-    end else if (tick_100ms) begin
-        hex_counter <= hex_counter + 32'd1;
-    end
+always_ff @(posedge clock or posedge reset) begin  
+    if (reset) begin  
+        hex_counter <= 32'h0000_0000;  
+    end else if (tick_100ms) begin  
+        hex_counter <= hex_counter + 32'd1;  
+    end  
 end
 
-- `hex_counter` incrementa una vez cada `tick_100ms` (≈ cada 100 ms con los parámetros de ejemplo).
-- El valor de `hex_counter` es el que se mostrará en los 8 dígitos en formato hexadecimal.
-- El byte menos significativo (`hex_counter[7:0]`) se refleja en `led[7:0]`.
+- `hex_counter` increments once per `tick_100ms`.  
+- This value is displayed across the 8 digits in HEX.  
+- Least significant byte is mirrored to `led`.
 
 ---
 
-### 3. Refresco rápido para el multiplexado
+### 3. Fast refresh for multiplexing
 
-Para que el ojo humano vea los 8 dígitos “encendidos a la vez”, se enciende cada uno muy rápido, uno por uno.  
-Se usa un pequeño contador rápido para seleccionar el dígito activo:
+A fast counter selects the active digit:
 
-logic [15:0] refresh_cnt;
+logic [15:0] refresh_cnt;  
 logic [2:0]  digit_index;
 
-always_ff @(posedge clock or posedge reset) begin
-    if (reset) begin
-        refresh_cnt <= 16'd0;
-        digit_index <= 3'd0;
-    end else begin
-        refresh_cnt <= refresh_cnt + 16'd1;
-        digit_index <= refresh_cnt[15:13]; // usar bits altos como índice
-    end
+always_ff @(posedge clock or posedge reset) begin  
+    if (reset) begin  
+        refresh_cnt <= 16'd0;  
+        digit_index <= 3'd0;  
+    end else begin  
+        refresh_cnt <= refresh_cnt + 16'd1;  
+        digit_index <= refresh_cnt[15:13];  
+    end  
 end
 
-- `refresh_cnt` incrementa en cada ciclo de `clock`.
-- Los bits altos de `refresh_cnt` se usan como `digit_index` (0–7).
-- Debido a la rapidez del reloj, cada dígito se muestra por un tiempo muy corto, pero al recorrer los 8 dígitos continuamente el efecto visual es que todos están encendidos.
-
-La elección de bits (`[15:13]`) puede variar según cuánto parpadeo se desee; se pueden ajustar para obtener más o menos tiempo por dígito.
+- Each digit is on for a very short time.  
+- Cycling through digits fast creates the illusion that all digits are on simultaneously.
 
 ---
 
-### 4. Selección del nibble según el dígito activo
-
-Según el `digit_index`, se selecciona qué grupo de 4 bits de `hex_counter` se enviará al decodificador de 7 segmentos:
+### 4. Selecting the nibble based on the active digit
 
 logic [3:0] active_nibble;
 
-always_comb begin
-    unique case (digit_index)
-        3'd0: active_nibble = hex_counter[ 3: 0];  // nibble menos significativo
-        3'd1: active_nibble = hex_counter[ 7: 4];
-        3'd2: active_nibble = hex_counter[11: 8];
-        3'd3: active_nibble = hex_counter[15:12];
-        3'd4: active_nibble = hex_counter[19:16];
-        3'd5: active_nibble = hex_counter[23:20];
-        3'd6: active_nibble = hex_counter[27:24];
-        3'd7: active_nibble = hex_counter[31:28];  // nibble más significativo
-        default: active_nibble = 4'h0;
-    endcase
+always_comb begin  
+    unique case (digit_index)  
+        3'd0: active_nibble = hex_counter[ 3: 0];  
+        3'd1: active_nibble = hex_counter[ 7: 4];  
+        3'd2: active_nibble = hex_counter[11: 8];  
+        3'd3: active_nibble = hex_counter[15:12];  
+        3'd4: active_nibble = hex_counter[19:16];  
+        3'd5: active_nibble = hex_counter[23:20];  
+        3'd6: active_nibble = hex_counter[27:24];  
+        3'd7: active_nibble = hex_counter[31:28];  
+        default: active_nibble = 4'h0;  
+    endcase  
 end
 
-- Para cada `digit_index`, se toma un nibble distinto de `hex_counter`.
-- De esta forma, mientras se recorre `digit_index` = 0…7, se van mostrando los 8 nibbles del contador.
+Each digit displays a different nibble of `hex_counter`.
 
 ---
 
-### 5. Decodificador HEX → 7 segmentos
-
-Se reutiliza la idea del ejemplo `3_11_seven_segment_basics`, pero sin usar el punto decimal (se fija en 0):
+### 5. HEX → 7-segment decoder
 
 logic [6:0] seg_7bits;  // a-g
 
-always_comb begin
-    unique case (active_nibble)
-        4'h0: seg_7bits = 7'b1111110;
-        4'h1: seg_7bits = 7'b0110000;
-        4'h2: seg_7bits = 7'b1101101;
-        4'h3: seg_7bits = 7'b1111001;
-        4'h4: seg_7bits = 7'b0110011;
-        4'h5: seg_7bits = 7'b1011011;
-        4'h6: seg_7bits = 7'b1011111;
-        4'h7: seg_7bits = 7'b1110000;
-        4'h8: seg_7bits = 7'b1111111;
-        4'h9: seg_7bits = 7'b1111011;
-        4'hA: seg_7bits = 7'b1110111;
-        4'hB: seg_7bits = 7'b0011111;
-        4'hC: seg_7bits = 7'b1001110;
-        4'hD: seg_7bits = 7'b0111101;
-        4'hE: seg_7bits = 7'b1001111;
-        4'hF: seg_7bits = 7'b1000111;
-        default: seg_7bits = 7'b0000000;
-    endcase
+always_comb begin  
+    unique case (active_nibble)  
+        4'h0: seg_7bits = 7'b1111110;  
+        4'h1: seg_7bits = 7'b0110000;  
+        4'h2: seg_7bits = 7'b1101101;  
+        4'h3: seg_7bits = 7'b1111001;  
+        4'h4: seg_7bits = 7'b0110011;  
+        4'h5: seg_7bits = 7'b1011011;  
+        4'h6: seg_7bits = 7'b1011111;  
+        4'h7: seg_7bits = 7'b1110000;  
+        4'h8: seg_7bits = 7'b1111111;  
+        4'h9: seg_7bits = 7'b1111011;  
+        4'hA: seg_7bits = 7'b1110111;  
+        4'hB: seg_7bits = 7'b0011111;  
+        4'hC: seg_7bits = 7'b1001110;  
+        4'hD: seg_7bits = 7'b0111101;  
+        4'hE: seg_7bits = 7'b1001111;  
+        4'hF: seg_7bits = 7'b1000111;  
+        default: seg_7bits = 7'b0000000;  
+    endcase  
 end
-
-- `seg_7bits` codifica qué segmentos (`a`–`g`) se encienden para el nibble actual.
-- El orden de bits debe corresponder al usado al construir `abcdefgh`.
 
 ---
 
-### 6. Construcción de `abcdefgh` y `digit`
-
-Primero se empaquetan los segmentos:
+### 6. Constructing `abcdefgh` and `digit`
 
 logic [7:0] segments;
 
-always_comb begin
-    segments[7:1] = seg_7bits; // a-g
-    segments[0]   = 1'b0;      // h (punto decimal apagado)
+always_comb begin  
+    segments[7:1] = seg_7bits;  
+    segments[0]   = 1'b0;  
 end
 
 assign abcdefgh = segments;
 
-Luego se crea la máscara one-hot para el dígito activo a partir de `digit_index`:
-
 logic [7:0] digit_int;
 
-always_comb begin
-    // one-hot a partir del índice
-    digit_int = 8'b0000_0001 << digit_index;
+always_comb begin  
+    digit_int = 8'b0000_0001 << digit_index;  
 end
 
 assign digit = digit_int;
 
-- Solo un bit de `digit` está en 1 a la vez.
-- El dígito seleccionado muestra el `active_nibble` correspondiente con el patrón `segments`.
+---
+
+## Relationship with other examples
+
+- `3_11_seven_segment_basics` — basic nibble → segments.  
+- `3_10_hex_counter_7seg` — uses an automatic multiplexing module.  
+- Later labs reuse this multiplexing method for counters, FSM states, and sensor values.
 
 ---
 
-## Relación con otros ejemplos
+## Possible extensions and exercises
 
-- `3_11_seven_segment_basics`  
-  Introduce la idea de decodificar un nibble y mostrarlo en un solo dígito.
+- Adjust the `tick_100ms` frequency for faster/slower counting.
+- Use a button to pause/resume or reset the counter.
+- Use the decimal point to indicate special modes.
+- Display only 4 digits and use the other 4 for other information.
+- Combine sensor values with the counter.
 
-- `3_10_hex_counter_7seg`  
-  Usa un módulo ya preparado (`seven_segment_display`) que se encarga del multiplexado internamente.
-
-- En algunos labs posteriores se reutiliza la idea de multiplexado para mostrar:
-  - Contadores.
-  - Estados de FSM.
-  - Valores de sensores (por ejemplo, distancia o posición).
-
----
-
-## Posibles extensiones y ejercicios
-
-Algunas ideas para experimentar sobre este ejemplo:
-
-- Cambiar el periodo de `tick_100ms` para hacer el conteo más rápido o más lento.
-- Usar un botón (`key[...]`) para pausar/reanudar el contador o para hacer reset a `hex_counter`.
-- Aprovechar el punto decimal (`h`) para marcar el nibble que se está “leyendo” o para indicar un modo especial.
-- Mostrar solo 4 dígitos (por ejemplo, el valor menos significativo de 16 bits) y usar los otros 4 dígitos para mostrar otra información.
-- Combinar el valor de un ADC con parte del contador, para visualizar datos de sensores junto con un índice de tiempo.
-
-Este ejemplo proporciona una base clara para entender cómo multiplexar 8 dígitos de 7 segmentos y cómo estructurar el código para separar conteo, refresco y decodificación.
+This example provides a clear base for understanding 8-digit multiplexing and how to separate counting, refreshing, and decoding logic.

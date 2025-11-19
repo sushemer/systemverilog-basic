@@ -1,131 +1,80 @@
 # Ultrasonic HC-SR04 basics
 
-Este documento explica el funcionamiento básico del sensor ultrasónico **HC-SR04**  y cómo se integra con la FPGA en este repositorio.
+This document explains how the **HC-SR04** ultrasonic sensor works and how it integrates with the FPGA.
 
 ---
 
-## ¿Qué mide el HC-SR04?
+## What does the HC-SR04 measure?
 
-El HC-SR04 mide **distancia** hasta un objeto usando ultrasonido:
+It measures **distance** using ultrasound:
 
-- Emite un pulso de sonido de alta frecuencia.
-- Mide el tiempo que tarda en regresar el eco.
-- Calcula la distancia aproximada con base en el tiempo de vuelo.
-
-El resultado típico es una distancia en centímetros o milímetros.
-
----
-
-## Pines principales
-
-El módulo HC-SR04 suele tener 4 pines:
-
-- `VCC` → alimentación (normalmente 5 V).
-- `GND` → tierra.
-- `TRIG` → entrada de disparo (desde la FPGA).
-- `ECHO` → salida de respuesta (hacia la FPGA).
-
-**Importante:**  
-El pin `ECHO` puede estar a **5 V**, por lo que se debe adaptar a 3.3 V para no dañar la FPGA:
-
-- Divisor resistivo.
-- Level shifter.
-- Cualquier solución segura documentada en `2_devices/`.
+- Sends a sound burst  
+- Waits for echo  
+- Measures echo delay time  
+- Distance ≈ (time * speed_of_sound) / 2  
 
 ---
 
-## Secuencia de medición
+## Main pins
 
-Flujo básico:
-
-1. La FPGA genera un pulso corto en `TRIG`:
-   - Duración típica: al menos 10 µs en nivel alto.
-
-2. El sensor emite una ráfaga ultrasónica y luego:
-   - Pone `ECHO` en alto mientras espera el eco.
-   - `ECHO` permanece en alto durante un tiempo proporcional a la distancia.
-
-3. La FPGA mide la **duración** del pulso en `ECHO`.
-
-4. A partir de ese tiempo, se calcula la distancia:
-
-   - Distancia ≈ (tiempo * velocidad_del_sonido) / 2
-
-El factor 1/2 aparece porque el sonido va y regresa.
+- `VCC` (5 V)  
+- `GND`  
+- `TRIG` → FPGA output  
+- `ECHO` → FPGA input (MUST be level-shifted to 3.3 V)
 
 ---
 
-## Medición del tiempo con la FPGA
+## Measurement sequence
 
-En la FPGA se puede medir el ancho del pulso de `ECHO` mediante:
-
-- Un **contador** que:
-  - Se pone en cero al inicio del pulso.
-  - Se incrementa cada ciclo de reloj mientras `ECHO` está en 1.
-
-- Al terminar el pulso:
-  - El valor del contador representa el tiempo en “ticks de reloj”.
-
-Luego, se puede convertir ese valor a:
-
-- Microsegundos (si se conoce la frecuencia de reloj).
-- Centímetros, usando una relación aproximada.
-
-Ejemplo conceptual en ticks:
-
-- Si `clk = 50 MHz`, un tick ≈ 20 ns.
-- Si el pulso dura 10,000 ticks:
-  - Tiempo ≈ 200 µs.
-  - Distancia aproximada se calcula con la ecuación correspondiente.
-
-En los ejemplos y labs, la fórmula exacta se ajusta según la frecuencia real del reloj y las aproximaciones elegidas.
+1. FPGA sends a short high pulse to `TRIG` (≥10 µs)  
+2. Sensor emits ultrasound and sets `ECHO` HIGH  
+3. `ECHO` stays HIGH until the echo returns  
+4. FPGA measures the HIGH duration  
+5. Convert measured ticks to time, then to distance  
 
 ---
 
-## Consideraciones prácticas
+## Measuring time on FPGA
 
-- **Rango típico**: desde unos pocos centímetros hasta ~4 metros.
-- **Zona muerta**: muy cerca del sensor (pocos cm), la medición es poco confiable.
-- **Ambiente**:
-  - Temperatura y condiciones pueden afectar ligeramente la velocidad del sonido.
-  - Para fines didácticos, se suele usar un valor constante.
+Use a **counter**:
 
-- **Ruido y lecturas inestables**:
-  - Es común promediar varias mediciones.
-  - Se pueden descartar valores fuera de rango.
+- Reset counter on rising edge of ECHO  
+- Increment counter every clock  
+- Capture final value at falling edge of ECHO  
 
----
+Then convert:
 
-## Uso típico en este repositorio
+- Ticks → microseconds  
+- Microseconds → centimeters  
 
-Ejemplos y labs:
-
-- `ultrasonic_hcsr04_measure_demo` (example/activity):
-  - Generar el pulso `TRIG`.
-  - Medir el tiempo de `ECHO`.
-  - Mostrar distancia aproximada en LEDs o display de 7 segmentos.
-
-- `ultrasonic_hcsr04_cm` (lab intermedio):
-  - Medición en centímetros con:
-    - Promedio de varias muestras.
-    - Filtro para valores atípicos.
-  - Integración con otros periféricos (LCD, TM1638).
-
-- Mini-proyecto “servo-scanned ultrasonic radar”:
-  - Girar un servo mientras se mide distancia.
-  - Mostrar resultados en LCD o 7 segmentos.
+Depends on clock frequency.
 
 ---
 
-## Relación con otros archivos de teoría
+## Practical considerations
 
-- `1_2_5_Registers_and_Clock.md`  
-  → uso de contadores para medir tiempos.
-- `1_2_6_Timing_and_Dividers.md`  
-  → relacionar ticks de reloj con unidades de tiempo.
-- `1_2_7_Finite_State_Machines.md`  
-  → FSM para controlar las fases: disparo, espera, medición, cálculo.
+- Typical range: a few cm to ~4 m  
+- Unreliable very close to sensor  
+- Temperature affects sound speed slightly  
+- Noise → average several readings  
+- Discard out-of-range anomalies  
 
-La parte de wiring y adaptación de niveles se detalla en:
+---
 
-- `2_devices/` → sección HC-SR04.
+## Typical use in this repository
+
+Examples:
+
+- `ultrasonic_hcsr04_measure_demo`  
+- `ultrasonic_hcsr04_cm` lab  
+- “Ultrasonic radar” mini-project (servo + distance visualization)
+
+---
+
+## Related theory
+
+- Timing (`1_2_6`)  
+- Registers & clock (`1_2_5`)  
+- FSMs (`1_2_7`)  
+
+Level shifting and wiring documented in `2_devices/`.

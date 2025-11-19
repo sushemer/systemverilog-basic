@@ -1,238 +1,133 @@
-# 4_9_4 – Mini ALU de 4 bits
+# 4_9_4 – 4-bit Mini ALU
 
-Actividad basada en `4_04_mini_alu_4bit`, ahora incluida en la carpeta de soluciones `4_9_solutions`.
+Activity based on `4_04_mini_alu_4bit`, included in the `4_9_solutions` folder.
 
-## Objetivo
+## Objective
 
-Implementar una **mini ALU de 4 bits** con:
+Implement a **4-bit mini ALU** with:
 
-- Dos operandos: `A[3:0]` y `B[3:0]`
-- Selector de operación: `op[1:0]`
-- Operaciones soportadas:
+- Two operands: `A[3:0]` and `B[3:0]`
+- Operation selector: `op[1:0]`
+- Supported operations:
   - `op = 2'b00` → `A + B`
   - `op = 2'b01` → `A - B`
   - `op = 2'b10` → `A & B`
   - `op = 2'b11` → `A ^ B`
-- Banderas:
-  - `carry` → acarreo/borrow en suma/resta
-  - `zero`  → vale 1 cuando el resultado es 0
+- Flags:
+  - `carry` → carry/borrow in addition/subtraction
+  - `zero`  → equals 1 when the result is zero
 
-El resultado y las banderas se visualizan en los LEDs de la placa.
+The ALU result and flags are displayed on the board LEDs.
 
 ---
 
-## Mapeo de señales
+## Signal Mapping
 
-### Entradas
+### Inputs
 
-En esta solución se mapean las teclas `key` como si fueran switches:
+Keys `key[7:0]` are used as if they were switches:
 
 - `sw = key`
-- `A = sw[3:0] = key[3:0]`
-- `B = sw[7:4] = key[7:4]`
-- `op = key[1:0]` (selector de operación)
+- `A = sw[3:0]`
+- `B = sw[7:4]`
+- `op = key[1:0]` (operation selector)
 
-Nota: los bits `key[1:0]` afectan tanto parte de `A` como a `op`.  
-Es una simplificación para poder usar únicamente `key` en esta actividad.
+Note: `key[1:0]` influence both `A` and `op`, but this is a simplification to use only the `key` inputs.
 
-### Salidas (LEDs)
+### Outputs (LEDs)
 
 - `led[3:0] = result[3:0]`  
-  Resultado de la operación de la ALU.
+  ALU result.
 
 - `led[4] = carry`  
-  Acarreo en la suma o bit extra de la resta (borrow simplificado).
+  Carry from addition or simplified borrow indication from subtraction.
 
 - `led[5] = zero`  
-  Bandera de **resultado cero** (vale 1 cuando `result == 0`).
+  Zero flag (1 when `result == 0`).
 
 - `led[7:6] = op[1:0]`  
-  Muestran qué operación está seleccionada.
+  Shows current ALU operation.
 
 ---
 
-## Comportamiento de la ALU
+## ALU Behavior
 
-### Operaciones aritméticas
+### Arithmetic operations
 
-Para capturar el bit de acarreo o borrow se amplía el ancho de los operandos a 5 bits:
+To capture carry/borrow, operands are extended to 5 bits:
 
-- **Suma (`op = 2'b00`)**
+#### Addition (`op = 2'b00`)
 
-  Ejemplo de implementación:
+sum_ext = {1’b0, A} + {1’b0, B}  
+result  = sum_ext[3:0]  
+carry   = sum_ext[4]  
 
-      sum_ext = {1'b0, A} + {1'b0, B};
-      result  = sum_ext[3:0];
-      carry   = sum_ext[4];
+#### Subtraction (`op = 2'b01`)
 
-  Donde:
+diff_ext = {1’b0, A} - {1’b0, B}  
+result   = diff_ext[3:0]  
+carry    = diff_ext[4] (interpreted as simple borrow indicator)
 
-  - `sum_ext[3:0]` son los 4 bits menos significativos (resultado de la suma).
-  - `sum_ext[4]` es el bit de acarreo (`carry`) de la operación.
+### Logical operations
 
-- **Resta (`op = 2'b01`)**
+AND (`op = 2'b10`):
 
-  De forma análoga, se puede calcular la resta en 5 bits:
+result = A & B  
+carry  = 0  
 
-      diff_ext = {1'b0, A} - {1'b0, B};
-      result   = diff_ext[3:0];
-      carry    = diff_ext[4];
+XOR (`op = 2'b11`):
 
-  En esta solución, el bit extra `diff_ext[4]` se utiliza como indicador de borrow de manera simplificada:
+result = A ^ B  
+carry  = 0  
 
-  - Si `A >= B`, normalmente `diff_ext[4]` será 0.
-  - Si `A < B`, puede interpretarse como que se produjo un “préstamo” (borrow).
+### Zero flag
 
-  No se entra en detalles de representación de números negativos; el foco está en observar cómo cambia `carry` al restar distintos valores.
-
-### Operaciones lógicas
-
-Para las operaciones lógicas no se requiere acarreo; en estas ramas se asigna `carry = 0`.
-
-- **AND (`op = 2'b10`)**
-
-      result = A & B;
-      carry  = 1'b0;
-
-- **XOR (`op = 2'b11`)**
-
-      result = A ^ B;
-      carry  = 1'b0;
-
-(Una variante posible sería usar `A | B` en lugar de `A ^ B` si se desea practicar OR.)
-
-### Bandera `zero`
-
-Al final del bloque de la ALU se calcula la bandera `zero` como:
-
-    zero = (result == 4'd0);
-
-Esto hace que:
-
-- `zero = 1` cuando el resultado es exactamente 0.
-- `zero = 0` para cualquier otro valor.
+zero = (result == 4’d0);
 
 ---
 
-## Estructura típica del bloque `always_comb`
+## Internal Structure of `always_comb`
 
-Una forma ordenada de implementar la ALU es:
+1. Default values for all outputs.
+2. `case (op)` computes the result.
+3. Zero flag is computed at the end.
 
-1. Definir señales auxiliares para suma y resta extendidas:
+Example:
 
-    sum_ext  = 5 bits  
-    diff_ext = 5 bits
-
-2. Calcular los resultados intermedios dentro del `case (op)`.
-
-3. Inicializar `result` y `carry` con valores por defecto para evitar latches.
-
-Ejemplo de estructura general (en pseudocódigo SystemVerilog):
-
-    always_comb begin
-        // Valores por defecto
-        result = 4'd0;
-        carry  = 1'b0;
-
-        case (op)
-            2'b00: begin
-                // Suma
-                sum_ext = {1'b0, A} + {1'b0, B};
-                result  = sum_ext[3:0];
-                carry   = sum_ext[4];
-            end
-
-            2'b01: begin
-                // Resta
-                diff_ext = {1'b0, A} - {1'b0, B};
-                result   = diff_ext[3:0];
-                carry    = diff_ext[4];  // interpretado como borrow simple
-            end
-
-            2'b10: begin
-                // AND
-                result = A & B;
-                carry  = 1'b0;
-            end
-
-            2'b11: begin
-                // XOR
-                result = A ^ B;
-                carry  = 1'b0;
-            end
-
-            default: begin
-                result = 4'd0;
-                carry  = 1'b0;
-            end
-        endcase
-
-        // Bandera zero común a todas las operaciones
-        zero = (result == 4'd0);
-    end
-
-Al final, se conectan las salidas al vector `led` según el mapeo acordado:
-
-    led[3:0] = result;
-    led[4]   = carry;
-    led[5]   = zero;
-    led[7:6] = op;
+result = A + B;  
+carry  = sum_ext[4];  
+zero   = (result == 0);
 
 ---
 
-## Pruebas sugeridas
+## Suggested Tests
 
-Algunas combinaciones útiles para verificar el comportamiento:
+### Addition
 
-1. **Suma (`op = 2'b00`)**
+A=3, B=1 → result=4, carry=0, zero=0  
+A=15, B=1 → result=0, carry=1, zero=1  
 
-   - A = 3 (0011), B = 1 (0001)  
-     - `result = 4` (0100), `carry = 0`, `zero = 0`.
-   - A = 15 (1111), B = 1 (0001)  
-     - `sum_ext = 1_0000`  
-     - `result = 0000`, `carry = 1`, `zero = 1`.
+### Subtraction
 
-2. **Resta (`op = 2'b01`)**
+A=5, B=2 → result=3, carry=0  
+A=2, B=5 → wrap-around result, borrow indicated in carry  
 
-   - A = 5 (0101), B = 2 (0010)  
-     - `result = 3` (0011), `carry` interpretado como 0, `zero = 0`.
-   - A = 2 (0010), B = 5 (0101)  
-     - resultado envolvente en 4 bits, `carry` (bit extra) indica borrow, `zero` según `result`.
+### AND
 
-3. **AND (`op = 2'b10`)**
+A=5, B=3 → result=1  
 
-   - A = 5 (0101), B = 3 (0011)  
-     - `result = 0001`, `carry = 0`, `zero = 0`.
+### XOR
 
-4. **XOR (`op = 2'b11`)**
-
-   - A = 5 (0101), B = 3 (0011)  
-     - `result = 0110`, `carry = 0`, `zero = 0`.
-   - A = 7 (0111), B = 7 (0111)  
-     - `result = 0000`, `carry = 0`, `zero = 1`.
-
-Si en todos estos casos los LEDs coinciden con los resultados esperados, la mini ALU está funcionando correctamente.
+A=5, B=3 → result=6  
+A=7, B=7 → result=0, zero=1  
 
 ---
 
-## Extensiones opcionales
+## Optional Extensions
 
-Algunas ideas para ampliar la actividad:
+- Add operations like OR, NOT, comparisons.
+- Add flags such as negative or overflow.
+- Display ALU result on the TM1638 (7-segment + LEDs).
+- Extract ALU into a separate reusable module.
 
-- Añadir más operaciones:
-  - OR (`A | B`)
-  - NOT (`~A`)
-  - Comparación (`A == B`, `A > B`, etc.)
-
-- Introducir banderas adicionales:
-  - `negative` para indicar si el resultado tiene el bit más significativo en 1.
-  - `overflow` para detectar overflow aritmético en suma/resta.
-
-- Mostrar el resultado en el TM1638:
-  - En los dígitos de 7 segmentos: valor de la operación.
-  - En los LEDs del TM1638: banderas (`carry`, `zero`, `negative`, etc.).
-
-- Separar el módulo de la ALU:
-  - Crear un módulo `alu_4bit` reutilizable y conectarlo desde un `hackathon_top` más grande.
-
-Con esta solución se cierra el ciclo de la actividad `4_04_mini_alu_4bit`, mostrando una implementación completa y comentada de una mini ALU combinacional de 4 bits.
+This solution provides a complete, fully commented implementation of a 4-bit combinational ALU for activity `4_04_mini_alu_4bit`.

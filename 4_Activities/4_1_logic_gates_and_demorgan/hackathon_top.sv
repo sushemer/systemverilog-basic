@@ -1,10 +1,10 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// Actividad 4.1 – Compuertas lógicas + ley de De Morgan + funciones combinacionales
+// Activity 4.1 – Logic gates + De Morgan's law + combinational functions
 //
-// Tareas:
-//  1) Implementar AND, OR, XOR y una ley de De Morgan con 2 entradas (A, B).
-//  2) Extender a 3 entradas (A, B, C) y diseñar funciones “mayoría” y “exactamente una en 1”.
-//  3) Agregar una entrada de habilitación (EN) que apague todas las salidas cuando EN = 0.
+// Tasks:
+//  1) Implement AND, OR, XOR and one De Morgan law with 2 inputs (A, B).
+//  2) Extend to 3 inputs (A, B, C) and design “majority” and “exactly one high” functions.
+//  3) Add an enable input (EN) that forces all outputs to 0 when EN = 0.
 //
 
 module hackathon_top
@@ -16,11 +16,11 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos dinámico (no usado aquí)
+    // Dynamic 7-segment display (not used here)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz hacia LCD (no usada en esta actividad)
+    // LCD interface (not used in this activity)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
@@ -30,25 +30,25 @@ module hackathon_top
     inout  logic [3:0] gpio
 );
 
-    // No usaremos display, LCD ni GPIO en esta actividad.
+    // 7-segment display, LCD and GPIO are not used in this activity.
     assign abcdefgh = '0;
     assign digit    = '0;
     assign red      = '0;
     assign green    = '0;
     assign blue     = '0;
-    // gpio se deja sin manejar desde este módulo (lo controla el wrapper de la placa)
+    // GPIO is handled by the board wrapper
 
     // -------------------------------------------------------------------------
-    // Entradas lógicas
+    // Logical inputs
     // -------------------------------------------------------------------------
     //
-    // Tarea 1 y 2:
+    // Task 1 and 2:
     //   A = key[1]
     //   B = key[0]
-    //   C = key[2]      (se usa en la Tarea 2)
+    //   C = key[2]      (used in Task 2)
     //
-    // Tarea 3:
-    //   EN = key[3]     (entrada de habilitación)
+    // Task 3:
+    //   EN = key[3]     (enable input)
 
     logic A, B, C, EN;
 
@@ -58,17 +58,17 @@ module hackathon_top
     assign EN = key[3];
 
     // -------------------------------------------------------------------------
-    // Tarea 1: Compuertas básicas + ley de De Morgan (con A y B)
+    // Task 1: Basic logic gates + De Morgan (A and B)
     // -------------------------------------------------------------------------
     //
-    // Objetivo:
+    // Objective:
     //   - led[0] = A AND B
     //   - led[1] = A OR  B
     //   - led[2] = A XOR B
     //   - led[3] = ~(A & B)
     //   - led[4] = (~A) | (~B)
     //
-    // Por ahora dejamos señales intermedias; tú debes completar las asignaciones.
+    // Intermediate signals; you must complete the assignments.
 
     logic and_ab;
     logic or_ab;
@@ -76,7 +76,7 @@ module hackathon_top
     logic demorgan_1;
     logic demorgan_2;
 
-    // TODO: implementar expresiones de la Tarea 1
+    // TODO: implement expressions for Task 1
     // assign and_ab     = ...;
     // assign or_ab      = ...;
     // assign xor_ab     = ...;
@@ -84,56 +84,55 @@ module hackathon_top
     // assign demorgan_2 = ...;  // (~A) | (~B)
 
     // -------------------------------------------------------------------------
-    // Tarea 2: Funciones combinacionales con 3 entradas (A, B, C)
+    // Task 2: Combinational functions with 3 inputs (A, B, C)
     // -------------------------------------------------------------------------
     //
-    // Objetivo (ejemplo sugerido):
-    //   - led[5] = “mayoría”: al menos dos entradas en 1.
-    //   - led[6] = “exactamente una entrada en 1”.
+    // Objective (example suggestion):
+    //   - led[5] = “majority”: at least two inputs are high.
+    //   - led[6] = “exactly one high”.
     //
-    // Usa AND, OR y NOT para construir estas funciones.
+    // Use AND, OR and NOT to build these functions.
 
-    logic majority_abc;   // al menos dos entradas en 1
+    logic majority_abc;      // at least two inputs = 1
     logic exactly_one_abc;
 
-    // TODO: implementar expresiones de la Tarea 2
-    // Ejemplo de pista:
+    // TODO: implement expressions for Task 2
+    // Example hint:
     // majority_abc = (A & B) | (A & C) | (B & C);
     // exactly_one_abc = ...;
 
     // -------------------------------------------------------------------------
-    // Tarea 3: Entrada de habilitación EN
+    // Task 3: Enable input EN
     // -------------------------------------------------------------------------
     //
-    // Requisito:
-    //   - Si EN = 0 → todos los LEDs [6:0] deben estar en 0.
-    //   - Si EN = 1 → mostrar los resultados de las tareas 1 y 2.
-    //   - led[7] puede indicar si EN está activo (por ejemplo, led[7] = EN).
+    // Requirement:
+    //   - If EN = 0 → all LEDs [6:0] must be 0.
+    //   - If EN = 1 → display the results of Tasks 1 and 2.
+    //   - led[7] may show whether EN is active (e.g., led[7] = EN).
     //
-    // Sugerencia:
-    //   - Primero agrupa todas las señales lógicas sin EN.
-    //   - Luego usa EN para “enmascarar” las salidas.
+    // Suggestion:
+    //   - First group all logical results without EN.
+    //   - Then use EN to “mask” the outputs.
 
-    logic [6:0] raw_leds;  // salidas lógicas sin habilitación
+    logic [6:0] raw_leds;  // logical outputs before enable
 
     always_comb
     begin
-        // Valores por defecto
         raw_leds = 7'b0;
 
-        // Mapear compuertas de la Tarea 1
+        // Task 1
         raw_leds[0] = and_ab;
         raw_leds[1] = or_ab;
         raw_leds[2] = xor_ab;
         raw_leds[3] = demorgan_1;
         raw_leds[4] = demorgan_2;
 
-        // Mapear funciones de la Tarea 2
+        // Task 2
         raw_leds[5] = majority_abc;
         raw_leds[6] = exactly_one_abc;
     end
 
-    // Aplicar la habilitación
+    // Apply enable
     always_comb
     begin
         if (EN)

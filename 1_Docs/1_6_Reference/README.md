@@ -1,33 +1,33 @@
-## Referencias
+## References
 
-### 1. Repositorios base
+### 1. Base repositories
 
 - **Yuri Panchul – basics-graphics-music**  
   <https://github.com/yuri-panchul/basics-graphics-music>  
 
-  Este fue el **repositorio principal de referencia**. Reúne ejemplos portables de Verilog/SystemVerilog para FPGA y ASIC, organizados en labs que cubren desde compuertas lógicas hasta gráficos, sonido y microarquitectura.  
-  Sus objetivos principales son:
-  - Reducir la complejidad de las herramientas EDA y de los vendors.
-  - Acercar los ejercicios académicos a problemas reales de microarquitectura (CPU, GPU, networking).
-  - Bajar la barrera de entrada para personas que comienzan o se están cambiando a diseño FPGA/ASIC.
-  - Ofrecer un flujo de trabajo reproducible: elegir tarjeta, sintetizar y programar con scripts Bash.
+  This was the **main reference repository**. It gathers portable Verilog/SystemVerilog examples for FPGA and ASIC, organized into labs ranging from logic gates to graphics, sound, and microarchitecture.  
+  Its main goals are:
+  - Reduce the complexity of EDA tools and vendor ecosystems.
+  - Bring academic exercises closer to real microarchitecture problems (CPU, GPU, networking).
+  - Lower the entry barrier for people starting out or transitioning to FPGA/ASIC design.
+  - Offer a reproducible workflow: choose a board, synthesize, and program using Bash scripts.
 
-  Varios conceptos, estructura de carpetas y scripts (`03_synthesize_for_fpga.bash`, `06_choose_another_fpga_board.bash`, etc.) de este proyecto se adaptaron y simplificaron para el entorno específico de **SiPeed Tang Nano 9K + LCD 480×272 + TM1638**.
+  Several concepts, folder structures, and scripts (`03_synthesize_for_fpga.bash`, `06_choose_another_fpga_board.bash`, etc.) from this project were adapted and simplified for the specific environment of **SiPeed Tang Nano 9K + LCD 480×272 + TM1638**.
 
-- **Verilog Hackathon Education Kit Manual (forks y variantes)**  
+- **Verilog Hackathon Education Kit Manual (forks and variants)**  
   - <https://github.com/ramprakashb/verilog-hackathon-education-kit-manual>  
   - <https://github.com/verilog-meetup/verilog-hackathon-education-kit-manual>  
 
-  Repositorios relacionados al kit educativo usado en distintos hackathons y seminarios de Verilog. Se tomaron ideas de organización de actividades, niveles de dificultad y enfoque en proyectos prácticos.
+  Repositories related to the educational kit used in various Verilog hackathons and seminars. Ideas were taken from their activity organization, difficulty levels, and practical project focus.
 
 - **systemverilog-homework**  
   <https://github.com/yuri-panchul/systemverilog-homework>  
 
-  Colección de tareas y ejercicios de SystemVerilog orientados a microarquitectura. Sirvió como inspiración para el estilo de los labs y la progresión de dificultad.
+  A collection of SystemVerilog assignments and exercises oriented toward microarchitecture. It served as inspiration for the style of the labs and the progression of difficulty.
 
 ---
 
-### 2. Libros y material de estudio
+### 2. Books and study material
 
 1. **Merrick, R. (2023).**  
    *Getting Started with FPGAs: Digital Circuit Design, Verilog, and VHDL for Beginners.* No Starch Press.
@@ -36,7 +36,7 @@
    *The FPGA Programming Handbook: An Essential Guide to FPGA Design for Transforming Ideas into Hardware Using SystemVerilog and VHDL (2nd ed.).* Packt Publishing.
 
 3. **Schoeberl, M. (2025).**  
-   *Digital Design with Chisel (6th ed.).* Autor.
+   *Digital Design with Chisel (6th ed.).* Author.
 
 4. **Harris, S., & Harris, D.**  
    *Digital Design and Computer Architecture, RISC-V Edition.* Morgan Kaufmann.
@@ -44,64 +44,63 @@
 5. **Dally, W. J., & Harting, R. C.**  
    *Digital Design: A Systems Approach.* Cambridge University Press.
 
-Estos libros se usaron como referencia conceptual para temas de diseño digital, temporización, FSM, microarquitectura y buenas prácticas de hardware.
+These books were used as conceptual references for digital design topics such as timing, FSM, microarchitecture, and hardware best practices.
 
 ---
 
-### 3. Recursos en línea y tutoriales
+### 3. Online resources and tutorials
 
-- **Verilog Meetup – Comunidad y eventos**  
-  - Sitio principal: <https://verilog-meetup.com/>  
-  - Artículo: *A new platform for FPGA seminars based on Gowin Tang Nano 9K: adding sound, graphics, and microarchitecture labs* (Panchul, 2024).  
+- **Verilog Meetup – Community and events**  
+  - Main site: <https://verilog-meetup.com/>  
+  - Article: *A new platform for FPGA seminars based on Gowin Tang Nano 9K: adding sound, graphics, and microarchitecture labs* (Panchul, 2024).  
 
-  Referencia clave para entender el contexto educativo en el que se usa la Tang Nano 9K y el enfoque en gráficos, sonido y microarquitectura.
+  A key reference for understanding the educational context in which the Tang Nano 9K is used, and the focus on graphics, sound, and microarchitecture.
 
-- **Documentación oficial de Tang Nano 9K (SiPeed)**  
+- **Official Tang Nano 9K documentation (SiPeed)**  
   - Tang Nano 9K – SiPeed Wiki: <https://wiki.sipeed.com/hardware/en/tang/Tang-Nano-9K/Nano-9K.html>  
 
-  Utilizada para pinout, características eléctricas, flujo de programación y detalles específicos de la tarjeta.
+  Used for pinout, electrical characteristics, programming flow, and board-specific details.
 
-- **Recursos didácticos de Verilog/SystemVerilog**  
+- **Educational resources for Verilog/SystemVerilog**  
   - HDLBits: <https://hdlbits.01xz.net/wiki/Main_Page>  
   - Nandland – Verilog Tutorial Index: <https://nandland.com/learn-verilog/>  
   - ASIC-World – Verilog Tutorial: <https://www.asic-world.com/verilog/veritut.html>  
   - ChipVerify – Verilog Tutorial: <https://www.chipverify.com/tutorials/verilog>  
 
-  Sirvieron como apoyo para reforzar conceptos básicos y ejemplos rápidos de sintaxis, simulación y construcción de módulos.
+  Used to reinforce basic concepts and quick examples of syntax, simulation, and module construction.
 
 ---
 
-### 4. Datasheets y notas de aplicación (hardware externo)
+### 4. Datasheets and application notes (external hardware)
 
-- **HC-SR04 – Sensor ultrasónico**  
+- **HC-SR04 – Ultrasonic sensor**  
   - Handson Technology. *HC-SR04 Ultrasonic Sensor Module User Guide (v2.0).*  
 
-- **TM1638 – Controlador de display + LEDs + teclas**  
+- **TM1638 – Display + LEDs + keys controller**  
   - Titan Micro Electronics. *TM1638 LED Driver Controller Datasheet.*  
 
 - **LCD 480×272 (TFT)**  
-  - Referencia de módulo genérico: *480×272 TFT LCD display module* (fabricantes como Hicenda y compatibles).  
+  - Generic module reference: *480×272 TFT LCD display module* (manufacturers such as Hicenda and compatibles).  
 
-- **Encoder rotatorio KY-040**  
-  - Components101: *KY-040 Rotary Encoder Module* – descripción de pines, funcionamiento y usos típicos.
+- **KY-040 rotary encoder**  
+  - Components101: *KY-040 Rotary Encoder Module* – pin descriptions, operation, common usage.
 
-Estos documentos fueron esenciales para definir conexiones, niveles de tensión, tiempos de señal (TRIG/ECHO, debouncing, etc.) y mapeo correcto en los módulos SystemVerilog.
+These documents were essential for defining connections, voltage levels, signal timing (TRIG/ECHO, debouncing, etc.), and correct mapping inside the SystemVerilog modules.
 
 ---
 
-### 5. Contexto educativo del proyecto
+### 5. Educational context of the project
 
-Este repositorio se construyó a partir de:
+This repository was built from:
 
-- Clases y sesiones prácticas de introducción a **Verilog/SystemVerilog** usando la **Tang Nano 9K**, impartidas a estudiantes con el apoyo del **Sr. Zavala**.
-- Material y filosofía de enseñanza de **Verilog Meetup**, orientadas a:
-  - Reducir la fricción de herramientas.
-  - Enfocar el aprendizaje en diseño digital, no en configuración de EDA.
-  - Llevar a los estudiantes desde ejercicios básicos (compuertas, contadores, FSM) hasta sistemas más integrados con gráficos, audio, displays y sensores.
+- Classes and hands-on sessions introducing **Verilog/SystemVerilog** using the **Tang Nano 9K**, taught to students with the support of **Mr. Zavala**.
+- Teaching material and philosophy from **Verilog Meetup**, oriented toward:
+  - Reducing tool friction.
+  - Focusing learning on digital design rather than EDA configuration.
+  - Taking students from basic exercises (gates, counters, FSM) to more integrated systems with graphics, audio, displays, and sensors.
 
-El objetivo final de este trabajo es ofrecer un conjunto de actividades, labs e implementaciones que:
+The final goal of this work is to offer a set of activities, labs, and implementations that:
 
-- Sean **reproducibles** en el entorno Tang Nano 9K + LCD + TM1638 + sensores básicos.
-- Conecten la teoría de diseño digital con **proyectos visibles y divertidos** (gráficos, “radar” ultrasónico, mini-ALU, etc.).
-- Sirvan como base para futuros cursos, talleres y hackathons centrados en FPGA y Verilog/SystemVerilog.
-
+- Are **reproducible** on the Tang Nano 9K + LCD + TM1638 + basic sensors environment.
+- Connect digital design theory with **visible and fun projects** (graphics, ultrasonic “radar,” mini-ALU, etc.).
+- Serve as a foundation for future courses, workshops, and FPGA/Verilog/SystemVerilog hackathons.

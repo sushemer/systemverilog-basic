@@ -1,62 +1,60 @@
-# 2.3.1 Seven Segment · Displays de 7 segmentos
+# 2.3.1 Seven Segment · 7-segment displays
 ![alt text](Mult/image.png)
 
-Los **displays de 7 segmentos** se utilizan para mostrar números (0–9, 0–F) y algunas letras simples.  
-En este repositorio se usan principalmente para:
+**7-segment displays** are used to show numbers (0–9, 0–F) and some simple letters.  
+In this repository they are mainly used for:
 
-- Contadores binarios/hexadecimales.
-- Indicadores de estado o modo.
-- Visualización básica de resultados (por ejemplo, distancia aproximada, nivel, etc.).
+- Binary/hexadecimal counters.
+- State or mode indicators.
+- Basic visualization of results (for example, approximate distance, level, etc.).
 
-Pueden ser de **un dígito** o de **varios dígitos** (con multiplexado).
+They can be **single-digit** or **multi-digit** (with multiplexing).
 
 ---
 
-## Señales y pines lógicos
+## Logical signals and pins
 
-Un dígito de 7 segmentos típico tiene:
+A typical 7-segment digit has:
 
-- 7 segmentos: `a, b, c, d, e, f, g`.
-- Punto decimal opcional: `dp`.
-- Un terminal común (ánodo común o cátodo común).
+- 7 segments: `a, b, c, d, e, f, g`.
+- Optional decimal point: `dp`.
+- A common terminal (common-anode or common-cathode).
 
-En el código suele representarse como:
+In code it is commonly represented as:
 
-- `seg[6:0]` → segmentos `a..g`.
-- `dp` → punto decimal (opcional).
-- `en_digit[n:0]` → habilitación de dígitos (cuando hay más de uno).
+- `seg[6:0]` → segments `a..g`.
+- `dp` → decimal point (optional).
+- `en_digit[n:0]` → digit enables (when there is more than one).
 
-Ejemplo de nombres:
+Example names:
 
 - `seg[6:0]`
 - `seg_dp`
-- `digit_en[3:0]` (para 4 dígitos)
+- `digit_en[3:0]` (for 4 digits)
 
-La asignación a pines físicos concretos se documenta en:
+The assignment to specific FPGA pins is documented in:
 
 - `2_1_Boards/2_1_1_Tang_Nano_9K/docs/pinout.md`
 - `2_1_Boards/2_1_1_Tang_Nano_9K/constr/tang-nano-9k.cst`
 
 ---
 
-## Conceptos clave
+## Key concepts
 
-### Tipo de display: ánodo común vs cátodo común
+### Display type: common-anode vs common-cathode
 
-- **Ánodo común**: segmentos se encienden llevando la señal a nivel bajo (0).
-- **Cátodo común**: segmentos se encienden llevando la señal a nivel alto (1).
+- **Common-anode**: segments light up by driving the signal low (0).
+- **Common-cathode**: segments light up by driving the signal high (1).
 
-Esto afecta:
+This affects:
 
-- La lógica del decodificador (si se usa inversión).
-- La interpretación de los bits en el mapa de segmentos.
+- The logic of the decoder (whether inversion is needed).
+- The interpretation of bits in the segment map.
 
-### Mapa de segmentos
+### Segment map
 
-Cada número/letra se codifica como un patrón de segmentos encendidos/apagados.  
-Por ejemplo, para un display donde `1` se representa encendiendo solo `b` y `c`:
+Each number/letter is encoded as a pattern of on/off segments.  
+For example, for a display where `1` is represented by turning on only `b` and `c`:
 
-```
-a b c d e f g
+a b c d e f g  
 0 1 1 0 0 0 0
-```

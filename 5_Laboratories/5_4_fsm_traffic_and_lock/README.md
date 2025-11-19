@@ -1,120 +1,165 @@
 # Lab 5.4 – FSM: traffic light + sequence lock
 
-## Objetivo
+## Objective
 
-Diseñar, implementar y probar **dos máquinas de estados finitos (FSM)** en la Tang Nano 9K:
+Implement two **independent finite state machines (FSMs)** inside the same design:
 
-1. Un **semáforo** simple con tres estados: rojo, verde y amarillo.
-2. Una **cerradura por secuencia** que solo se desbloquea al ingresar A-B-A-B.
+1. A **traffic light FSM** cycling through  
+   **RED → GREEN → YELLOW → RED**,  
+   using configurable durations and driven by `slow_clock` (~1 Hz).
 
-Al final del lab debería poder:
+2. A **sequence-based lock FSM**, which unlocks only when the button sequence:  
+   **A → B → A → B** is entered.  
+   - Button **A**: `key[4]`  
+   - Button **B**: `key[5]`  
+   - Unlock indicator: `led[7] = 1`
 
-- Expresar un comportamiento temporal como **FSM + temporizador**.
-- Implementar una FSM de **control de secuencia de botones**.
-- Mapear claramente estados a LEDs para depuración visual.
+LED mapping:
 
----
+- `led[2]` = red  
+- `led[1]` = yellow  
+- `led[0]` = green  
+- `led[7]` = lock (sequence correct)
 
-## Prerrequisitos
-
-- Haber realizado:
-  - **Lab 5.1 – blink_hello_world** (divisor / tiempos).
-  - **Lab 5.3 – shift_register_patterns** (actualización de estado con ticks).
-
-- Conocer:
-  - `always_ff @(posedge clk ...)`
-  - `typedef enum logic [...]` para codificar estados.
-  - Detección de flancos simples (`pulse = btn & ~btn_q`).
-
----
-
-## Mapeo de señales
-
-### Semáforo
-
-- **Reloj**: `slow_clock` (≈1 Hz, viene del wrapper de la placa).
-- **Reset**: `reset` (activo en 1).
-- **Estados**: `TRAFFIC_RED`, `TRAFFIC_GREEN`, `TRAFFIC_YELLOW`.
-- **Tiempos**:
-  - `T_RED    = 3`  (aprox. 3 s)
-  - `T_GREEN  = 3`  (aprox. 3 s)
-  - `T_YELLOW = 1`  (aprox. 1 s)
-- **LEDs**:
-  - `led[2]` → rojo
-  - `led[1]` → amarillo
-  - `led[0]` → verde
-
-### Cerradura por secuencia
-
-- **Botones**:
-  - `btnA = key[4]`
-  - `btnB = key[5]`
-- **Secuencia válida**: `A → B → A → B`
-- **FSM**:
-  - `LOCK_IDLE`
-  - `LOCK_A1`
-  - `LOCK_A1B2`
-  - `LOCK_A1B2A3`
-  - `LOCK_OPEN`
-- **Salida**:
-  - `led[7]` → encendido cuando la secuencia correcta se completó.
+At the end of this lab, you should understand:
+- How to design and run **multiple FSMs** in parallel.
+- How to use **slow clocks** for timed transitions.
+- How to detect **button edges** inside an FSM.
+- How to map FSM outputs to LEDs.
 
 ---
 
-## Procedimiento sugerido
+## 1. Traffic Light FSM
 
-1. **Estudia el bloque del semáforo**
-   - Revisa el `typedef enum` y el `always_ff` que actualiza `traffic_state`.
-   - Verifica cómo se usa `traffic_timer` para contar ticks de `slow_clock`.
-   - Dibuja el diagrama de estados: RED → GREEN → YELLOW → RED.
+### States
 
-2. **Analiza la detección de flancos (edge detect)**
-   - Observa cómo `btnA_q` y `btnB_q` almacenan los valores anteriores.
-   - Verifica que:
-     - `pulseA = btnA & ~btnA_q`
-     - `pulseB = btnB & ~btnB_q`
-   - Esto genera un pulso de un tick de `slow_clock` cuando se presiona cada botón.
+The code defines the following enumerated states:
 
-3. **Revisa la FSM de la cerradura**
-   - Traza el diagrama de estados según el código:
-     - `LOCK_IDLE` espera `A`.
-     - `LOCK_A1` espera `B`.
-     - `LOCK_A1B2` espera `A`.
-     - `LOCK_A1B2A3` espera `B`.
-     - `LOCK_OPEN` = secuencia completada (LED de lock encendido).
-   - Cualquier botón incorrecto en cada etapa debe llevar a `LOCK_IDLE`.
+- `TRAFFIC_RED`
+- `TRAFFIC_GREEN`
+- `TRAFFIC_YELLOW`
 
-4. **Síntesis y prueba en hardware**
-   - Compila y programa la FPGA.
-   - Observa el semáforo:
-     - led[2] (rojo), led[1] (amarillo), led[0] (verde) deben ir cambiando con el tiempo.
-   - Prueba la cerradura:
-     - Ingresa la secuencia **A-B-A-B** (usando `key[4]` y `key[5]`).
-     - El LED `led[7]` debe encenderse y permanecer así hasta hacer `reset`.
+These states advance according to a timer driven by `slow_clock`.
 
-5. **Experimenta con los tiempos**
-   - Cambia `T_RED`, `T_GREEN` y `T_YELLOW` para otros intervalos.
-   - Observa cómo cambia el comportamiento en tiempo real.
+### Timing configuration (in slow_clock ticks)
 
----
+- `T_RED    = 3`  
+- `T_GREEN  = 3`  
+- `T_YELLOW = 1`
 
-## Checklist de pruebas
+If `slow_clock ~ 1 Hz`, these correspond to ~3 s, ~3 s, and ~1 s.
 
-- [ ] Con `reset` activo y luego liberado, el semáforo inicia en **rojo** (`led[2]=1`).
-- [ ] El semáforo sigue la secuencia: **rojo → verde → amarillo → rojo**.
-- [ ] Los cambios de estado solo se dan en ticks de `slow_clock`.
-- [ ] Presionando `A-B-A-B` (key[4], key[5]) en ese orden, `led[7]` se enciende.
-- [ ] Cualquier error en la secuencia (ej. A-B-B, A-A-...) hace que la FSM vuelva a `LOCK_IDLE`.
-- [ ] El LED de lock (`led[7]`) permanece encendido incluso si se siguen presionando botones, hasta que se haga `reset`.
+### How it works
+
+- On reset:  
+  `traffic_state = TRAFFIC_RED`, timer = 0.
+- Each tick of `slow_clock` increments the timer.
+- When the timer reaches the configured duration (`T_xxx - 1`), the FSM changes to the next state and resets the timer.
+
+### LED outputs
+
+- `led[2]` (red) turns ON during `TRAFFIC_RED`
+- `led[1]` (yellow) turns ON during `TRAFFIC_YELLOW`
+- `led[0]` (green) turns ON during `TRAFFIC_GREEN`
+
+Only one of these LEDs should be ON at a time.
 
 ---
 
-## Extensiones opcionales
+## 2. Sequence Lock FSM (A-B-A-B)
 
-Ideas para seguir jugando con este lab:
+### Button mapping
 
-- Agregar un **sensor de presencia** (otra tecla) que acelere el semáforo si hay “pocos coches”.
-- Hacer que la **cerradura pueda volver a bloquearse** con otra secuencia (ej. B-A-B-A).
-- Usar algunos LEDs intermedios (`led[6:3]`) para mostrar el **estado numérico** de cada FSM.
+- `btnA = key[4]`  
+- `btnB = key[5]`
 
-Este lab es buena base para cualquier sistema de control basado en máquinas de estados (semáforos reales, menús, protocolos, etc.).
+Button transitions are detected using **edge detection** (rising edge):
+
+pulseA = btnA & ~btnA_q
+
+pulseB = btnB & ~btnB_q
+
+
+These pulses are updated at each `slow_clock` tick.
+
+### Sequence to unlock
+
+Required sequence:
+
+1. Press **A**
+2. Press **B**
+3. Press **A**
+4. Press **B**
+
+Once completed, the FSM enters `LOCK_OPEN` and the lock LED stays ON until reset.
+
+### FSM states
+
+- `LOCK_IDLE`      – waiting for A  
+- `LOCK_A1`        – saw A, waiting for B  
+- `LOCK_A1B2`      – saw A,B, waiting for A  
+- `LOCK_A1B2A3`    – saw A,B,A, waiting for final B  
+- `LOCK_OPEN`      – success
+
+If a wrong button is pressed at any point, the FSM returns to `LOCK_IDLE`.
+
+### LED output
+
+- `led[7] = 1` only in state `LOCK_OPEN`.
+
+---
+
+## 3. Final LED mapping
+
+led[0] = green_on
+
+led[1] = yellow_on
+
+led[2] = red_on
+
+led[7] = lock_led
+
+
+All other LEDs remain OFF.
+
+---
+
+## Testing Checklist
+
+### Traffic Light FSM
+- [ ] On reset, only the **red LED** is ON (`led[2] = 1`)
+- [ ] After ~3 seconds, **green** LED turns ON
+- [ ] After ~3 seconds, **yellow** LED turns ON
+- [ ] After ~1 second, returns to **red**
+- [ ] The cycle repeats indefinitely
+
+### Sequence Lock FSM
+- [ ] Pressing A → moves from `LOCK_IDLE` to `LOCK_A1`
+- [ ] Pressing B → moves to `LOCK_A1B2`
+- [ ] Pressing A → moves to `LOCK_A1B2A3`
+- [ ] Pressing B → moves to `LOCK_OPEN`
+- [ ] `led[7]` turns ON only in `LOCK_OPEN`
+- [ ] Any incorrect button press resets the sequence
+
+---
+
+## Optional Extensions
+
+- Add a **timeout** in the lock FSM (reset back to IDLE after a few seconds).
+- Display the current state on the **TM1638** or **LCD** for debugging.
+- Add a configuration mode using `key[2]` or `key[3]` to change traffic light durations.
+- Combine both FSM outputs with sound or PWM brightness effects.
+
+---
+
+## Summary
+
+This lab demonstrates how to:
+
+- Build two **independent** state machines inside a single design.
+- Use **slow_clock** for human-perceivable timing.
+- Implement **edge detection** for button-driven FSMs.
+- Drive LEDs from FSM states.
+
+This pattern is essential for more advanced FPGA projects such as control systems, digital locks, UI navigation, and robotics.
+

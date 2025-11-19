@@ -1,119 +1,98 @@
-# labs_common – Módulos de uso compartido para los labs
+# labs_common – Shared modules for the labs
 
-Este directorio contiene **módulos SystemVerilog de uso común** para los laboratorios
-del proyecto, especialmente para la placa **Tang Nano 9K** con la configuración  
+This directory contains **SystemVerilog modules used across multiple labs** in the project, especially for the **Tang Nano 9K** using the configuration  
 `tang_nano_9k_lcd_480_272_tm1638_hackathon`.
 
-En lugar de repetir el mismo código en cada lab, aquí se concentran bloques
-reutilizables (drivers, helpers y utilidades) que luego se instancian desde
-los distintos `hackathon_top.sv`.
+Instead of duplicating the same code in every lab, this directory gathers reusable
+blocks (drivers, helpers, utilities) that are instantiated from each `hackathon_top.sv`.
 
-> **Origen:** estos módulos se basan en el proyecto original de  
-> **“basic-graphics” para FPGAs**, desarrollado por **Mr. Panchul**.  
-> En ese proyecto se usan como “piezas base” para muchos ejemplos en
-> diferentes boards.  
-> En este repositorio se han **adaptado** para trabajar principalmente con
-> la Tang Nano 9K, pero la autoría original de la idea y de gran parte del
-> código base corresponde a **Mr. Panchul** y al proyecto *basic-graphics*.
-
----
-
-## 1. Propósito del directorio
-
-El objetivo de `labs_common` es:
-
-- Proveer **bloques reutilizables** que se comparten entre varios labs
-  (por ejemplo, el driver del display de 7 segmentos).
-- Centralizar la lógica “genérica” para que:
-  - Se mantenga en **un solo lugar**.
-  - Sea más fácil corregir errores o mejorarla sin editar todos los labs.
-- Mantener los archivos de cada lab (`5_1`, `5_2`, …) más limpios y enfocados
-  en el concepto principal del ejercicio.
+> **Origin:** these modules are based on the original  
+> **“basic-graphics” FPGA project** developed by **Mr. Panchul**.  
+> In that project, these blocks act as “building pieces” for many examples across
+> different boards.  
+> In this repository, they have been **adapted** to work primarily with the Tang Nano 9K,  
+> but the original authorship of the idea and the base source code belongs to  
+> **Mr. Panchul** and the *basic-graphics* project.
 
 ---
 
-## 2. Contenido típico
+## 1. Purpose of the directory
 
-La lista exacta de archivos puede variar según la versión del repositorio, pero en
-general se encuentran módulos como:
+The goal of `labs_common` is to:
+
+- Provide **reusable blocks** shared across labs  
+  (e.g., the seven-segment display driver).
+- Centralize “generic logic” so that:
+  - It is maintained in **one place**.
+  - Fixes and improvements do not require editing every lab.
+- Keep each lab’s `hackathon_top.sv` clean and focused on the main concept.
+
+---
+
+## 2. Typical contents
+
+The exact list changes with repo versions, but typically includes:
 
 - `seven_segment_display.sv`  
-  Driver multiplexado de **display de 7 segmentos** (8 dígitos), tomado y
-  adaptado del proyecto *basic-graphics*:
-  - Recibe un bus `number` empaquetado en nibbles (4 bits por dígito).
-  - Recibe un vector `dots` para controlar los puntos decimales.
-  - Genera las señales `abcdefgh` y `digit` que se conectan al hardware.
-  - Se usa en varias actividades y labs relacionados con 7 segmentos
-    (por ejemplo, contadores hexadecimales y “playgrounds”).
+  Multiplexed **seven-segment display driver** (8 digits), adapted from the  
+  *basic-graphics* project:
+  - Takes a packed `number` bus (nibbles = 4 bits per digit).
+  - Takes `dots` to control decimal points.
+  - Generates `abcdefgh` and `digit` signals for the hardware.
+  - Used in several activities and labs (hex counters, playgrounds, etc.).
 
-- Otros módulos de apoyo reutilizables  
-  (según la versión del proyecto pueden incluir, por ejemplo,
-  pequeñas utilidades de división de reloj, empaquetado de dígitos, etc.).
-  Todos siguen la filosofía de:
-  - Tener **interfaces limpias y documentadas**.
-  - Ser fáciles de conectar desde `hackathon_top.sv`.
-  - Poderse reutilizar en múltiples ejemplos sin modificación.
+- Other reusable helper modules  
+  (clock dividers, digit packing helpers, etc.).
+  All follow the philosophy of:
+  - Clean and documented interfaces.
+  - Easy instantiation from any `hackathon_top.sv`.
+  - Reusability across labs.
 
-Cuando se añada un nuevo módulo genérico, la recomendación es colocarlo aquí, en
-`labs_common`, si se va a usar en más de un lab.
+Place any new generic module here if used in more than one lab.
 
 ---
 
-## 3. Uso desde los labs
+## 3. Use from the labs
 
-En los archivos de laboratorio (`5_Labs/5_xx_*/hackathon_top.sv`) es común ver:
+Typical usage in labs (`5_Labs/5_xx_*/hackathon_top.sv`):
 
-- Una **instanciación** de algún módulo de `labs_common`, por ejemplo:
+```sv
+seven_segment_display #(.w_digit(8)) i_7segment (
+    .clk      ( clock      ),
+    .rst      ( reset      ),
+    .number   ( number_reg ),
+    .dots     ( dots_reg   ),
+    .abcdefgh ( abcdefgh   ),
+    .digit    ( digit      )
+);
+```
+number_reg and dots_reg are prepared in each lab according to the exercise.
 
-    seven_segment_display #(.w_digit(8)) i_7segment (
-        .clk      ( clock      ),
-        .rst      ( reset      ),
-        .number   ( number_reg ),
-        .dots     ( dots_reg   ),
-        .abcdefgh ( abcdefgh   ),
-        .digit    ( digit      )
-    );
+The synthesis scripts must include labs_common files for the toolchain to find the modules.
 
-- Algún bloque que prepara las señales de entrada para ese módulo, por ejemplo:
+## 4. Best practices
 
-    // number_reg y dots_reg se preparan en hackathon_top
-    // a partir de contadores, modos, lecturas de sensores, etc.
+- Keep modules as generic as possible, with minimal dependencies.
 
-En los scripts de síntesis (`03_synthesize_for_fpga.bash` o el proyecto Tcl de Gowin)
-los archivos de `labs_common` deben estar incluidos explícitamente para que el
-sintetizador pueda encontrar las definiciones.
+- Document:
+
+  - Purpose
+
+  - Input/output ports
+
+  - Parameters (parameter, localparam)
+
+- Do not include lab-specific logic inside labs_common.
+If it belongs only to one lab, leave it in its corresponding directory.
+
+## 5. Relation to other directories 
+- 5_Labs/ - Each lab instantiates modules from labs_common.
+
+- peripherals/ – Contains hardware-specific drivers (sensors, TM1638, LCD).
+
+- scripts/ – Contains synthesis/programming scripts.
+
+labs_common functions as a reusable library that keeps all labs cleaner and easier to maintain.
 
 ---
 
-## 4. Buenas prácticas
-
-Al trabajar con este directorio se recomienda:
-
-- Mantener los módulos **lo más genéricos posible** y sin dependencias innecesarias.
-- Documentar en comentarios:
-  - Propósito del módulo.
-  - Puertos de entrada y salida.
-  - Parámetros configurables (`parameter`, `localparam`).
-- No introducir lógica específica de un lab dentro de `labs_common`; si un cambio solo
-  aplica a un ejercicio concreto, es mejor dejarlo en su `hackathon_top.sv`.
-
----
-
-## 5. Relación con otros directorios
-
-- `5_Labs/`  
-  Contiene los **laboratorios individuales**, cada uno con su propio
-  `hackathon_top.sv` que instancia módulos de `labs_common` y de otros directorios.
-
-- `peripherals/`  
-  Incluye módulos específicos de **hardware externo** (sensores, TM1638, etc.).
-  Mientras que `labs_common` se centra en lógica de apoyo general, `peripherals`
-  se enfoca en drivers de dispositivos concretos, muchos de ellos también
-  originados o inspirados en el proyecto *basic-graphics* de Mr. Panchul.
-
-- `scripts/`  
-  Contiene scripts para **síntesis, lugar y ruta y programación** (por ejemplo,
-  `03_synthesize_for_fpga.bash`), basados en la estructura de trabajo del
-  proyecto *basic-graphics* y adaptados para este repositorio.
-
-En conjunto, `labs_common` funciona como una **biblioteca de bloques reutilizables** que hace que los labs sean más cortos, claros y fáciles de mantener, manteniendo el reconocimiento al trabajo original de **Mr. Panchul** y del proyecto **basic-graphics**.

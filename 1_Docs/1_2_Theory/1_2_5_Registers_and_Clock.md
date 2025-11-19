@@ -1,158 +1,149 @@
 # 1.2.5 Registers and clock
 
-Este documento introduce dos elementos centrales en diseños con FPGA:
+This document introduces two core elements in FPGA design:
 
-- La **señal de reloj** (`clk`).
-- Los **registros** (flip-flops) que almacenan información entre ciclos.
+- The **clock signal** (`clk`)
+- **Registers** (flip-flops) that store information between cycles
 
-La mayor parte de la lógica en este repositorio sigue un estilo **sincrónico**, es decir, controlado por un reloj común.
-
----
-
-## 1. Señal de reloj (clock)
-
-La señal de **reloj** es una onda periódica (normalmente cuadrada) que marca el ritmo de actualización del sistema:
-
-- Cada flanco (generalmente el **flanco positivo**) es un “tic”.
-- En cada tic, los registros pueden tomar nuevos valores.
-
-En la Tang Nano 9K:
-
-- La placa incluye un oscilador de referencia (por ejemplo, ~27 MHz).
-- En los diseños se declara un puerto `clock` o `clk` que se conecta a ese pin de reloj.
-- En este repositorio, el módulo de la tarjeta suele entregar:
-  - `clock` (rápido, directamente derivado del reloj de la placa).
-  - `slow_clock` (reloj dividido para efectos muy lentos, según el ejemplo concreto).
-
-Ejemplo de puerto de reloj en un módulo:
-  ```sv
-    module binary_counter (
-        input  logic       clk,
-        input  logic       rst_n,
-        output logic [7:0] count
-    );
-        // ...
-    endmodule
-  ```
----
-
-## 2. Registros (flip-flops)
-
-Un **registro** es un conjunto de flip-flops que guarda un valor:
-
-- Se actualiza solo en el flanco del reloj (según la sensibilidad del `always_ff`).
-- Permite recordar información de un ciclo al siguiente.
-- Es la base de contadores, máquinas de estados (FSM), filtros digitales, etc.
-
-Ejemplo de un contador de 8 bits con registro:
-  ```sv
-    module binary_counter (
-        input  logic       clk,
-        input  logic       rst_n,
-        output logic [7:0] count
-    );
-
-        always_ff @(posedge clk or negedge rst_n) begin
-            if (!rst_n)
-                count <= 8'd0;           // Reset asíncrono, pone el contador en cero
-            else
-                count <= count + 8'd1;   // En cada flanco de reloj, incrementa
-        end
-
-    endmodule
-  ```
-Puntos clave:
-
-- `count` es un registro de 8 bits.
-- Solo cambia de valor en el flanco positivo de `clk` (o cuando `rst_n` pasa a 0).
-- Entre flancos, `count` mantiene su valor.
+Most logic in this repository follows a **synchronous** style, meaning it is controlled by a common clock.
 
 ---
 
-## 3. Reloj + registro = diseño secuencial
+## 1. Clock signal
 
-Cuando se combinan:
+The **clock** is a periodic waveform (usually square) that sets the update rhythm of the system:
 
-- Un reloj `clk`.
-- Registros que se actualizan en el flanco de `clk`.
-- Lógica combinacional entre registros.
+- Each edge (usually the **rising edge**) is a “tick”
+- At each tick, registers may take new values
 
-Se obtiene un diseño **secuencial sincrónico**. El flujo típico es:
+On the Tang Nano 9K:
 
-1. En un flanco de reloj, los registros capturan nuevos datos.
-2. Entre flancos, la lógica combinacional calcula los siguientes valores.
-3. En el próximo flanco, esos nuevos valores vuelven a registrarse.
+- The board includes a reference oscillator (~27 MHz)
+- Designs declare a port `clock` or `clk` connected to that pin
+- The board-level module usually provides:
+  - `clock` (fast raw clock)
+  - `slow_clock` (a divided clock for slow effects)
 
-Este patrón:
+Example clock port:
 
-- Facilita razonar sobre el comportamiento en el tiempo.
-- Evita muchos problemas de metastabilidad y “glitches” que aparecen en diseños puramente combinacionales grandes.
-- Es la base de casi todos los `hackathon_top.sv` del repositorio.
+module binary_counter (
+    input  logic clk,
+    input  logic rst_n,
+    output logic [7:0] count
+);
+    ...
+endmodule
 
 ---
 
-## 4. Reset: síncrono vs asíncrono
+## 2. Registers (flip-flops)
 
-En los ejemplos de este repositorio se utilizan, principalmente, dos estilos de reset:
+A **register** is a set of flip-flops that stores a value:
 
-### 4.1 Reset asíncrono
+- Updated only on a clock edge (according to the `always_ff` sensitivity list)
+- Maintains the stored value between cycles
+- Forms the basis of counters, FSMs, filters, etc.
 
-El registro se borra en cuanto `rst_n` cambia, **sin esperar un flanco de reloj**.
-  ```sv
+Example:
+
+module binary_counter (
+    input  logic clk,
+    input  logic rst_n,
+    output logic [7:0] count
+);
+
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)
-            q <= 1'b0;
+            count <= 0;
         else
-            q <= d;
+            count <= count + 1;
     end
-  ```
-Características:
 
-- Responde de inmediato al cambio de `rst_n`.
-- Es útil cuando se quiere poder forzar el sistema a un estado conocido en cualquier momento.
-- Requiere más cuidado en el hardware físico para asegurar que la señal de reset cumple requisitos de tiempo.
+endmodule
 
-### 4.2 Reset síncrono
+Key points:
 
-El registro solo se borra en el **flanco de reloj**, cuando `reset` está activo.
-  ```sv
-    always_ff @(posedge clk) begin
-        if (reset)
-            q <= 1'b0;
-        else
-            q <= d;
-    end
-  ```
-Características:
-
-- El reset se aplica alineado con el reloj.
-- Facilita el análisis de tiempo (todo depende del mismo `clk`).
-- Es un estilo muy común en diseños sincrónicos modernos.
-
-En este repositorio se usa uno u otro estilo según el ejemplo o el entorno del módulo de placa (`board_specific_top`).
+- `count` is an 8-bit register  
+- Changes only on the rising edge or reset  
+- Holds its value between edges  
 
 ---
 
-## 5. Reglas prácticas al usar registros y reloj
+## 3. Clock + register = sequential design
 
-Al trabajar con los ejercicios de este proyecto:
+When you combine:
 
-- Mantener, en lo posible, **un solo reloj principal** (`clock`) por diseño.
-- Evitar crear muchos relojes nuevos a partir de lógica; es preferible:
-  - generar pulsos de **enable**, o
-  - usar **divisores de frecuencia** internos,
-  en lugar de múltiples dominios de reloj.
-- Declarar la lógica secuencial con `always_ff` y la lógica combinacional con `always_comb`, para mantener el código claro y fácil de verificar.
-- Usar resets de manera **consistente** dentro de cada módulo (no mezclar muchos estilos sin necesidad).
-- Asegurar que todas las señales que cruzan entre diferentes dominios de reloj (si existen) pasen por mecanismos de **sincronización** adecuados (no es el foco de este repositorio, pero es importante a nivel profesional).
+- A clock signal  
+- Registers updated on the clock edge  
+- Combinational logic between registers  
 
-Estas ideas se aplican en:
+You get a **synchronous sequential design**.
 
-- Contadores de `5_1_counter_hello_world`.
-- Máquinas de estados del semáforo y del “lock”.
-- Labs con sensores y TM1638.
-- Implementaciones como:
-  - el **reloj digital**, y
-  - el sistema tipo **radar ultrasónico**.
+Typical flow:
 
-Son la base del estilo de diseño que se espera practicar con este material.
+1. Registers sample data at a clock edge  
+2. Combinational logic computes next values  
+3. Next edge loads those values into registers  
+
+This pattern:
+
+- Simplifies reasoning about time behavior  
+- Avoids metastability and glitches found in large combinational-only designs  
+- Is the foundation of almost every `hackathon_top.sv` file  
+
+---
+
+## 4. Reset: synchronous vs asynchronous
+
+Two reset styles appear in this repository:
+
+### 4.1 Asynchronous reset
+
+Register clears **immediately**, without waiting for a clock edge.
+
+always_ff @(posedge clk or negedge rst_n)
+
+Characteristics:
+
+- Responds instantly  
+- Useful for forcing the system to a known state at any moment  
+- Requires careful timing design  
+
+### 4.2 Synchronous reset
+
+Register clears **on the next clock edge**.
+
+always_ff @(posedge clk)
+
+Characteristics:
+
+- Reset aligns with the clock  
+- Easier timing analysis  
+- Common in modern synchronous design  
+
+---
+
+## 5. Practical rules for registers and clock
+
+While working with these exercises:
+
+- Prefer using **one main clock** per design  
+- Avoid generating multiple clocks from logic; instead use:
+  - **Enable pulses**
+  - **Frequency dividers**
+- Use:
+  - `always_ff` for sequential logic  
+  - `always_comb` for combinational logic  
+- Keep reset style **consistent** inside each module  
+- If signals cross clock domains, use proper **synchronizers**  
+
+These rules are applied in:
+
+- Counters in `5_1_counter_hello_world`  
+- Traffic light FSM and lock FSM  
+- Sensor + TM1638 labs  
+- Implementations like:
+  - Digital clock  
+  - Ultrasonic radar display  
+
+They form the foundation of the design style practiced in this material.

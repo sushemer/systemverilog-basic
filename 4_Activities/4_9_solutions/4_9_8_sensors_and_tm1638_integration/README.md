@@ -1,201 +1,202 @@
-# 4_9_8 – Integración de sensores + TM1638
+# 4_9_8 – Sensors + TM1638 Integration
 
-Actividad basada en `4_8_sensors_and_tm1638_integration`, ubicada en `4_9_solutions/4_9_8_sensors_and_tm1638_integration`.
+Activity based on `4_8_sensors_and_tm1638_integration`, located in `4_9_solutions/4_9_8_sensors_and_tm1638_integration`.
 
-## Objetivo
+## Objective
 
-Integrar **sensores físicos** con la tarjeta **TM1638**, de manera que:
+Integrate **physical sensors** with the **TM1638** board so that:
 
-- Se lean el **HC-SR04** (ultrasonido) y el **KY-040** (encoder rotatorio).
-- Se muestre un valor numérico en el **display de 7 segmentos** del TM1638.
-- Se represente una **barra (bar graph)** en los **8 LEDs** del TM1638.
-- Se cambie el modo de visualización con las teclas (`key[1:0]`).
+- The **HC-SR04** (ultrasonic) and **KY-040** (rotary encoder) are read.
+- A numerical value is shown on the **TM1638 7-segment display**.
+- A **bar graph** is rendered on the **8 LEDs** of the TM1638.
+- The display mode can be changed using the keys (`key[1:0]`).
 
-La solución aprovecha módulos ya disponibles en el repositorio (sensores, sincronización de entradas, y driver de 7 segmentos).
-
----
-
-## Conexiones de sensores (GPIO)
-
-Se asume el siguiente mapeo en `gpio`:
-
-**HC-SR04 (ultrasonido)**  
-- `gpio[0]` → `TRIG` (salida desde la FPGA hacia el sensor).  
-- `gpio[1]` → `ECHO` (entrada desde el sensor hacia la FPGA).
-
-**KY-040 (encoder rotatorio)**  
-- `gpio[3]` → canal A (`CLK`).  
-- `gpio[2]` → canal B (`DT`).
-
-Módulos involucrados:
-
-- `ultrasonic_distance_sensor`: entrega un valor relativo de distancia  
-  `distance_rel : logic [15:0]`.
-- `sync_and_debounce`: sincroniza y limpia rebotes de las señales del encoder.
-- `rotary_encoder`: entrega un contador cuadratura  
-  `encoder_value : logic [15:0]`.
-
-En la solución, las señales del encoder (`A`, `B`) se pasan primero por `sync_and_debounce` para obtener versiones estables antes de alimentar a `rotary_encoder`.
+The solution uses modules already available in the repository (sensors, input synchronization, and 7-segment driver).
 
 ---
 
-## TM1638 y señales principales
+## Sensor connections (GPIO)
 
-Además de los GPIO hacia los sensores, se utilizan las señales del TM1638:
+The following mapping on `gpio` is assumed:
 
-- Líneas de control hacia el TM1638 (según el wrapper de la placa).
-- Salida de **segmentos** (internamente manejada por `seven_segment_display`).
-- **8 LEDs** integrados en el TM1638, que se usan como “barra” de nivel.
+**HC-SR04 (ultrasonic)**  
+- `gpio[0]` → `TRIG` (output from FPGA to the sensor)  
+- `gpio[1]` → `ECHO` (input from the sensor to the FPGA)
 
-En el lado del diseño, lo relevante es:
+**KY-040 (rotary encoder)**  
+- `gpio[3]` → channel A (`CLK`)  
+- `gpio[2]` → channel B (`DT`)
 
-- Un valor de 16 bits `sensor_value` que representa el dato seleccionado (distancia o encoder).
-- Un registro `number` (típicamente 4 nibbles BCD o hex) que alimenta al módulo de 7 segmentos.
-- Un patrón de 8 bits `led_bar` que se mapea a los LEDs del TM1638.
+Modules involved:
+
+- `ultrasonic_distance_sensor`: outputs a relative-distance value  
+  `distance_rel : logic [15:0]`
+- `sync_and_debounce`: synchronizes and removes bounce from the encoder signals
+- `rotary_encoder`: generates a quadrature counter  
+  `encoder_value : logic [15:0]`
+
+In the solution, the encoder signals (`A`, `B`) are processed through `sync_and_debounce` first to obtain stable versions before feeding `rotary_encoder`.
 
 ---
 
-## Módulos necesarios
+## TM1638 and main signals
 
-Para que la solución sintetice correctamente, deben incluirse (además del wrapper de la placa):
+In addition to GPIO for the sensors, the TM1638 signals are used:
+
+- Control lines to the TM1638 (handled by the board wrapper)
+- Output **segments** (internally driven by `seven_segment_display`)
+- **8 LEDs** integrated in the TM1638, used as a level bar
+
+On the design side, the important signals are:
+
+- A 16-bit value `sensor_value` representing the selected data (distance or encoder)
+- A `number` register (often 4 hexadecimal/BCD nibbles) connected to the 7-segment module
+- An 8-bit `led_bar` pattern mapped to the TM1638 LEDs
+
+---
+
+## Required modules
+
+For the solution to synthesize correctly, the following must be included (in addition to the board wrapper):
 
 - `peripherals/ultrasonic_distance_sensor.sv`
 - `peripherals/rotary_encoder.sv`
 - `peripherals/sync_and_debounce.sv`
 - `peripherals/sync_and_debounce_one.sv`
 - `peripherals/seven_segment_display.sv`
-- `hackathon_top.sv` correspondiente a esta actividad (en `4_9_solutions/4_9_8_...`)
+- The corresponding `hackathon_top.sv` for this activity (in `4_9_solutions/4_9_8_...`)
 
-Es importante verificar que todos estos archivos aparezcan en el script de síntesis o en el proyecto de Gowin.
+It is important to ensure that all these files are included in the synthesis script or the Gowin project.
 
 ---
 
-## Modos de operación (`key[1:0]`)
+## Operating modes (`key[1:0]`)
 
-Se usa `key[1:0]` como selector de modo:
+`key[1:0]` is used as a mode selector:
 
 - `mode = key[1:0];`
 
-La solución propone, por ejemplo, los modos:
+The solution proposes, for example, the following modes:
 
-- `mode = 2'b00` → **Modo distancia**  
-  Se toma `sensor_value = distance_rel`.  
-  El display muestra la distancia (en formato hex o escalado), y los LEDs forman una barra proporcional a dicha distancia.
+- `mode = 2'b00` → **Distance mode**  
+  `sensor_value = distance_rel`  
+  The display shows the distance (hex or scaled), and the LEDs form a bar proportional to this value.
 
-- `mode = 2'b01` → **Modo encoder**  
-  Se toma `sensor_value = encoder_value`.  
-  El display muestra el valor del encoder (positivo/negativo, típicamente en hex) y la barra refleja el valor absoluto o una porción alta del contador.
+- `mode = 2'b01` → **Encoder mode**  
+  `sensor_value = encoder_value`  
+  The display shows the encoder value (positive/negative, typically in hex), and the bar reflects the magnitude or higher bits of the counter.
 
-- `mode = 2'b10` → **Modo mixto o debug**  
-  Se muestra una combinación de ambos valores, por ejemplo:  
-  mitad alta del display = distancia, mitad baja = encoder, o alguna mezcla que facilite depuración.
+- `mode = 2'b10` → **Mixed or debug mode**  
+  A combination of both values is shown, for example:  
+  upper half of the display = distance, lower half = encoder, or another helpful mix for debugging.
 
-- `mode = 2'b11` → **Modo libre**  
-  Reservado para extensiones (congelar valor, mostrar escala fija, probar patrones en LEDs, etc.).
+- `mode = 2'b11` → **Free mode**  
+  Reserved for extensions (freeze value, fixed scale, LED patterns, etc.)
 
-La implementación exacta puede variar, pero la solución incluida en `4_9_8` sigue esta idea general: un multiplexor sobre `sensor_value` controlado por `mode`.
-
----
-
-## Flujo general de la solución
-
-La lógica del diseño puede resumirse en los siguientes pasos:
-
-1. **Lectura de sensores**
-
-   - El módulo `ultrasonic_distance_sensor` genera `distance_rel` a partir de las señales `TRIG` y `ECHO`.
-   - El módulo `sync_and_debounce` recibe `gpio[3:2]` y entrega señales estabilizadas al `rotary_encoder`.
-   - `rotary_encoder` genera `encoder_value`, un contador incremental/decremental según el giro del encoder.
-
-2. **Selección del valor (multiplexor por modo)**
-
-   Se define un registro o lógica combinacional:
-
-   - Para `mode = 00` → `sensor_value = distance_rel`.
-   - Para `mode = 01` → `sensor_value = encoder_value`.
-   - Para `mode = 10` → alguna función de ambos (por ejemplo `distance_rel - encoder_value`).
-   - Para `mode = 11` → un valor fijo o de prueba (por ejemplo 0).
-
-   De esta manera, la lógica posterior (display + LEDs) trabaja siempre sobre `sensor_value`.
-
-3. **Escalado para display de 7 segmentos**
-
-   A partir de `sensor_value` (16 bits), se forma un número que el módulo de 7 segmentos pueda mostrar:
-
-   - Opción simple: mostrar `sensor_value` directamente en **hexadecimal** (4 dígitos).  
-     Por ejemplo, se empaquetan los 16 bits en `number[15:0]` y se rellenan los dígitos restantes con 0 si el TM1638 tiene 8 dígitos.
-   - Opción alternativa: realizar una conversión a **decimal** (BCD) si se desea mostrar valores más “humanos”, aunque esto agrega un poco de lógica extra.
-
-   En la solución típica de este repositorio se prefiere el método sencillo (hex), ya que resulta compacto y directo.
-
-4. **Generación de la barra en LEDs**
-
-   Para construir un bar graph de 8 niveles:
-
-   - Se toma un subconjunto de bits de `sensor_value` (por ejemplo los 8 bits más altos).
-   - Se define un umbral o escala y se traduce a un nivel de 0 a 8.
-   - A partir del nivel se construye un patrón del tipo:
-
-     - Nivel 0 → `8'b0000_0000`
-     - Nivel 1 → `8'b0000_0001`
-     - Nivel 2 → `8'b0000_0011`
-     - ...
-     - Nivel 8 → `8'b1111_1111`
-
-   Esta barra se envía a los LEDs del TM1638, proporcionando una representación visual rápida de la magnitud del valor.
-
-5. **Manejo de teclas adicionales (opcional)**
-
-   - Bits de `key` adicionales (por ejemplo `key[7:2]`) pueden usarse para:
-     - Cambiar la escala de la barra (zoom).
-     - Activar modos de prueba.
-     - Congelar el valor actual de un sensor.
-   - En la solución base se prioriza mantener el ejemplo sencillo, dejando estos bits libres para extensiones.
+The exact implementation may vary, but the included solution uses this general idea: a multiplexer over `sensor_value` controlled by `mode`.
 
 ---
 
-## Pruebas sugeridas
+## General solution flow
 
-1. **Modo distancia (`mode = 00`)**
+The logic of the design can be summarized in the following steps:
 
-   - Colocar el sensor HC-SR04 apuntando a un objeto a distintas distancias.
-   - Observar cómo:
-     - El número en el display cambia al acercar/alejar el objeto.
-     - La barra de LEDs del TM1638 crece o disminuye de acuerdo con la distancia relativa.
+1. **Sensor reading**
 
-2. **Modo encoder (`mode = 01`)**
+   - `ultrasonic_distance_sensor` generates `distance_rel` from the `TRIG` and `ECHO` signals.  
+   - `sync_and_debounce` receives `gpio[3:2]` and outputs stabilized signals to `rotary_encoder`.  
+   - `rotary_encoder` generates `encoder_value`, an incremental/decremental counter based on rotation direction.
 
-   - Girar el encoder KY-040 lentamente en un sentido y luego en el contrario.
-   - Confirmar que:
-     - El valor del display aumenta o disminuye según el sentido de giro.
-     - La barra refleja la magnitud del valor (por ejemplo el valor absoluto, o un rango recortado).
+2. **Value selection (mode multiplexer)**
 
-3. **Cambios rápidos de modo**
+   A register or combinational logic selects the value:
 
-   - Alternar entre `mode = 00` y `mode = 01` para comprobar que el sistema conmute correctamente entre ultrasonido y encoder.
-   - Verificar que no existan valores “extraños” ni parpadeos inesperados en el display.
+   - `mode = 00` → `sensor_value = distance_rel`  
+   - `mode = 01` → `sensor_value = encoder_value`  
+   - `mode = 10` → some function of both (e.g., `distance_rel - encoder_value`)  
+   - `mode = 11` → a fixed/test value (e.g., 0)
 
-4. **Modo mixto y modo libre (`10` y `11`)**
+   This ensures that all later logic (display + LEDs) always works with `sensor_value`.
 
-   - Probar la lógica definida en la solución (combinación de sensores, valores fijos, etc.).
-   - Ajustar el código si se desea experimentar con otras combinaciones o comportamientos.
+3. **Scaling for 7-segment display**
+
+   From `sensor_value` (16 bits), a number is prepared for the 7-segment driver:
+
+   - Simple option: display `sensor_value` directly in **hex** (4 hex digits).  
+     E.g., put `sensor_value` into `number[15:0]` and fill the remaining digits with 0 if using an 8-digit TM1638.
+
+   - Alternative: convert to **decimal** (BCD) to display human-readable values (adds extra logic).
+
+   The repository solution typically uses the simple hex method.
+
+4. **LED bar generation**
+
+   To build an 8-level bar graph:
+
+   - A subset of `sensor_value` bits is used (e.g., the highest bits)
+   - A threshold/scale converts this into a level from 0 to 8
+   - The LED pattern is built:
+
+     - Level 0 → `00000000`
+     - Level 1 → `00000001`
+     - Level 2 → `00000011`
+     - …
+     - Level 8 → `11111111`
+
+   This bar is sent to the TM1638 LEDs to provide a quick visual magnitude indicator.
+
+5. **Additional key handling (optional)**
+
+   - Other `key` bits (like `key[7:2]`) may be used to:
+     - Change the bar scale (zoom)  
+     - Enable test modes  
+     - Freeze sensor values  
+   - The base solution keeps these bits free for extensions.
 
 ---
 
-## Extensiones opcionales
+## Suggested tests
 
-Algunas ideas para ampliar esta actividad:
+1. **Distance mode (`mode = 00`)**
 
-- Añadir una **escala de unidades** (por ejemplo centímetros o pasos) y documentarla en comentarios.
-- Usar el TM1638 para:
-  - Mostrar el valor de un sensor en los dígitos más a la derecha.
-  - Mostrar el de otro sensor en los dígitos más a la izquierda.
-- Implementar un sencillo **sistema de menú** con las teclas del TM1638 para seleccionar:
-  - Sensor activo.
-  - Tipo de visualización (hex / decimal).
-  - Tipo de barra (lineal, logarítmica, etc.).
-- Integrar esta funcionalidad con el LCD:
-  - Dibujar una barra en la pantalla que siga el mismo valor que los LEDs.
-  - Mostrar en texto el modo actual y la lectura aproximada.
+   - Point the HC-SR04 at objects at different distances  
+   - Observe:  
+     - The displayed number changes when approaching/moving away  
+     - The LED bar increases/decreases accordingly  
 
-Esta solución reúne varias piezas vistas en actividades previas (sensores, debounce, encoder, 7 segmentos, barras de LEDs) y muestra cómo coordinarlas para construir un panel de lectura sencillo pero completo sobre la Tang Nano 9K + TM1638.
+2. **Encoder mode (`mode = 01`)**
+
+   - Rotate the KY-040 slowly in both directions  
+   - Confirm:  
+     - The display increments/decrements  
+     - The bar reflects the magnitude (absolute or top bits)  
+
+3. **Fast mode switching**
+
+   - Switch between `00` and `01`  
+   - Verify that the system transitions correctly with no glitches  
+
+4. **Mixed and free modes (`10` and `11`)**
+
+   - Test the behavior defined in the solution (combined sensors, fixed values, etc.)  
+   - Modify if experimenting with new combinations  
+
+---
+
+## Optional extensions
+
+Ideas to extend this activity:
+
+- Add a **unit scale** (e.g., centimeters or steps) and document it in comments  
+- Use the TM1638 to:  
+  - Show one sensor on the right digits  
+  - Show the other sensor on the left digits  
+- Implement a simple **menu system** using the TM1638 buttons to select:  
+  - Active sensor  
+  - Display type (hex / decimal)  
+  - Bar graph type (linear, logarithmic, etc.)  
+- Integrate the functionality with the LCD:  
+  - Draw a bar on screen matching the LED bar  
+  - Show text describing the active mode and approximate reading  
+
+This solution brings together several previously seen components (sensors, debounce, encoder, 7-segment, LED bars) and demonstrates how to coordinate them to build a simple but complete sensor dashboard on the Tang Nano 9K + TM1638.

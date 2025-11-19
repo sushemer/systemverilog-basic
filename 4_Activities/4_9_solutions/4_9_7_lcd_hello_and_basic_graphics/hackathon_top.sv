@@ -1,19 +1,18 @@
-// File: 4_9_solutions/4_9_7_lcd_hello_and_basic_graphics/hackathon_top.sv
-//
-// Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// Actividad 4.7 – LCD "HELLO" + gráficas básicas
-//
-// Idea general:
-//   - Se dibuja un marco alrededor de la pantalla.
-//   - El fondo interno es un tono suave azul/gris.
-//   - Se reserva una banda central para la palabra "HELLO".
-//   - Cada letra (H, E, L, L, O) se forma con bloques (rectángulos).
-//   - En la parte inferior hay una barra de estado que cambia de color con key[0].
-//
-// Coordenadas:
-//   x: 0..479
-//   y: 0..271
-//
+Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
+/*
+Activity 4.7 – LCD "HELLO" + basic graphics
+
+General idea:
+  - Draw a frame around the screen.
+  - Inner background is a soft blue/gray tone.
+  - A central band is reserved for the word "HELLO".
+  - Each letter (H, E, L, L, O) is formed with block rectangles.
+  - At the bottom, a status bar changes color with key[0].
+
+Coordinates:
+  x: 0..479
+  y: 0..271
+*/
 
 module hackathon_top
 (
@@ -24,45 +23,40 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (no es el foco de esta actividad)
+    // Seven-segment display (not used in this activity)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD: coordenadas actuales del píxel
+    // LCD interface: current pixel coordinates
     input  logic [8:0] x,   // 0 .. 479
     input  logic [8:0] y,   // 0 .. 271
 
-    // Salida de color RGB (5-6-5 bits)
+    // RGB color output (5-6-5 bits)
     output logic [4:0] red,
     output logic [5:0] green,
     output logic [4:0] blue,
 
-    inout  logic [3:0] gpio   // No se usa en esta actividad
+    inout  logic [3:0] gpio   // Not used here
 );
 
     // -------------------------------------------------------------------------
-    // Parámetros de la pantalla (coinciden con el driver de LCD 480x272)
+    // Screen parameters (match the 480x272 LCD controller)
     // -------------------------------------------------------------------------
 
     localparam int SCREEN_W = 480;
     localparam int SCREEN_H = 272;
 
     // -------------------------------------------------------------------------
-    // LEDs y display de 7 segmentos
+    // LEDs and seven-segment display
     // -------------------------------------------------------------------------
 
-    assign led      = key;    // Solo reflejamos las teclas
-    assign abcdefgh = 8'h00;  // 7 segmentos apagado
+    assign led      = key;    // Just reflect keys on LEDs
+    assign abcdefgh = 8'h00;  // 7-segment display turned off
     assign digit    = 8'h00;
-    // gpio lo maneja el wrapper
-    // (aquí no lo usamos de forma explícita)
 
     // -------------------------------------------------------------------------
-    // Señales auxiliares para las letras "HELLO"
+    // Auxiliary signals for the "HELLO" letters
     // -------------------------------------------------------------------------
-    //
-    // Reservamos una franja horizontal en el centro de la pantalla y
-    // la dividimos en 5 celdas de igual ancho para cada letra.
 
     logic in_H;
     logic in_E;
@@ -70,24 +64,24 @@ module hackathon_top
     logic in_L2;
     logic in_O;
 
-    // Banda vertical para el texto
-    localparam int HELLO_TOP    = 80;   // y mínimo de la banda de texto
-    localparam int HELLO_BOTTOM = 200;  // y máximo de la banda de texto
+    // Vertical text band
+    localparam int HELLO_TOP    = 80;
+    localparam int HELLO_BOTTOM = 200;
 
-    // Ancho aproximado de cada celda de letra
+    // Approx. width of each letter cell
     localparam int LETTER_W = 60;
 
-    // Posición X inicial del texto
+    // Starting X position of text
     localparam int HELLO_X0 = 60;
     localparam int HELLO_X1 = HELLO_X0 + 5*LETTER_W;
 
-    // Grosor de “línea” para trazos de las letras
+    // Stroke thickness
     localparam int STROKE       = 6;
     localparam int HELLO_MID_Y  = (HELLO_TOP + HELLO_BOTTOM) / 2;
     localparam int MID_Y_TOP    = HELLO_MID_Y - STROKE/2;
     localparam int MID_Y_BOTTOM = HELLO_MID_Y + STROKE/2;
 
-    // Rangos en X para cada letra
+    // X ranges for each letter
     localparam int H_X0  = HELLO_X0 + 0*LETTER_W;
     localparam int H_X1  = H_X0 + LETTER_W;
 
@@ -104,17 +98,17 @@ module hackathon_top
     localparam int O_X1  = O_X0 + LETTER_W;
 
     // -------------------------------------------------------------------------
-    // Lógica de dibujo en el LCD
+    // LCD drawing logic
     // -------------------------------------------------------------------------
 
     always_comb
     begin
-        // Fondo por defecto: negro
+        // Default background: black
         red   = '0;
         green = '0;
         blue  = '0;
 
-        // Inicializar banderas de letras
+        // Reset letter flags
         in_H  = 1'b0;
         in_E  = 1'b0;
         in_L1 = 1'b0;
@@ -122,160 +116,133 @@ module hackathon_top
         in_O  = 1'b0;
 
         // ---------------------------------------------------------------------
-        // 1) Marco (borde) de la pantalla
+        // 1) Screen border
         // ---------------------------------------------------------------------
-        //
-        // 4 píxeles de grosor alrededor de toda la pantalla.
+        // 4-pixel-thick white frame.
 
         if (x < 4 || x >= SCREEN_W-4 || y < 4 || y >= SCREEN_H-4)
         begin
-            // Marco blanco
             red   = 5'b11111;
             green = 6'b111111;
             blue  = 5'b11111;
         end
 
         // ---------------------------------------------------------------------
-        // 2) Interior de la pantalla (no borde)
+        // 2) Interior (non-border)
         // ---------------------------------------------------------------------
         if (!(x < 4 || x >= SCREEN_W-4 || y < 4 || y >= SCREEN_H-4))
         begin
-            // Fondo base: gris-azulado suave
+            // Soft blue-gray background
             red   = 5'd2;
             green = 6'd4;
             blue  = 5'd8;
 
             // -----------------------------------------------------------------
-            // 2.1) Franja central para la palabra HELLO
+            // 2.1) Central "HELLO" band
             // -----------------------------------------------------------------
-            //
-            // Banda:
-            //   y entre HELLO_TOP y HELLO_BOTTOM
-            //   x entre HELLO_X0 y HELLO_X1
 
             if (   (y >= HELLO_TOP)   && (y < HELLO_BOTTOM)
                 && (x >= HELLO_X0)    && (x < HELLO_X1) )
             begin
-                // Fondo de la banda de texto (celeste claro)
+                // Text band background (light cyan)
                 red   = 5'd4;
                 green = 6'd10;
                 blue  = 5'd15;
 
                 // -------------------------------------------------------------
-                // Definición de trazos de cada letra con rectángulos
+                // Letter strokes
                 // -------------------------------------------------------------
 
-                // -------------------------
-                // Letra H (columna 0)
-                // -------------------------
+                // H
                 in_H =
-                    // Barra vertical izquierda
+                    // Left vertical bar
                     (x >= H_X0 && x < H_X0 + STROKE &&
                      y >= HELLO_TOP && y < HELLO_BOTTOM)
                     ||
-                    // Barra vertical derecha
+                    // Right vertical bar
                     (x >= H_X1 - STROKE && x < H_X1 &&
                      y >= HELLO_TOP && y < HELLO_BOTTOM)
                     ||
-                    // Barra horizontal central
+                    // Middle horizontal bar
                     (y >= MID_Y_TOP && y < MID_Y_BOTTOM &&
                      x >= H_X0 + STROKE && x < H_X1 - STROKE);
 
-                // -------------------------
-                // Letra E (columna 1)
-                // -------------------------
+                // E
                 in_E =
-                    // Barra vertical izquierda
+                    // Left vertical bar
                     (x >= E_X0 && x < E_X0 + STROKE &&
                      y >= HELLO_TOP && y < HELLO_BOTTOM)
                     ||
-                    // Barra horizontal superior
+                    // Top horizontal bar
                     (y >= HELLO_TOP && y < HELLO_TOP + STROKE &&
                      x >= E_X0 && x < E_X1)
                     ||
-                    // Barra horizontal central
+                    // Middle horizontal bar
                     (y >= MID_Y_TOP && y < MID_Y_BOTTOM &&
                      x >= E_X0 && x < E_X1)
                     ||
-                    // Barra horizontal inferior
+                    // Bottom horizontal bar
                     (y >= HELLO_BOTTOM - STROKE && y < HELLO_BOTTOM &&
                      x >= E_X0 && x < E_X1);
 
-                // -------------------------
-                // Letra L (primera L, columna 2)
-                // -------------------------
+                // L1
                 in_L1 =
-                    // Barra vertical izquierda
                     (x >= L1_X0 && x < L1_X0 + STROKE &&
                      y >= HELLO_TOP && y < HELLO_BOTTOM)
                     ||
-                    // Barra horizontal inferior
                     (y >= HELLO_BOTTOM - STROKE && y < HELLO_BOTTOM &&
                      x >= L1_X0 && x < L1_X1);
 
-                // -------------------------
-                // Letra L (segunda L, columna 3)
-                // -------------------------
+                // L2
                 in_L2 =
-                    // Barra vertical izquierda
                     (x >= L2_X0 && x < L2_X0 + STROKE &&
                      y >= HELLO_TOP && y < HELLO_BOTTOM)
                     ||
-                    // Barra horizontal inferior
                     (y >= HELLO_BOTTOM - STROKE && y < HELLO_BOTTOM &&
                      x >= L2_X0 && x < L2_X1);
 
-                // -------------------------
-                // Letra O (columna 4)
-                // -------------------------
+                // O
                 in_O =
-                    // Borde superior
+                    // Top
                     (y >= HELLO_TOP && y < HELLO_TOP + STROKE &&
                      x >= O_X0 && x < O_X1)
                     ||
-                    // Borde inferior
+                    // Bottom
                     (y >= HELLO_BOTTOM - STROKE && y < HELLO_BOTTOM &&
                      x >= O_X0 && x < O_X1)
                     ||
-                    // Borde izquierdo
+                    // Left
                     (x >= O_X0 && x < O_X0 + STROKE &&
                      y >= HELLO_TOP && y < HELLO_BOTTOM)
                     ||
-                    // Borde derecho
+                    // Right
                     (x >= O_X1 - STROKE && x < O_X1 &&
                      y >= HELLO_TOP && y < HELLO_BOTTOM);
             end
 
             // -----------------------------------------------------------------
-            // 2.2) Color de las letras "HELLO"
+            // 2.2) Letter color
             // -----------------------------------------------------------------
             if (in_H || in_E || in_L1 || in_L2 || in_O)
             begin
-                // Letras en rojo brillante
                 red   = 5'b11111;
                 green = 6'd0;
                 blue  = 5'd0;
             end
 
             // -----------------------------------------------------------------
-            // 2.3) Barra de estado inferior (extra)
+            // 2.3) Bottom status bar
             // -----------------------------------------------------------------
-            //
-            // Barra en la parte inferior de la pantalla que cambia de color
-            // según key[0].
-
             if (y >= SCREEN_H - 30)
             begin
                 if (key[0])
                 begin
-                    // Barra verde
                     red   = 5'd0;
                     green = 6'b111111;
                     blue  = 5'd0;
                 end
                 else
                 begin
-                    // Barra azul
                     red   = 5'd0;
                     green = 6'd0;
                     blue  = 5'b11111;

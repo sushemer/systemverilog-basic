@@ -1,27 +1,33 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// 3.x: Priority encoder 3→2 con varias implementaciones.
+// 3.5: 4-bit Comparator (A vs B) with two implementations.
 //
-// Idea general:
-// - Entradas: in[2:0] vienen de key[2:0].
-// - Si varias entradas están en '1', se elige la de **mayor prioridad**.
-// - En este ejemplo la prioridad es: bit 0 > bit 1 > bit 2
-//   (es decir, el bit 0 es el de mayor prioridad).
+// General idea:
+// - Inputs:
+//     A[3:0] = key[3:0]
+//     B[3:0] = key[7:4]
+// - Outputs (two comparators):
+//     Implementation 0 (high-level: ==, >, <)
+//       eq0 = (A == B)
+//       gt0 = (A >  B)
+//       lt0 = (A <  B)
 //
-// Implementaciones internas:
-//   enc0: cadena de if / else if
-//   enc1: casez con patrones "don't care"
-//   enc2: separación en "árbitro de prioridad" + encoder normal
-//   enc3: recorrido con for-loop
+//     Implementation 1 (bit-by-bit, “cascaded comparator”):
+//       eq1, gt1, lt1 computed from bit-by-bit comparisons.
 //
-// Salida visible:
-//   led[7:6] = enc0
-//   led[5:4] = enc1
-//   led[3:2] = enc2
-//   led[1:0] = enc3
+// LED mapping:
+//   led[0] = eq0   (A == B)  – implementation 0
+//   led[1] = gt0   (A >  B)
+//   led[2] = lt0   (A <  B)
+//
+//   led[3] = eq1   (A == B)  – implementation 1
+//   led[4] = gt1   (A >  B)
+//   led[5] = lt1   (A <  B)
+//
+//   led[7:6] = 0   (unused)
 
 module hackathon_top
 (
-    // Interfaz estándar para esta board
+    // Standard interface for this board
     input  logic       clock,
     input  logic       slow_clock,
     input  logic       reset,
@@ -29,23 +35,23 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display 7 segmentos (no se usa aquí)
+    // 7-segment display (not used here)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no se usa aquí)
+    // LCD interface (not used here)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
     output logic [5:0] green,
     output logic [4:0] blue,
 
-    // GPIO genéricos (no se usan aquí)
+    // GPIO (not used here)
     inout  logic [3:0] gpio
 );
 
     // ------------------------------------------------------------------------
-    // Apagar lo que no usamos
+    // Turn off unused peripherals
     // ------------------------------------------------------------------------
     assign abcdefgh = 8'h00;
     assign digit    = 8'h00;
@@ -57,130 +63,85 @@ module hackathon_top
     assign gpio  = 4'hz;
 
     // ------------------------------------------------------------------------
-    // Entradas del priority encoder (3 bits)
+    // Comparator inputs
     // ------------------------------------------------------------------------
     //
-    // in[0] = bit de mayor prioridad
-    // in[2] = bit de menor prioridad
+    // A = key[3:0]
+    // B = key[7:4]
     //
-    // Si varias entradas están en 1 al mismo tiempo:
-    //   - se elige primero in[0]
-    //   - luego in[1]
-    //   - luego in[2]
+    // Changing key bits forms two 4-bit values
+    // which are compared against each other.
 
-    logic [2:0] in;
-    assign in = key[2:0];
+    logic [3:0] A, B;
+
+    assign A = key[3:0];
+    assign B = key[7:4];
 
     // ------------------------------------------------------------------------
-    // Implementación 1: cadena de if / else if
+    // Implementation 0: high-level comparator (==, >, <)
     // ------------------------------------------------------------------------
-    //
-    // Regla:
-    //   - Si in[0] = 1 → código 0
-    //   - Si in[0] = 0 y in[1] = 1 → código 1
-    //   - Si in[0] = 0, in[1] = 0 y in[2] = 1 → código 2
-    //   - Si todo es 0 → por convención regresamos 0
 
-    logic [1:0] enc0;
+    logic eq0, gt0, lt0;
 
     always_comb begin
-        if      (in[0]) enc0 = 2'd0;
-        else if (in[1]) enc0 = 2'd1;
-        else if (in[2]) enc0 = 2'd2;
-        else            enc0 = 2'd0;
+        eq0 = (A == B);
+        gt0 = (A  > B);
+        lt0 = (A  < B);
     end
 
     // ------------------------------------------------------------------------
-    // Implementación 2: casez con prioridades
+    // Implementation 1: bit-by-bit cascaded comparator
     // ------------------------------------------------------------------------
     //
-    // Se exploran patrones de in[2:0] de más genérico a más específico:
-    //
-    //   3'b??1 → hay un 1 en bit 0, gana prioridad 0
-    //   3'b?10 → si no se cumplió lo anterior y hay '10x', gana prioridad 1
-    //   3'b100 → si sólo bit 2 está en 1, gana prioridad 2
-    //   default → sin entradas activas, devolvemos 0
+    // Idea:
+    //   - First check the most significant bit (MSB).
+    //   - If A[3] and B[3] differ, the MSB decides.
+    //   - If equal, move to next bit (A[2], B[2]), and so on.
+    //   - If all bits are equal, then A == B.
 
-    logic [1:0] enc1;
+    logic eq1, gt1, lt1;
 
     always_comb begin
-        casez (in)
-            3'b??1:  enc1 = 2'd0;
-            3'b?10:  enc1 = 2'd1;
-            3'b100:  enc1 = 2'd2;
-            default: enc1 = 2'd0;
-        endcase
-    end
+        eq1 = 1'b0;
+        gt1 = 1'b0;
+        lt1 = 1'b0;
 
-    // ------------------------------------------------------------------------
-    // Implementación 3:
-    //   Separar "árbitro de prioridad" y "encoder normal"
-    // ------------------------------------------------------------------------
-    //
-    // Paso 1: generar un vector one-hot "g" donde solo un bit es 1,
-    //         aplicando prioridad (bit 0 > 1 > 2).
-    //
-    // Paso 2: aplicar un encoder sin prioridad sobre "g".
-
-    logic [2:0] g;
-    logic [1:0] enc2;
-
-    // Árbitro de prioridad: genera g (one-hot)
-    always_comb begin
-        g = 3'b000;
-        if      (in[0]) g = 3'b001;  // prioridad más alta
-        else if (in[1]) g = 3'b010;
-        else if (in[2]) g = 3'b100;
-        // Si no hay bits en 1, g se queda en 000
-    end
-
-    // Encoder normal sobre g (que ya es one-hot)
-    always_comb begin
-        unique case (g)
-            3'b001:  enc2 = 2'd0;
-            3'b010:  enc2 = 2'd1;
-            3'b100:  enc2 = 2'd2;
-            default: enc2 = 2'd0;   // sin entradas activas
-        endcase
-    end
-
-    // ------------------------------------------------------------------------
-    // Implementación 4: for-loop
-    // ------------------------------------------------------------------------
-    //
-    // Se recorre el vector de entrada usando un for:
-    //   - Se inicializa enc3 en 0.
-    //   - Se recorre desde el bit de MENOR prioridad (2) hacia el de MAYOR (0).
-    //   - Cada vez que se encuentra un '1', se actualiza enc3 con el índice.
-    //   - Como el último índice visitado es 0, si está en 1, termina siendo
-    //     el que domina (bit 0 tiene más prioridad).
-
-    logic [1:0] enc3;
-
-    always_comb begin
-        enc3 = 2'd0;
-
-        // $bits(in) vale 3 → índices 0, 1, 2
-        for (int i = $bits(in)-1; i >= 0; i--) begin
-            if (in[i]) begin
-                enc3 = i[1:0];
-            end
+        if (A[3] != B[3]) begin
+            gt1 = (A[3] & ~B[3]);
+            lt1 = (~A[3] & B[3]);
+        end
+        else if (A[2] != B[2]) begin
+            gt1 = (A[2] & ~B[2]);
+            lt1 = (~A[2] & B[2]);
+        end
+        else if (A[1] != B[1]) begin
+            gt1 = (A[1] & ~B[1]);
+            lt1 = (~A[1] & B[1]);
+        end
+        else if (A[0] != B[0]) begin
+            gt1 = (A[0] & ~B[0]);
+            lt1 = (~A[0] & B[0]);
+        end
+        else begin
+            eq1 = 1'b1;
         end
     end
 
     // ------------------------------------------------------------------------
-    // Empaquetar todas las versiones en los LEDs
+    // Connect results to LEDs
     // ------------------------------------------------------------------------
-    //
-    // Concatenación:
-    //   led = { enc0, enc1, enc2, enc3 };
-    //
-    // Mapeo:
-    //   led[7:6] → enc0 (if/else)
-    //   led[5:4] → enc1 (casez)
-    //   led[3:2] → enc2 (árbitro + encoder)
-    //   led[1:0] → enc3 (for-loop)
 
-    assign led = { enc0, enc1, enc2, enc3 };
+    always_comb begin
+        led[0] = eq0;
+        led[1] = gt0;
+        led[2] = lt0;
+
+        led[3] = eq1;
+        led[4] = gt1;
+        led[5] = lt1;
+
+        led[6] = 1'b0;
+        led[7] = 1'b0;
+    end
 
 endmodule

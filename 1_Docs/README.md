@@ -1,28 +1,28 @@
-# 1. Docs · Documentación y ruta de lectura
+# 1. Docs · Documentation and reading path
 
-La carpeta `1_docs` contiene la **documentación central** del repositorio.  
-Su función principal es:
+The `1_docs` folder contains the **central documentation** of the repository.  
+Its main purpose is to:
 
-- Explicar el contexto y la forma de trabajo.
-- Presentar la teoría mínima necesaria, de forma aplicada.
-- Guiar la instalación de herramientas.
-- Unificar términos, siglas y referencias externas.
+- Explain the context and workflow.
+- Present the minimal applied theory required.
+- Guide the installation of tools.
+- Standardize terms, acronyms, and external references.
 
-El objetivo no es reemplazar libros ni documentación oficial, sino ofrecer el **mínimo suficiente** para poder seguir los ejemplos, actividades, laboratorios y mini-proyectos del repositorio.
+The goal is not to replace books or official documentation, but to provide the **minimum necessary** to follow the examples, activities, labs, and mini-projects in the repository.
 
 ---
 
-## Estructura de `1_docs`
+## Structure of `1_docs`
 
-La carpeta se organiza en los siguientes subdirectorios:
+The folder is organized into the following subdirectories:
 
 - `1_1_Overview/`  
-  - Panorama general de la documentación.  
-  - Relación entre Docs, Devices, Examples, Activities, Labs e Implementation.  
-  - Flujo recomendado de uso del repositorio.
+  - General overview of the documentation.  
+  - Relationship between Docs, Devices, Examples, Activities, Labs, and Implementation.  
+  - Recommended workflow for using the repository.
 
 - `1_2_Theory/`  
-  - Teoría breve y aplicada, dividida en archivos cortos por tema, por ejemplo:
+  - Short and applied theory, divided into compact files by topic, for example:
     - `modules_and_ports.md`
     - `combinational_vs_sequential.md`
     - `registers_and_clock.md`
@@ -34,60 +34,60 @@ La carpeta se organiza en los siguientes subdirectorios:
     - `seven_segment_basics.md`
     - `lcd_hd44780_basics.md`
     - `ultrasonic_hcsr04_basics.md`
-  - Cada archivo incluye:
-    - Explicación breve.
-    - Uno o pocos diagramas o ejemplos.
-    - Enlaces a Examples, Activities y Labs relacionados.
+  - Each file includes:
+    - A short explanation.
+    - One or a few diagrams or examples.
+    - Links to related Examples, Activities, and Labs.
 
 - `1_3_Install/`  
-  - Guías para instalar y configurar el entorno de trabajo.
-  - Subcarpetas sugeridas:
+  - Guides for installing and configuring the working environment.
+  - Suggested subfolders:
     - `1_3_1_Windows/`
     - `1_3_2_Linux/`
-  - Temas típicos:
-    - Instalación de Gowin EDA (versión recomendada).
-    - Controladores/Drivers necesarios.
-    - Notas sobre simuladores opcionales (Icarus, Verilator, etc., si se utilizan).
-    - Pruebas básicas de funcionamiento (smoke test).
+  - Typical topics:
+    - Installation of Gowin EDA (recommended version).
+    - Required drivers.
+    - Notes on optional simulators (Icarus, Verilator, etc., if used).
+    - Basic smoke-test procedures.
 
 - `1_4_Glosario/`  
-  - Definiciones breves de términos usados en el repositorio:
-    - HDL, FPGA, módulo, instancia, clock, reset, debounce, FSM, etc.
-  - Referencias a periféricos: HC-SR04, TM1638, LCD, servo, ADC, entre otros.
-  - El objetivo es servir como **punto de consulta rápido**, no como enciclopedia.
+  - Short definitions of terms used in the repository:
+    - HDL, FPGA, module, instance, clock, reset, debounce, FSM, etc.
+  - Peripheral references: HC-SR04, TM1638, LCD, servo, ADC, among others.
+  - The goal is to serve as a **quick reference point**, not an encyclopedia.
 
 - `1_5_Reference/`  
-  - Índice de materiales más extensos:
-    - Apuntes o manuales en PDF (por ejemplo, materiales de cursos previos).
-    - Repositorios externos relevantes.
-  - Cada entrada debe incluir:
-    - Nombre o título corto.
-    - Una línea sobre “para qué sirve”.
-    - Enlace al recurso (URL o ruta interna en el repositorio).
+  - Index of more extensive materials:
+    - Notes or manuals in PDF (e.g., previous course content).
+    - Relevant external repositories.
+  - Each entry should include:
+    - Name or short title.
+    - A line explaining “what it is for”.
+    - Link to the resource (URL or internal path).
 
 ---
 
-## Cómo usar esta carpeta
+## How to use this folder
 
-Se recomienda el siguiente flujo al trabajar con `1_docs`:
+The recommended workflow when using `1_docs` is:
 
-1. **Leer primero** `1_1_Overview/`  
-   Para entender el contexto, la filosofía del repositorio y cómo se relaciona la documentación con el resto de las carpetas.
+1. **Read `1_1_Overview/` first**  
+   To understand the context, the philosophy of the repository, and how the documentation relates to the other folders.
 
-2. **Consultar teoría a demanda** en `1_2_Theory/`  
-   - Antes o durante un Example, Activity o Lab.  
-   - Solo lo necesario para el tema en curso (por ejemplo, FSM o PWM).
+2. **Consult theory on demand** in `1_2_Theory/`  
+   - Before or during an Example, Activity, or Lab.  
+   - Only what is needed for the topic (e.g., FSM, PWM).
 
-3. **Seguir las guías de instalación** en `1_3_Install/`  
-   - Cuando se configura el entorno por primera vez.  
-   - En caso de reinstalar o migrar de Windows a Linux (o viceversa).
+3. **Follow the installation guides** in `1_3_Install/`  
+   - When setting up the environment for the first time.  
+   - When reinstalling or switching between Windows and Linux.
 
-4. **Usar el glosario** de `1_4_Glosario/`  
-   - Cuando aparezca un término nuevo o una sigla desconocida.  
-   - Como apoyo para elaborar reportes, presentaciones o documentación adicional.
+4. **Use the glossary** from `1_4_Glosario/`  
+   - Whenever a new term or acronym appears.  
+   - As support for writing reports, presentations, or extra documentation.
 
-5. **Revisar referencias** en `1_5_Reference/`  
-   - Para profundizar en un tema específico.  
-   - Para conocer el origen de ideas o ejemplos utilizados en el repositorio.
+5. **Review references** in `1_5_Reference/`  
+   - To dive deeper into specific topics.  
+   - To understand the sources of ideas or examples used in the repository.
 
 ---

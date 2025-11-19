@@ -1,156 +1,192 @@
 # Lab 5.5 – Seven-segment + TM1638 playground
 
-## Objetivo
+## Objective
 
-Practicar el uso del módulo `seven_segment_display` del repositorio y entender cómo:
+Practice using the repository’s `seven_segment_display` module and understand how to:
 
-- Mapear un valor binario de 32 bits a **8 dígitos HEX**.
-- Usar las teclas (`key[7:0]`) como **entrada** y los puntos decimales (`dots`) como **indicadores**.
-- Usar los LEDs (`led[7:0]`) del TM1638 como salida adicional para depuración.
+- Map a 32-bit binary value into **8 HEX digits**.
+- Use `key[7:0]` as **input** and decimal points (`dots`) as **status indicators**.
+- Use the TM1638 LEDs (`led[7:0]`) as an additional debugging output.
 
-Al terminar este lab deberías sentirte cómodo:
+By the end of this lab, you should feel comfortable:
 
-- Configurando el driver de 7 segmentos (`w_digit`, `number`, `dots`).
-- Dividiendo números en **nibbles** (4 bits por dígito).
-- Diseñando pequeños “modos” de visualización controlados por teclas.
-
----
-
-## Prerrequisitos
-
-- Haber visto o realizado:
-
-  - **Lab 5.1 – blink_hello_world** (divisor de frecuencia).
-  - **Actividad 4.6 – seven_segment_playground** (si ya la trabajaste).
-
-- Conocer:
-
-  - Cómo funciona un display de 7 segmentos multiplexado.
-  - La relación nibble ↔ dígito HEX.
+- Configuring the 7-segment driver (`w_digit`, `number`, `dots`).
+- Splitting numbers into **nibbles** (4 bits per digit).
+- Designing small “display modes” controlled by keys.
 
 ---
 
-## Mapeo de señales
+## Prerequisites
+
+You should have completed or seen:
+
+- **Lab 5.1 – blink_hello_world** (frequency divider).
+- **Activity 4.6 – seven_segment_playground** (if you already worked on it).
+
+You should also know:
+
+- How a multiplexed 7-segment display works.
+- The nibble ↔ HEX digit relationship.
+
+---
+
+## Signal mapping
 
 - `mode = key[1:0]`  
-  Selecciona el modo de visualización del display:
+  Selects the display mode:
 
-  - `00` → **Modo 0**: contador HEX.
-  - `01` → **Modo 1**: nibbles desde `key[7:0]`.
-  - `10` → **Modo 2**: patrón fijo `DEAD_BEEF`.
-  - `11` → **Modo 3**: número invertido `~counter`.
+  - `00` → **Mode 0**: HEX counter  
+  - `01` → **Mode 1**: nibbles from `key[7:0]`  
+  - `10` → **Mode 2**: fixed pattern `DEAD_BEEF`  
+  - `11` → **Mode 3**: bitwise inverted number `~counter`
 
 - `hex_counter[31:0]`  
-  Contador libre que incrementa con cada `tick`.
+  Free-running counter that increments with each `tick`.
 
 - `number_reg[31:0]`  
-  Valor que va al display de 7 segmentos (8 dígitos HEX).
+  Value sent to the 7-segment display (8 HEX digits).
 
 - `dots_reg[7:0]`  
-  Puntos decimales; el lab base los iguala a `key[7:0]`.
+  Decimal points; this lab maps them directly from `key[7:0]`.
 
-- `led[7:0]` (TM1638 LEDs):
-
-  - `led[1:0]` → modo activo (copia de `mode`).
-  - `led[7:2]` → bits bajos de `hex_counter` (patrón decorativo).
+- `led[7:0]` (TM1638 LEDs):  
+  - `led[1:0]` → active mode  
+  - `led[7:2]` → low bits of `hex_counter` (decorative)
 
 ---
 
-## Descripción de los modos
+## Description of modes
 
-### Modo 0 – Contador HEX
-
-- `mode = 2'b00` (`key[1:0] = 00`).
+### **Mode 0 – HEX counter**
+- `mode = 2'b00`
 - `number_reg <= hex_counter;`
-- El display muestra un conteo hexadecimal libre de 32 bits
-  (de `0000_0000` hasta `FFFF_FFFF` y vuelve a empezar).
+- Display shows a free-running 32-bit hexadecimal counter  
+  (`0000_0000` to `FFFF_FFFF` then restarts).
 
-### Modo 1 – Playground manual con key
+---
 
-- `mode = 2'b01`.
+### **Mode 1 – Manual playground using key**
+- `mode = 2'b01`
 - `number_reg <= { 24'h0, key[7:4], key[3:0] };`
-- Solo se usan los dos dígitos menos significativos:
 
-  - D0 muestra `key[3:0]`.
-  - D1 muestra `key[7:4]`.
-  - D2..D7 = 0.
+Only the two least-significant digits are used:
 
-Sirve para ver rápidamente cómo cambian los dígitos al modificar `key`.
+- D0 shows `key[3:0]`
+- D1 shows `key[7:4]`
+- D2..D7 = 0
 
-### Modo 2 – Patrón fijo DEAD_BEEF
+Useful to experiment with nibble-to-HEX mapping.
 
-- `mode = 2'b10`.
+---
+
+### **Mode 2 – Fixed pattern DEAD_BEEF**
+- `mode = 2'b10`
 - `number_reg <= 32'hDEAD_BEEF;`
-- El display muestra `DEAD_BEEF` permanentemente.
-- Útil como patrón de prueba y para acostumbrarte a leer HEX en 7 segmentos.
 
-### Modo 3 – Número invertido
+Display shows:
 
-- `mode = 2'b11`.
+D E A D B E E F
+
+
+Great as a debug pattern and to practice reading HEX on the 7-segment display.
+
+---
+
+### **Mode 3 – Inverted number**
+- `mode = 2'b11`
 - `number_reg <= ~hex_counter;`
-- Muestra el complemento bit a bit del contador.
-- Te permite comparar visualmente Modo 0 vs Modo 3.
+
+Displays the bitwise complement of the HEX counter.  
+Useful for visually comparing Mode 0 and Mode 3.
 
 ---
 
-## Procedimiento sugerido
+## Suggested procedure
 
-1. **Revisa el divisor de frecuencia**
+### 1. **Review the frequency divider**
 
-   - Observa el bloque con `W_DIV`, `div_cnt` y `tick`.
-   - Cambia `W_DIV` y verifica cómo cambia la velocidad del contador en el display.
-
-2. **Estudia el mapping de modos**
-
-   - Localiza el `case (mode)` en `always_ff`.
-   - Dibuja una tabla con:
-     - `mode`, `number_reg`, significado en texto.
-   - Asegúrate de entender cómo se construye cada patrón.
-
-3. **Relaciona nibbles con dígitos**
-
-   - Recuerda: cada dígito HEX son 4 bits (`0–F`).
-   - Fíjate cómo `DEAD_BEEF` se reparte en 8 dígitos:
-
-     - D7 = D, D6 = E, D5 = A, D4 = D, D3 = B, D2 = E, D1 = E, D0 = F.
-
-4. **Prueba en hardware**
-
-   - Sintetiza y programa la FPGA.
-   - Cambia `mode` variando `key[1:0]` y observa:
-     - Cambio de patrón en el display.
-     - Cambio en `led[1:0]`.
-   - Presiona distintas combinaciones de `key[7:0]` y mira cómo:
-     - Modo 1 actualiza los dos dígitos bajos.
-     - Los puntos decimales siguen el patrón exacto de `key`.
-
-5. **Juega con dots**
-
-   - Usa `dots_reg <= key;` como base.
-   - Cambia el código para que:
-     - Solo cierto modo use puntos decimales.
-     - O un bit específico de `key` encienda todos los dots.
+- Find the block using `W_DIV`, `div_cnt`, and `tick`.
+- Modify `W_DIV` to change animation speed.
+- Verify (optionally in simulation) that `tick` pulses periodically.
 
 ---
 
-## Checklist de pruebas
+### 2. **Study the mode mapping**
 
-- [ ] El diseño sintetiza y programa en la Tang Nano 9K sin errores.
-- [ ] En **Modo 0**, el valor del display cambia de forma continua (contador HEX).
-- [ ] En **Modo 1**, los dos dígitos menos significativos reflejan `key[7:4]` y `key[3:0]`.
-- [ ] En **Modo 2**, se muestra `DEAD_BEEF` y permanece estable.
-- [ ] En **Modo 3**, el patrón cambia pero de forma distinta al Modo 0 (complemento).
-- [ ] `led[1:0]` coinciden con `mode` para todos los modos.
-- [ ] Los puntos decimales cambian al modificar `key[7:0]`.
+- Locate the `case (mode)` inside the `always_ff`.
+- Create a small table with:
+  - mode  
+  - number_reg  
+  - meaning  
+
+Make sure you understand how each pattern is constructed.
 
 ---
 
-## Extensiones opcionales
+### 3. **Relate nibbles to digits**
 
-Si quiere exprimir más este lab:
+Remember: each HEX digit = 4 bits.
 
-- Implemente un modo donde el valor mostrado provenga de un **sensor** (ej. potenciómetro o ultrasónico), reusando lógica de otros labs.
-- Cambiar la visualización a **decimal**: por ejemplo, mostrar `0000`–`9999` en cuatro dígitos (requiere conversión binario→BCD).
-- Use algunos bits de `hex_counter` para hacer un efecto tipo “barra” usando los puntos decimales.
+Breakdown of `DEAD_BEEF`:
 
-Este lab le prepara directo para el siguiente, donde podrá combinar 7 segmentos + TM1638 + sensores en algo más cercano a un mini panel de instrumentación. 😎
+- D7 = D  
+- D6 = E  
+- D5 = A  
+- D4 = D  
+- D3 = B  
+- D2 = E  
+- D1 = E  
+- D0 = F  
+
+---
+
+### 4. **Test on hardware**
+
+- Synthesize and program the FPGA.
+- Change `mode` with `key[1:0]` and observe:
+  - Display pattern change  
+  - `led[1:0]` reflect the mode  
+- Modify `key[7:0]` and check:
+  - Mode 1 updates the two LSB HEX digits  
+  - Decimal points follow the exact `key` pattern  
+
+---
+
+### 5. **Play with dots**
+
+Since `dots_reg <= key;`:
+
+- `key[0] = 1` lights the dot for digit 0  
+- `key[7] = 1` lights the dot for digit 7  
+
+Experiment ideas:
+
+- Light dots only in certain modes.
+- Light multiple dots when a specific key bit is pressed.
+
+---
+
+## Test checklist
+
+- [ ] Design synthesizes and programs on Tang Nano 9K without errors  
+- [ ] **Mode 0:** continuous HEX counter  
+- [ ] **Mode 1:** two least-significant digits match `key[7:4]` and `key[3:0]`  
+- [ ] **Mode 2:** `DEAD_BEEF` shown permanently  
+- [ ] **Mode 3:** inverted pattern, visually distinct from Mode 0  
+- [ ] `led[1:0]` always match `mode`  
+- [ ] Decimal points update according to `key[7:0]`  
+
+---
+
+## Optional extensions
+
+If you want to push this lab further:
+
+- Add a mode where the display shows values from a **sensor**  
+  (potentiometer, ultrasonic sensor, encoder, etc.).
+- Convert a value to **decimal** and show `0000`–`9999`  
+  (requires binary-to-BCD conversion).
+- Use bits of `hex_counter` to drive a dot-based progress bar.
+
+This lab prepares you for the next one,  
+where 7-segments + TM1638 + sensors combine into a small **instrument panel**. 

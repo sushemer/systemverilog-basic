@@ -1,29 +1,22 @@
-# 1.3 Install · Guía de instalación y pruebas básicas
+# 1.3 Install · Installation guide and basic tests
 
-La carpeta `1_3_Install` reúne las instrucciones necesarias para:
+The `1_3_Install` folder includes instructions to:
 
-- Instalar las herramientas principales de desarrollo.
-- Configurar los drivers para la Tang Nano 9K.
+- Install main development tools  
+- Configure drivers for the Tang Nano 9K  
 
-El objetivo es que cualquier persona pueda dejar listo su entorno de trabajo antes de pasar a Examples, Activities, Labs e Implementation.
-
----
-
-## Estructura de `1_3_Install`
-
-- `1_3_1_Windows/`  
-  Instrucciones paso a paso para instalar y probar el entorno en Windows.
-
-- `1_3_2_Linux/`  
-  Instrucciones equivalentes para distribuciones Linux compatibles.
+Goal: ensure anyone can prepare a working environment before moving to Examples, Activities, Labs, or Implementations.
 
 ---
 
-## Flujo sugerido
+## Structure
 
-1. Identificar el sistema operativo donde se va a trabajar.
-2. Seguir la guía correspondiente:
-   - `1_3_1_Windows/` o
-   - `1_3_2_Linux/`.
+- `1_3_1_Windows/` → Windows installation guide  
+- `1_3_2_Linux/` → Linux installation guide  
 
 ---
+
+## Suggested flow
+
+1. Identify your operating system  
+2. Follow the corresponding guide  

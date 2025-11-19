@@ -1,10 +1,10 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// Ejemplo 3.1: compuertas lógicas básicas + verificación de una ley de De Morgan.
+// Example 3.1: basic logic gates + verification of a De Morgan law.
 //
-// Este módulo está pensado como "top":
-// - Usa 2 entradas digitales (key[1:0]) como señales A y B.
-// - Usa 5 LEDs (led[4:0]) para mostrar resultados de AND, OR, XOR y De Morgan.
-// - No utiliza reloj ni lógica secuencial; todo es puramente combinacional.
+// This module is intended as a "top":
+// - It uses 2 digital inputs (key[1:0]) as signals A and B.
+// - It uses 5 LEDs (led[4:0]) to display results of AND, OR, XOR and De Morgan outputs.
+// - It does not use a clock or sequential logic; everything is purely combinational.
 
 module hackathon_top
 (
@@ -32,39 +32,39 @@ module hackathon_top
     inout  logic [3:0] gpio
 );
 
-    // Renombrar internamente para claridad.
-    // Esto ayuda a razonar en términos de A y B en lugar de key[1:0].
+    // Internally rename signals for clarity.
+    // This helps reasoning in terms of A and B instead of key[1:0].
     logic A, B;
     assign A = key[1];
     assign B = key[0];
 
     // ------------------------------------------------------------------------
-    // Compuertas básicas
+    // Basic gates
     // ------------------------------------------------------------------------
-    // Cada una de estas asignaciones es combinacional y se evalúa de forma
-    // continua: cualquier cambio en A o B se reflejará de inmediato en los LEDs.
+    // Each of these assignments is combinational and evaluated continuously:
+    // any change in A or B is immediately reflected on the LEDs.
 
-    assign led[0] = A & B;    // AND: solo es 1 cuando A = 1 y B = 1
-    assign led[1] = A | B;    // OR: es 1 cuando al menos una entrada es 1
-    assign led[2] = A ^ B;    // XOR: es 1 cuando A y B son distintos
+    assign led[0] = A & B;    // AND: only 1 when A = 1 and B = 1
+    assign led[1] = A | B;    // OR: 1 when at least one input is 1
+    assign led[2] = A ^ B;    // XOR: 1 when A and B differ
 
     // ------------------------------------------------------------------------
-    // Ley de De Morgan
+    // De Morgan law
     // ------------------------------------------------------------------------
-    // Se muestran dos expresiones distintas que deben producir el mismo resultado:
+    // Two different expressions are displayed, which must produce the same result:
     //
     //   1) ~(A & B)
     //   2) (~A) | (~B)
     //
-    // La tabla de verdad indica que ambas expresiones son equivalentes.
-    // En hardware, se puede "ver" esta equivalencia cuando led[3] y led[4]
-    // siempre coinciden para todas las combinaciones de A y B.
+    // The truth table shows that both expressions are equivalent.
+    // In hardware, this equivalence can be "seen" when led[3] and led[4]
+    // always match for all combinations of A and B.
 
-    assign led[3] = ~(A & B);       // Expresión 1: negación de AND
-    assign led[4] = (~A) | (~B);    // Expresión 2: OR de las negaciones
+    assign led[3] = ~(A & B);       // Expression 1: negation of AND
+    assign led[4] = (~A) | (~B);    // Expression 2: OR of the negated inputs
 
-    // Si el cableado y el código son correctos:
-    // - led[3] y led[4] deberán encenderse y apagarse siempre al mismo tiempo.
-    // - Esto permite verificar experimentalmente la ley de De Morgan.
+    // If the wiring and code are correct:
+    // - led[3] and led[4] must always turn on and off at the same time.
+    // - This allows experimental verification of De Morgan’s law.
 
 endmodule

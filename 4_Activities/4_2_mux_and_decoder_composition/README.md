@@ -1,146 +1,116 @@
-# 4.2 – Composición: decoder 2→4 + mux 4→1
+# 4.2 – Composition: 2→4 Decoder + 4→1 Multiplexer
 
-En esta actividad se van a **componer bloques combinacionales** para construir un circuito más completo a partir de piezas sencillas:
+In this activity, you will **compose** simple combinational blocks to build a larger circuit:
 
-- Un **decoder 2→4** que genera una salida one-hot.
-- Un **multiplexor 4→1** construido a partir de:
-  - las salidas del decoder,
-  - compuertas `AND`,
-  - y una compuerta `OR` final.
+- A **2→4 one-hot decoder**
+- A **4→1 multiplexer**, implemented using:
+  - the decoder output,
+  - AND gates,
+  - a final OR gate.
 
-Se usa la placa **Tang Nano 9K** con la configuración  
-`tang_nano_9k_lcd_480_272_tm1638_hackathon` y el módulo tope `hackathon_top`.
-
----
-
-## Objetivos de la actividad
-
-Al finalizar, la persona usuaria será capaz de:
-
-1. Implementar un **decoder 2→4** con salidas one-hot usando `always_comb` y `case`.
-2. Construir un **mux 4→1** a partir del decoder y compuertas lógicas.
-3. Visualizar tanto las salidas del decoder como la salida del mux en los LEDs de la placa.
-4. Relacionar:
-   - representación one-hot,
-   - selección de canales de datos,
-   - y salida de un multiplexor.
+Board used: **Tang Nano 9K**  
+Wrapper: `tang_nano_9k_lcd_480_272_tm1638_hackathon`
 
 ---
 
-## Mapeo de señales (sugerido)
+## Objectives
 
-Entradas desde los botones `key`:
+By the end of this activity, you will:
 
-- Selectores (compartidos por decoder y mux):  
-  `sel[1:0] = key[1:0]`
-- Datos del mux (4 canales de 1 bit):  
-  `data[3:0] = key[5:2]`
-
-Salidas hacia los LEDs:
-
-- `led[3:0]` → salidas del decoder (`dec_out[3:0]`), en formato **one-hot**.
-- `led[4]`   → salida del mux 4→1 (`mux_y`).
-- `led[7:5]` → libres para extensiones o depuración.
-
-El display de 7 segmentos (`abcdefgh`, `digit`) y la LCD (`red`, `green`, `blue`) **no se usan** en esta actividad y se pueden dejar en cero.
+1. Implement a **2→4 one-hot decoder** using `case`.
+2. Build a **4→1 mux** using AND + OR instead of high-level constructs.
+3. Display decoder output and mux output on the board LEDs.
+4. Understand how:
+   - one-hot encoding,
+   - data channel selection,
+   - and mux output  
+   relate to each other.
 
 ---
 
-## Descripción general del flujo
+## Signal Mapping (recommended)
 
-1. Las líneas `key[1:0]` se interpretan como `sel`, el selector de 2 bits.
-2. El **decoder 2→4** convierte `sel` en un patrón one-hot `dec_out[3:0]`.
-3. Las **entradas de datos** del mux (`data[3:0]`) provienen de `key[5:2]`.
-4. El mux 4→1 se implementa combinando:
-   - `dec_out` con `data` mediante compuertas `AND`.
-   - una compuerta `OR` final que reúne esos productos lógicos.
+Inputs:
 
-Resultado visible:
+- `sel[1:0] = key[1:0]`
+- `data[3:0] = key[5:2]`
 
-- `dec_out[3:0]` se muestra en `led[3:0]`.
-- La salida del mux (`mux_y`) se muestra en `led[4]`.
+LED outputs:
 
----
+- `led[3:0]` → decoder output (one-hot)
+- `led[4]`   → 4→1 mux output
+- `led[7:5]` → free for extensions
 
-## Paso 1: implementar el decoder 2→4 (one-hot)
-
-En el archivo `hackathon_top.sv` se encontrará una plantilla parecida a:
-
-    logic [1:0] sel;
-    logic [3:0] dec_out;
-
-    always_comb begin
-        dec_out = 4'b0000;
-
-        // TODO: implementar el decoder 2→4
-    end
-
-La tarea consiste en completar el `always_comb` para que:
-
-- Cuando `sel = 2'b00` → `dec_out = 4'b0001`
-- Cuando `sel = 2'b01` → `dec_out = 4'b0010`
-- Cuando `sel = 2'b10` → `dec_out = 4'b0100`
-- Cuando `sel = 2'b11` → `dec_out = 4'b1000`
-
-Recomendaciones:
-
-- Usar `unique case (sel)` para que el decoder quede claro y el sintetizador pueda optimizarlo bien.
-- Mantener la asignación por defecto `dec_out = 4'b0000;` al inicio del bloque para cubrir cualquier caso no esperado.
+The 7-segment display and LCD remain unused.
 
 ---
 
-## Paso 2: implementar el mux 4→1 usando el decoder
+## Step 1: Implementing the Decoder
 
-Una vez que `dec_out` funciona correctamente, se implementa el mux 4→1 sin usar el operador condicional `?:` ni un `case` directo, sino a partir de **AND + OR**, reutilizando el decoder como lógica de selección.
+The decoder must produce:
 
-Idea lógica:
+| sel | dec_out |
+|-----|---------|
+| 00  | 0001    |
+| 01  | 0010    |
+| 10  | 0100    |
+| 11  | 1000    |
+
+Implementation recommended:
+
+- `always_comb`  
+- `unique case (sel)`  
+- A default assignment `dec_out = 0`
+
+---
+
+## Step 2: Building the 4→1 Mux Using Decoder Output
+
+Logic (conceptual):
 
 - `and0 = dec_out[0] & data[0]`
 - `and1 = dec_out[1] & data[1]`
 - `and2 = dec_out[2] & data[2]`
 - `and3 = dec_out[3] & data[3]`
-- `mux_y = and0 | and1 | and2 | and3`
 
-En SystemVerilog esto puede hacerse, por ejemplo:
+Final mux output:
 
-- Declarando señales auxiliares (`logic and0, and1, and2, and3;`) y asignándolas en un `always_comb`.
-- O escribiendo directamente la expresión de `mux_y` en una sola línea, sumando todos los productos lógicos.
+mux_y = and0 | and1 | and2 | and3
 
-Finalmente, se asigna `mux_y` a `led[4]` para poder observar en la placa qué entrada está siendo seleccionada.
 
----
+Or using reduction:
 
-## Paso 3: pruebas sugeridas
+mux_y = |and_terms
 
-1. Fijar un patrón en `data[3:0]` (por ejemplo `4'b1010`) con `key[5:2]`.
-2. Recorrer `sel` (`key[1:0]`) de `00` a `11` y observar:
 
-   - Cómo `dec_out` recorre `0001`, `0010`, `0100`, `1000` en `led[3:0]`.
-   - Cómo `led[4]` refleja el bit correspondiente de `data` según el valor de `sel`.
-
-Ejemplo de comportamiento esperado si `data = 4'b1010`:
-
-- `sel = 2'b00` → `mux_y = data[0] = 0`
-- `sel = 2'b01` → `mux_y = data[1] = 1`
-- `sel = 2'b10` → `mux_y = data[2] = 0`
-- `sel = 2'b11` → `mux_y = data[3] = 1`
-
-Este comportamiento permite comprobar visualmente que:
-
-- El decoder está generando correctamente el patrón one-hot.
-- El mux 4→1 está seleccionando el canal adecuado.
+This selects the correct `data[i]` depending on `sel`.
 
 ---
 
-## Extensiones opcionales
+## Step 3: Testing
 
-Si hay tiempo o se desea experimentar más, se pueden realizar, por ejemplo, las siguientes extensiones:
+Example:
 
-- Usar `led[7:5]` para mostrar `sel` y alguna combinación de `data` (por ejemplo, `led[6:5] = sel`).
-- Implementar una segunda versión del mux 4→1 usando `case (sel)` y comparar que ambas implementaciones producen exactamente la misma salida.
-- Añadir al final de `hackathon_top.sv` una pequeña tabla de verdad en comentarios que documente:
-  - las combinaciones de `sel`,
-  - el patrón one-hot esperado en `dec_out`,
-  - y el bit de `data` que debe aparecer en `mux_y`.
+If `data = 4'b1010`:
 
-Con esta actividad se cierra el ciclo: **decoder 2→4 + mux 4→1** como ejemplo de composición de bloques combinacionales a partir de módulos simples.
+| sel | dec_out | mux_y |
+|-----|---------|--------|
+| 00  | 0001    | 0      |
+| 01  | 0010    | 1      |
+| 10  | 0100    | 0      |
+| 11  | 1000    | 1      |
+
+Visually, on LEDs:
+
+- `led[3:0]` scroll one-hot  
+- `led[4]` shows the mux result
+
+---
+
+## Optional Extensions
+
+- Show `sel` on `led[6:5]`
+- Implement a second mux version using `case (sel)` and compare outputs
+- Add a truth table as a comment for clarity
+
+---

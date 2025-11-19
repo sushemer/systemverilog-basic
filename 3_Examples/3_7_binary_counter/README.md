@@ -1,50 +1,48 @@
-# 3.7 Binary counter (contador binario)
+# 3.7 Binary counter
 
-Este ejemplo implementa un **contador binario** usando el reloj de la Tang Nano 9K
-y muestra sus bits más significativos en los LEDs. Es una forma clásica de:
+This example implements a **binary counter** using the Tang Nano 9K clock
+and displays its most significant bits on the LEDs. It is a classic way to:
 
-- Verificar que el reloj y el reset están funcionando.
-- Observar cómo los bits de un contador binario cambian a diferentes frecuencias.
-- Practicar con lógica **secuencial** (flip‐flops, `always_ff`, reset asíncrono).
+- Verify that the clock and reset are working.
+- Observe how the bits of a binary counter toggle at different frequencies.
+- Practice **sequential logic** (flip-flops, `always_ff`, asynchronous reset).
 
-Además, se deja una **variante opcional** donde el contador sólo avanza
-cuando se presiona (y suelta) alguna tecla.
-
----
-
-## Objetivo
-
-Al finalizar este ejemplo, la persona usuaria podrá:
-
-- Entender la diferencia entre **lógica combinacional** y **secuencial**.
-- Implementar un contador binario sencillo en SystemVerilog.
-- Relacionar la frecuencia de reloj con la velocidad de parpadeo de los LEDs.
-- Extender el diseño a variantes controladas por teclas.
+An **optional variant** is also included where the counter only advances
+when a key is pressed (and released).
 
 ---
 
-## Señales principales y mapeo
+## Objective
 
-### Entradas
+At the end of this example, the user will be able to:
+
+- Understand the difference between **combinational** and **sequential** logic.
+- Implement a simple binary counter in SystemVerilog.
+- Relate the clock frequency to the LED blinking rate.
+- Extend the design to key-controlled variants.
+
+---
+
+## Main signals and mapping
+
+### Inputs
 
 - `clock`  
-  Reloj principal de la placa (≈ 27 MHz en esta configuración).
+  Main board clock (≈ 27 MHz in this configuration).
 
 - `reset`  
-  Señal de reset asíncrono (activa en alto).  
-  Su origen físico depende del `board_specific_top.sv` y del archivo `.cst` de la placa
-  (normalmente un botón de reset).
+  Asynchronous reset signal (active high).  
+  Its physical origin depends on the `board_specific_top.sv` and the board’s `.cst`
+  file (usually a reset button).
 
 - `key[7:0]`  
-  Entradas de teclas/botones.  
-  **En el ejemplo básico de contador libre no se usan.**  
-  Se utilizan sólo en la variante opcional (counter controlado por teclas).
+  Button/key inputs.  
+  **Not used in the basic free-running counter.**  
+  Only used in the optional key-controlled variant.
 
-### Salidas
+### Outputs
 
 - `led[7:0]`  
-  Muestran los bits más significativos del contador:
+  Display the most significant bits of the counter:
 
-  ```sv
   assign led = cnt[W_CNT-1 -: 8];
-  ```

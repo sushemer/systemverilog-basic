@@ -1,214 +1,222 @@
-# 3.17 Ultrasonic distance – LEDs, 7 segmentos y barra en LCD
+# 3.17 Ultrasonic Distance – Visualization on LEDs, TM1638, and LCD
 
-Este ejemplo integra el **sensor ultrasónico HC-SR04** con la Tang Nano 9K para:
+This example integrates the **HC-SR04 ultrasonic distance sensor** with the Tang Nano 9K to:
 
-- Medir una **distancia relativa** mediante el módulo `ultrasonic_distance_sensor`.
-- Mostrar el valor en:
-  - **LEDs** (`led[7:0]`).
-  - **Display de 7 segmentos** (TM1638) con `seven_segment_display`.
-  - Una **barra horizontal roja** en la pantalla LCD 480×272, cuyo largo depende de la distancia.
+- Measure a **relative distance** using the `ultrasonic_distance_sensor` module.
+- Display this distance on:
+  - **LEDs** (`led[7:0]`),
+  - **TM1638 seven-segment display** using `seven_segment_display`,
+  - A **horizontal red bar** on the 480×272 LCD, whose length depends on the measured distance.
 
-Es una primera aproximación a la idea de “radar” o **visualización gráfica de distancia**.
-
----
-
-## Objetivo
-
-Al finalizar este ejemplo, la persona usuaria podrá:
-
-- Entender cómo conectar y usar el módulo `ultrasonic_distance_sensor` con la Tang Nano 9K.
-- Visualizar la distancia medida en:
-  - LEDs (como patrón binario).
-  - Display de 7 segmentos (valor numérico).
-  - LCD (barra horizontal proporcional).
-- Practicar:
-  - Escalamiento de un valor de 16 bits a coordenadas de pantalla.
-  - Integración de periféricos (sensor + TM1638 + LCD) en un mismo diseño.
+This is the first step toward a “radar-style” **distance visualization** application.
 
 ---
 
-## Señales y pines
+## Objective
 
-### Entradas principales
+By the end of this example, the user will be able to:
 
-- `clock`  
-  Reloj principal del sistema (~27 MHz).
-
-- `slow_clock`  
-  No se utiliza en este ejemplo (reservado para otras prácticas).
-
-- `reset`  
-  Reset asíncrono activo en alto.
-
-- `key[7:0]`  
-  Reservado para ejercicios adicionales (no se usa en la lógica principal).
-
-### Sensor ultrasónico (vía `gpio`)
-
-En este ejemplo se asume:
-
-- `gpio[0]` → `TRIG` (salida hacia HC-SR04).  
-- `gpio[1]` → `ECHO` (entrada desde HC-SR04).
-
-La conexión física exacta se detalla en:
-
-- `2_devices/` (sección HC-SR04).
-- Archivo de constraints de la tarjeta hackathon (por ejemplo `board_specific.cst`).
-
-### Salidas
-
-- `led[7:0]`  
-  Muestran el byte menos significativo de la distancia:
-
-  assign led = distance[7:0];
-
-- `abcdefgh[7:0]`, `digit[7:0]`  
-  Salidas hacia el TM1638 mediante `seven_segment_display`:
-
-  seven_segment_display #(
-      .w_digit (8)
-  ) i_7segment (
-      .clk      (clock),
-      .rst      (reset),
-      .number   ({16'd0, distance}),
-      .dots     (8'b0000_0000),
-      .abcdefgh (abcdefgh),
-      .digit    (digit)
-  );
-
-  `number` recibe la distancia extendida a 32 bits; el módulo se encarga de formatearla (hex/dec según su implementación interna).
-
-- `red[4:0]`, `green[5:0]`, `blue[4:0]`  
-  Color del píxel actual en la LCD:
-
-  - Fondo: negro (`0,0,0`).
-  - Barra de distancia: rojo (`31,0,0`).
-
-- `gpio[3:0]`  
-  Solo se usan `gpio[0]` y `gpio[1]`; el resto puede quedar sin uso según el `board_specific_top`.
+- Understand how to connect and use the `ultrasonic_distance_sensor` with the Tang Nano 9K.
+- Visualize the measured distance on:
+  - LEDs (binary pattern),
+  - The seven-segment display (numeric value),
+  - The LCD (horizontal bar proportional to distance).
+- Practice:
+  - Scaling a 16-bit distance value to screen coordinates,
+  - Integrating multiple peripherals (sensor + TM1638 + LCD) into one design.
 
 ---
 
-## Flujo interno del diseño
+## Signals and Pins
 
-### 1. Medición de distancia con `ultrasonic_distance_sensor`
+### Main Inputs
 
-Se instancia el módulo del sensor, configurando la frecuencia de reloj y el ancho del valor de distancia:
+- **clock**  
+  Main system clock (~27 MHz).
 
-  localparam int unsigned CLK_HZ = 27_000_000;
+- **slow_clock**  
+  Not used in this example (reserved for other labs).
 
-  logic [15:0] distance;
+- **reset**  
+  Asynchronous active-high reset.
 
-  ultrasonic_distance_sensor #(
-      .clk_frequency          (CLK_HZ),
-      .relative_distance_width($bits(distance))
-  ) i_sensor (
-      .clk               (clock),
-      .rst               (reset),
-      .trig              (gpio[0]),
-      .echo              (gpio[1]),
-      .relative_distance (distance)
-  );
+- **key[7:0]**  
+  Reserved for future exercises.
 
-- `distance` es un valor **relativo** (no necesariamente en centímetros), pero **monótono**:
-  - Más grande cuando el eco tarda más.
-  - Más pequeño cuando el objeto está más cerca.
+### Ultrasonic Sensor (using `gpio`)
 
-### 2. Visualización numérica (LEDs y 7 segmentos)
+In this example:
 
-- **LEDs** → debug directo:
+- `gpio[0]` → `TRIG` (output to HC-SR04)  
+- `gpio[1]` → `ECHO` (input from HC-SR04)
 
-  assign led = distance[7:0];
+Refer to hardware docs and the board constraint file for physical wiring.
 
-- **TM1638** → `seven_segment_display` muestra `distance` como número de 32 bits (con padding en los bits altos):
+### Outputs
 
-  seven_segment_display #(
-      .w_digit (8)
-  ) i_7segment (
-      .clk      (clock),
-      .rst      (reset),
-      .number   ({16'd0, distance}),
-      .dots     (8'b0000_0000),
-      .abcdefgh (abcdefgh),
-      .digit    (digit)
-  );
+- **led[7:0]**  
+  Shows the 8 LSBs of the measured distance:
 
-Esto permite ver la distancia tanto en binario (LEDs) como en formato legible (7 segmentos).
+      assign led = distance[7:0];
 
-### 3. Escalamiento de la distancia a coordenada X
+- **abcdefgh[7:0]** and **digit[7:0]**  
+  Generated with `seven_segment_display`:
 
-La pantalla es de **480 píxeles de ancho**:
+      seven_segment_display #(
+          .w_digit (8)
+      ) i_7segment (
+          .clk      (clock),
+          .rst      (reset),
+          .number   ({16'd0, distance}),
+          .dots     (8'b0000_0000),
+          .abcdefgh (abcdefgh),
+          .digit    (digit)
+      );
 
-  localparam int unsigned SCREEN_WIDTH  = 480;
-  localparam int unsigned SCREEN_HEIGHT = 272;
+- **LCD RGB outputs**  
+  Used to draw the horizontal bar.
 
-Se toman los bits altos de `distance` para mapearlos a una coordenada `x` válida (0..479):
-
-  logic [8:0] distance_x; // 0..479
-
-  always_comb begin
-      if (distance[15:7] >= SCREEN_WIDTH[8:0])
-          distance_x = SCREEN_WIDTH[8:0] - 1;  // saturar a 479
-      else
-          distance_x = distance[15:7];
-  end
-
-- `distance[15:7]` es un valor de 9 bits (0..511 aprox.).
-- Si se pasa de 479, se **satura** para que no salga de pantalla.
-- Este valor `distance_x` define la **longitud** de la barra roja.
-
-### 4. Barra horizontal roja en LCD
-
-Se dibuja una barra centrada verticalmente cuya longitud depende de `distance_x`:
-
-  localparam int unsigned BAR_HEIGHT = 20;
-  localparam int unsigned BAR_Y_MID  = SCREEN_HEIGHT / 2;
-
-  always_comb begin
-      // Fondo negro
-      red   = 5'd0;
-      green = 6'd0;
-      blue  = 5'd0;
-
-      // Barra roja
-      if ( (x <= distance_x) &&
-           (y >= (BAR_Y_MID - (BAR_HEIGHT/2))) &&
-           (y <= (BAR_Y_MID + (BAR_HEIGHT/2))) ) begin
-          red   = 5'd31;
-          green = 6'd0;
-          blue  = 5'd0;
-      end
-  end
-
-- Para cada píxel (`x`, `y`), se verifica si cae dentro de la franja horizontal que va de `x = 0` a `x = distance_x`.
-- Si pertenece a esa región, el píxel se pinta rojo.
-- En caso contrario, permanece negro.
-
-Resultado visual:
-
-- Objetos más **cercanos** → `distance` pequeña → `distance_x` pequeño → barra corta.
-- Objetos más **lejanos** → `distance` grande → `distance_x` más grande → barra más larga (hasta saturar).
+- **gpio[3:0]**  
+  Only bits 0 and 1 are used for TRIG/ECHO.
 
 ---
 
-## Relación con otros ejemplos
+## Internal Flow
 
-Este ejemplo se apoya en varios conceptos y archivos:
+### 1. Distance Measurement (`ultrasonic_distance_sensor`)
 
-- `1_2_9_Buses_Overview.md`  
-  → contexto general de buses y sensores externos.
+The module measures the echo time from the HC-SR04 and outputs a **relative distance value**.
 
-- `1_2_11_ADC_Basics.md`  
-  → ideas generales de medición y conversión (analogía con potenciómetro).
+Configuration example:
 
-- `3_13_lcd_basic_shapes` y `3_14_lcd_moving_rectangle`  
-  → cómo se usan `x`, `y` para dibujar figuras en la LCD.
+    localparam int unsigned CLK_HZ = 27_000_000;
 
-- `3_15_tm1638_quickstart` y `3_11_seven_segment_basics`  
-  → fundamentos de 7 segmentos y TM1638.
+    ultrasonic_distance_sensor #(
+        .clk_frequency          (CLK_HZ),
+        .relative_distance_width($bits(distance))
+    ) i_sensor (
+        .clk               (clock),
+        .rst               (reset),
+        .trig              (gpio[0]),
+        .echo              (gpio[1]),
+        .relative_distance (distance)
+    );
 
-Este `3_17_ultrasonic_distance` combina todo lo anterior en un solo diseño:
+Notes:
 
-- Sensor **ultrasónico**.
-- **LEDs** y **TM1638** para salida numérica.
-- **LCD** para visualización gráfica de la distancia.
+- `distance` is **not in centimeters**; it is a monotonic relative measurement.
+- Larger values → echo took longer → object is farther.
+
+---
+
+### 2. Numerical Visualization (LEDs + TM1638)
+
+#### LEDs (debug)
+
+    assign led = distance[7:0];
+
+Shows the least-significant byte of the distance.
+
+#### TM1638 seven-segment display
+
+The distance is zero-extended to 32 bits:
+
+    number = {16'd0, distance};
+
+`seven_segment_display` handles:
+
+- Hexadecimal decoding,
+- Digit multiplexing,
+- Segment patterns.
+
+This allows real-time numeric display of the measured distance.
+
+---
+
+### 3. Mapping Distance to LCD X-Coordinate
+
+Screen resolution:
+
+- Width: 480  
+- Height: 272
+
+We project part of `distance` into the x-coordinate space.
+
+Using the upper bits:
+
+    distance[15:7] → range roughly 0..511
+
+Mapping logic:
+
+    if distance[15:7] >= 480  
+        distance_x = 479  
+    else  
+        distance_x = distance[15:7]
+
+This saturates values above the screen max.
+
+The resulting `distance_x` defines the **bar length**.
+
+---
+
+### 4. LCD Visualization (Horizontal Red Bar)
+
+The LCD draws:
+
+1. **Black background**  
+2. A **red bar** centered vertically, from x = 0 to x = distance_x.
+
+Vertical region:
+
+- Height: 20 px  
+- Centered at `SCREEN_HEIGHT / 2`
+
+Color logic (conceptual):
+
+- If pixel within bar region → red = 31, green = 0, blue = 0  
+- Else → black
+
+Effect:
+
+- Small distance → short bar  
+- Large distance → long bar  
+- Far object (saturated) → full-width bar
+
+---
+
+## Relationship with Other Examples
+
+This example combines concepts from several earlier modules:
+
+- LCD basics  
+  `3_13_lcd_basic_shapes`  
+  `3_14_lcd_moving_rectangle`
+
+- Seven-segment TM1638 basics  
+  `3_11_seven_segment_basics`  
+  `3_15_tm1638_quickstart`
+
+- Sensor interfacing and buses  
+  `1_2_9_Buses_Overview.md`  
+  `1_2_11_ADC_Basics.md`
+
+Together, they form a complete system integrating:
+
+- Digital sensor input  
+- Two display outputs (numeric + graphical)  
+- Auxiliary debugging (LEDs)
+
+---
+
+## Summary
+
+This example demonstrates a full visualization pipeline:
+
+1. **HC-SR04 ultrasonic sensor** measures relative distance.  
+2. Distance value is sent to:
+   - **LEDs** (binary),
+   - **TM1638** (numeric),
+   - **LCD** (graphical bar).
+3. A scaled coordinate maps distance into a red bar on the LCD.
+4. The system provides a foundation for advanced “radar” or “distance meter” projects.
+

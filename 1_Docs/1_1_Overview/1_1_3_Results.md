@@ -1,25 +1,24 @@
-# 1.1.3 Results – ¿Qué vas a poder hacer al terminar?
+# 1.1.3 Results – What will you be able to do once you finish?
 
-Al trabajar con este repositorio, debería ser capaz de:
+By working through this repository, you should be able to:
 
-- Escribir y entender módulos de SystemVerilog con entradas/salidas claramente definidas.
-- Implementar y depurar lógica combinacional (compuertas, mux/decoder, comparadores sencillos).
-- Diseñar máquinas de estados simples (semáforos, secuencias, candados, menús básicos).
-- Implementar contadores, divisores de frecuencia y PWM básicos para controlar LEDs, servos u otros actuadores.
-- Integrar periféricos externos como:
-  - Módulo **TM1638** (7 segmentos + LEDs + teclas).
-  - Sensor ultrasónico **HC-SR04**.
-  - Encoders rotatorios y potenciómetros (vía ADC externo).
-  - Display LCD **480×272** (controlado desde el top de la tarjeta).
+- Write and understand SystemVerilog modules with clearly defined inputs and outputs.
+- Implement and debug combinational logic (gates, mux/decoder, simple comparators).
+- Design simple state machines (traffic lights, sequences, locks, basic menus).
+- Implement counters, frequency dividers, and basic PWM to control LEDs, servos, or other actuators.
+- Integrate external peripherals such as:
+  - **TM1638** module (7-segments + LEDs + keys).
+  - **HC-SR04** ultrasonic sensor.
+  - Rotary encoders and potentiometers (via external ADC).
+  - **480×272 LCD** display (driven from the board’s top module).
 
+Additionally, you will:
 
-Además, conseguirá:
-
-- Familiarizarse con un flujo de trabajo típico:
+- Become familiar with a typical workflow:
   - Editor (VS Code).
-  - Control de versiones (Git).
-  - Scripts de síntesis y programación para Gowin.
-- Leer, entender y modificar ejemplos existentes, en lugar de empezar siempre desde cero.
-- Entender mejor qué hace la herramienta de síntesis y cómo interpretar errores y advertencias frecuentes.
+  - Version control (Git).
+  - Synthesis and programming scripts for Gowin.
+- Read, understand, and modify existing examples instead of always starting from scratch.
+- Better understand what the synthesis tool does and how to interpret common errors and warnings.
 
 ---

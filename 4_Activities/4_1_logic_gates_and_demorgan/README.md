@@ -1,77 +1,82 @@
-# 4.1 – Compuertas lógicas, De Morgan y funciones combinacionales
+# 4.1 – Logic Gates, De Morgan’s Law and Combinational Functions
 
-En esta actividad trabajarás con compuertas lógicas básicas,  verificarás una ley de De Morgan y diseñarás funciones combinacionales sencillas.
+In this activity, you will work with basic logic gates, verify one of De Morgan’s laws, and design simple combinational functions.
 
-Se usa la placa **Tang Nano 9K** con el wrapper `hackathon_top`  para la configuración `tang_nano_9k_lcd_480_272_tm1638_hackathon`.
+The board used is the **Tang Nano 9K** with the wrapper `hackathon_top` for the configuration:
 
----
-
-## Objetivos
-
-1. Implementar compuertas `AND`, `OR`, `XOR` y una ley de De Morgan con 2 entradas.
-2. Extender la idea a 3 entradas (`A`, `B`, `C`) para diseñar funciones “mayoría” y “exactamente una en 1”.
-3. Agregar una entrada de habilitación (`EN`) que permita apagar/encender el bloque combinacional completo.
+`tang_nano_9k_lcd_480_272_tm1638_hackathon`
 
 ---
 
-## Señales
+## Objectives
 
-Entradas:
+1. Implement `AND`, `OR`, `XOR` and one De Morgan expression using 2 inputs.
+2. Extend the idea to 3 inputs (`A`, `B`, `C`) and design:
+   - a “majority” function,
+   - a “exactly one high” function.
+3. Add an enable input (`EN`) that turns the entire block on/off.
+
+---
+
+## Signals
+
+Inputs:
 
 - `A = key[1]`
 - `B = key[0]`
-- `C = key[2]` (Tarea 2)
-- `EN = key[3]` (Tarea 3)
+- `C = key[2]` (Task 2)
+- `EN = key[3]` (Task 3)
 
-Salidas (sugeridas):
+Suggested LED mapping:
 
 - `led[0]` → `A AND B`
-- `led[1]` → `A OR  B`
+- `led[1]` → `A OR B`
 - `led[2]` → `A XOR B`
 - `led[3]` → `~(A & B)`
 - `led[4]` → `(~A) | (~B)`
-- `led[5]` → “mayoría” de (A,B,C) → al menos dos entradas = 1
-- `led[6]` → “exactamente una entrada en 1” de (A,B,C)
-- `led[7]` → indicador de habilitación (`EN`)
+- `led[5]` → majority of A,B,C
+- `led[6]` → exactly one input high
+- `led[7]` → indicator for EN
 
-El display de 7 segmentos y la LCD no se usan en esta actividad.
-
----
-
-## Tareas
-
-### Tarea 1 – Compuertas básicas + De Morgan (2 entradas)
-
-1. Conecta `A` y `B` a `key[1:0]`.
-2. Implementa:
-   - `led[0] = A & B`
-   - `led[1] = A | B`
-   - `led[2] = A ^ B`
-   - `led[3] = ~(A & B)`
-   - `led[4] = (~A) | (~B)`
-3. Verifica en la placa que, para todas las combinaciones de `A` y `B`,  
-   los LEDs `3` y `4` siempre tienen el mismo valor.
+The LCD and 7-segment display are not used.
 
 ---
 
-### Tarea 2 – Funciones con 3 entradas (A, B, C)
+## Tasks
 
-1. Define `C = key[2]`.
-2. Diseña e implementa:
-   - `led[5]` = función “mayoría”: se enciende si **al menos dos** entre A,B,C son 1.
-   - `led[6]` = función “exactamente una en 1”: se enciende si solo una de A,B,C es 1.
-3. Comprueba en la placa que el comportamiento coincide con tu intuición:
-   - Por ejemplo, para A=1, B=1, C=0 → mayoría = 1, exactamente una = 0.
+### **Task 1 – Logic gates + De Morgan (2 inputs)**
 
----
+Implement:
 
-### Tarea 3 – Habilitación (EN)
+- `A & B`  
+- `A | B`  
+- `A ^ B`  
+- `~(A & B)`  
+- `(~A) | (~B)`
 
-1. Define `EN = key[3]`.
-2. Modifica las salidas para que:
-   - Si `EN = 0` → `led[6:0] = 0`.
-   - Si `EN = 1` → `led[6:0]` muestren las funciones de las Tareas 1 y 2.
-3. Usa `led[7]` como indicador de que `EN` está activo (por ejemplo `led[7] = EN`).
+Verify that LEDs `3` and `4` always match for every combination of A and B.
 
 ---
 
+### **Task 2 – Functions with 3 inputs**
+
+Implement:
+
+- Majority → at least two of A,B,C are `1`.
+- Exactly one high → only one among A,B,C is `1`.
+
+---
+
+### **Task 3 – Enable input**
+
+When `EN = 0`:
+
+- all LEDs `[6:0]` must be *off*.
+
+When `EN = 1`:
+
+- show the results of Tasks 1 and 2 normally.
+
+Use `led[7]` to show EN state.
+
+---

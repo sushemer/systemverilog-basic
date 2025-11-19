@@ -1,278 +1,278 @@
-# 4.8 – Integración de sensores y TM1638
+# 4.8 – Sensor Integration and TM1638
 
-En esta actividad se integran **sensores físicos** con el módulo **TM1638**:
+In this activity, **physical sensors** are integrated with the **TM1638 module**:
 
-- Se lee al menos un sensor (ultrasonido HC-SR04 y/o encoder rotatorio KY-040).
-- Se muestra el valor en el **display de 7 segmentos** (TM1638).
-- Se representa el valor como una **barra** usando los **8 LEDs** del TM1638.
-- Se usan **teclas** para cambiar de modo, sensor o escala.
+- At least one sensor is read (HC-SR04 ultrasonic sensor and/or KY-040 rotary encoder).
+- The value is displayed on the **7-segment display** (TM1638).
+- The value is represented as a **bar** using the **8 LEDs** on the TM1638.
+- **Keys** are used to switch modes, sensors, or scale.
 
-La intención es juntar varias piezas ya vistas en los ejemplos: sensores, drivers y lógica combinacional/secuencial sencilla.
-
----
-
-## Objetivo
-
-Al terminar la actividad la persona usuaria debería poder:
-
-- Instanciar uno o más módulos de sensor (ultrasonido, encoder).
-- Seleccionar qué valor mostrar usando teclas (`key`).
-- Actualizar el display de 7 segmentos con un número de hasta 16 bits.
-- Dibujar una barra de nivel en los LEDs en función del valor leído.
-- Diseñar distintos modos de operación (por ejemplo: “distancia”, “encoder”, “mixto”).
+The intention is to combine several components already seen in previous examples: sensors, drivers, and simple combinational/sequential logic.
 
 ---
 
-## Hardware asumido
+## Objective
 
-- **Placa:** Tang Nano 9K con configuración  
+At the end of the activity, the user should be able to:
+
+- Instantiate one or more sensor modules (ultrasonic, encoder).
+- Select which value to display using keys (`key`).
+- Update the 7-segment display with a number up to 16 bits.
+- Draw a level bar on the LEDs based on the measured value.
+- Design different operating modes (for example: “distance”, “encoder”, “mixed”).
+
+---
+
+## Assumed Hardware
+
+- **Board:** Tang Nano 9K with configuration  
   `tang_nano_9k_lcd_480_272_tm1638_hackathon`.
-- **TM1638** conectado (8 dígitos de 7 segmentos + 8 LEDs + teclas).
-- **GPIO [3:0]** conectados a los sensores:
-  - `gpio[0]` → TRIG del HC-SR04.
-  - `gpio[1]` → ECHO del HC-SR04.
-  - `gpio[3]` → A (CLK) del KY-040.
-  - `gpio[2]` → B (DT) del KY-040.
+- **TM1638** connected (8 seven-segment digits + 8 LEDs + keys).
+- **GPIO [3:0]** connected to sensors:
+  - `gpio[0]` → TRIG of the HC-SR04.
+  - `gpio[1]` → ECHO of the HC-SR04.
+  - `gpio[3]` → A (CLK) of the KY-040.
+  - `gpio[2]` → B (DT) of the KY-040.
 
-Si no se cuenta con ambos sensores, la actividad puede realizarse solo con uno y adaptar la lógica de selección.
+If both sensors are not available, the activity can be done with only one, adapting the selection logic.
 
 ---
 
-## Archivos / módulos necesarios
+## Required Files / Modules
 
-Es importante verificar que los siguientes módulos se encuentren incluidos en el proyecto (Tcl / script de síntesis):
+It is important to verify that the following modules are included in the project (Tcl / synthesis script):
 
 - `ultrasonic_distance_sensor.sv`  
-  (módulo para HC-SR04, ya utilizado en el ejemplo de ultrasonido).
+  (module for HC-SR04, already used in the ultrasonic example).
 - `rotary_encoder.sv`
 - `sync_and_debounce.sv`
 - `sync_and_debounce_one.sv`
 - `seven_segment_display.sv`
-- `hackathon_top.sv` (archivo principal de la actividad).
+- `hackathon_top.sv` (main activity file).
 
-Regla general: si un módulo se instancia dentro de `hackathon_top.sv`, su archivo `.sv` debe estar agregado al proyecto.
-
----
-
-## Qué hace la plantilla de `hackathon_top.sv`
-
-La plantilla típica de esta actividad incluye, al menos, los bloques siguientes.
-
-### 1) Ultrasonido HC-SR04
-
-Se instancia el módulo `ultrasonic_distance_sensor` con:
-
-- Entradas:
-  - `clk` y `rst` conectados al reloj y reset del sistema.
-  - `trig` y `echo` conectados a `gpio[0]` y `gpio[1]` (según el mapeo acordado).
-- Salida principal:
-  - `relative_distance` conectada a una señal de 16 bits, por ejemplo  
-    `distance_rel` de tipo `logic [15:0]`.
-
-La salida `distance_rel` no está en centímetros reales, sino en una unidad **relativa al tiempo de eco**, pero aumenta con la distancia, lo cual resulta suficiente para la visualización en esta actividad.
+General rule: if a module is instantiated inside `hackathon_top.sv`, its `.sv` file must be added to the project.
 
 ---
 
-### 2) Encoder rotatorio KY-040
+## What the `hackathon_top.sv` Template Does
 
-Se toman las señales crudas del encoder:
+The typical template for this activity includes at least the following blocks.
+
+### 1) HC-SR04 Ultrasonic Sensor
+
+The `ultrasonic_distance_sensor` module is instantiated with:
+
+- Inputs:
+  - `clk` and `rst` connected to the system clock and reset.
+  - `trig` and `echo` connected to `gpio[0]` and `gpio[1]` (according to the chosen mapping).
+- Main output:
+  - `relative_distance`, connected to a 16-bit signal, e.g.,  
+    `distance_rel` of type `logic [15:0]`.
+
+The `distance_rel` output is **not in centimeters**, but in a unit **relative to echo time**, although it grows with distance, which is sufficient for visualization in this activity.
+
+---
+
+### 2) KY-040 Rotary Encoder
+
+The raw signals from the encoder are taken:
 
 - `enc_a_raw = gpio[3]`
 - `enc_b_raw = gpio[2]`
 
-Luego se usa `sync_and_debounce` para **sincronizar y eliminar rebotes**:
+Then, `sync_and_debounce` is used to **synchronize and remove bounce**:
 
-- Entradas del módulo: `sw_in = {enc_b_raw, enc_a_raw}`.
-- Salidas: señales depuradas `enc_a_deb` y `enc_b_deb`.
+- Module inputs: `sw_in = {enc_b_raw, enc_a_raw}`.
+- Outputs: debounced signals `enc_a_deb` and `enc_b_deb`.
 
-Después se instancia `rotary_encoder`:
+Then `rotary_encoder` is instantiated:
 
-- Entradas: `clk`, `reset`, `a = enc_a_deb`, `b = enc_b_deb`.
-- Salida: `value` conectada a una señal de 16 bits, por ejemplo  
-  `encoder_value` de tipo `logic [15:0]`.
+- Inputs: `clk`, `reset`, `a = enc_a_deb`, `b = enc_b_deb`.
+- Output: `value`, connected to a 16-bit signal, e.g.,  
+  `encoder_value` of type `logic [15:0]`.
 
-Esta salida representa el conteo del encoder (positivo/negativo según la implementación) y permite observar giros y dirección.
-
----
-
-### 3) Selección del valor a mostrar
-
-Se define un **modo de operación** a partir de algunas teclas, por ejemplo:
-
-- `mode = key[1:0]` (2 bits para cuatro modos posibles).
-
-Se declara una señal intermedia:
-
-- `sensor_value` de tipo `logic [15:0]`.
-
-En un bloque combinacional (`always_comb`) se selecciona el valor según el modo:
-
-- Si `mode = 2'b00` → `sensor_value = distance_rel` (solo ultrasonido).
-- Si `mode = 2'b01` → `sensor_value = encoder_value` (solo encoder).
-- Si `mode = 2'b10` → `sensor_value = distance_rel - encoder_value` (modo “mixto” o de prueba).
-- En cualquier otro caso (`2'b11` u otros) → `sensor_value = 16'd0` (reservado o modo de depuración).
-
-La señal `sensor_value` se utiliza como base para:
-
-- El número que se mostrará en el display de 7 segmentos.
-- La barra de nivel representada en los 8 LEDs.
+This output represents the encoder count (positive/negative depending on implementation), allowing observation of turns and direction.
 
 ---
 
-### 4) Mostrar el valor en el TM1638 (7 segmentos)
+### 3) Selecting the Value to Display
 
-Se reutiliza el módulo `seven_segment_display` ya usado en otras actividades.
+An **operating mode** is defined from some keys, for example:
 
-Parámetros típicos:
+- `mode = key[1:0]` (2 bits for four possible modes).
+
+An intermediate signal is declared:
+
+- `sensor_value` of type `logic [15:0]`.
+
+In a combinational block (`always_comb`), the value is selected according to the mode:
+
+- If `mode = 2'b00` → `sensor_value = distance_rel` (ultrasonic only).
+- If `mode = 2'b01` → `sensor_value = encoder_value` (encoder only).
+- If `mode = 2'b10` → `sensor_value = distance_rel - encoder_value` (mixed/test mode).
+- Any other case (`2'b11` or others) → `sensor_value = 16'd0` (reserved/debug mode).
+
+The `sensor_value` signal is used as the basis for:
+
+- The number shown on the 7-segment display.
+- The level bar represented by the 8 LEDs.
+
+---
+
+### 4) Showing the Value on the TM1638 (7-segment)
+
+The `seven_segment_display` module from previous activities is reused.
+
+Typical parameters:
 
 - `W_DIGITS = 8`
 - `W_NUM    = W_DIGITS * 4 = 32`
 
-Se declara un bus de 32 bits para el número y 8 bits para los puntos:
+A 32-bit bus for the number and 8 bits for the dots are declared:
 
-- `number` de tipo `logic [31:0]`.
-- `dots` de tipo `logic [7:0]`.
+- `number` of type `logic [31:0]`.
+- `dots` of type `logic [7:0]`.
 
-Forma habitual de empaquetar el valor del sensor:
+Common way to package the sensor value:
 
 - `number = {16'd0, sensor_value}`  
-  (los 4 dígitos menos significativos muestran `sensor_value` en hexadecimal).
+  (the 4 least significant digits show `sensor_value` in hexadecimal).
 - `dots   = 8'b0000_0000`  
-  (puntos decimales apagados, o configurados según el modo).
+  (decimal points off, or configured per mode).
 
-Después se conectan `number` y `dots` a la instancia de `seven_segment_display`, cuyas salidas `abcdefgh` y `digit` se dirigen al TM1638.
+Then `number` and `dots` are connected to the `seven_segment_display` instance, whose outputs `abcdefgh` and `digit` go to the TM1638.
 
-De esta forma, el valor del sensor aparece en hexadecimal en los dígitos del TM1638; se puede limitar la interpretación visual a los 4 dígitos menos significativos si así se desea.
+Thus, the sensor value appears in hexadecimal on the TM1638 digits; visual inspection can be limited to the 4 least-significant digits if desired.
 
 ---
 
-### 5) Barra de nivel en los LEDs del TM1638
+### 5) Level Bar on the TM1638 LEDs
 
-Los 8 LEDs del TM1638 se usan como una **barra de nivel** (similar a un “VU meter”).
+The 8 LEDs on the TM1638 are used as a **level bar** (similar to a VU meter).
 
-#### 5.1 Normalizar el valor
+#### 5.1 Normalizing the Value
 
-Se puede extraer una parte de `sensor_value` como nivel:
+Part of `sensor_value` can be used as the level:
 
-- `bar_level` de tipo `logic [7:0]`.
-- Por ejemplo: `bar_level = sensor_value[15:8]`.
+- `bar_level` of type `logic [7:0]`.
+- Example: `bar_level = sensor_value[15:8]`.
 
-Si `sensor_value` recorre un rango amplio, también se puede saturar `bar_level` o aplicar un pequeño reescalado, para que la barra recorra razonablemente los 8 LEDs.
+If `sensor_value` spans a large range, `bar_level` can also be saturated or rescaled so that the bar reasonably covers the 8 LEDs.
 
-#### 5.2 Construir la barra
+#### 5.2 Building the Bar
 
-Opciones comunes:
+Common options:
 
-- **Barra acumulativa** (llenado de izquierda a derecha):
+- **Cumulative bar** (filling from left to right):
 
-  - Se inicializa una señal `led_bar = 8'b0000_0000`.
-  - Si `bar_level > 0`, se enciende el bit 0 (`led_bar[0] = 1`).
-  - Si `bar_level > 1`, se enciende `led_bar[1]`, y así hasta el bit 7.
+  - Initialize `led_bar = 8'b0000_0000`.
+  - If `bar_level > 0`, turn on bit 0 (`led_bar[0] = 1`).
+  - If `bar_level > 1`, turn on bit 1, and so on up to bit 7.
 
-- **Barra directa por bits**:
+- **Direct bit bar**:
 
   - `led_bar = bar_level`.
-  - Cada bit de `bar_level` controla directamente uno de los LEDs.
+  - Each bit of `bar_level` directly controls one LED.
 
-#### 5.3 Asignar a la salida
+#### 5.3 Output Assignment
 
-La señal `led_bar` se conecta a los LEDs del TM1638.  
-Si la plantilla también expone los LEDs de la propia Tang Nano 9K, se puede:
+The `led_bar` signal is connected to the TM1638 LEDs.  
+If the template also exposes the Tang Nano 9K onboard LEDs, they can be used to:
 
-- Usar los LEDs del TM1638 como **barra principal**.
-- Usar los LEDs de la placa como **debug** del valor crudo (por ejemplo, `sensor_value[15:8]`).
+- Use TM1638 LEDs as **main bar**.
+- Use onboard LEDs as **debug** (e.g., `sensor_value[15:8]`).
 
 ---
 
-### 6) Organización típica del bloque de salida
+### 6) Typical Output Block Organization
 
-Una organización clara del bloque de salida (`always_comb`) suele seguir estos pasos:
+A clear organization of the output block (`always_comb`) usually follows these steps:
 
-1. Inicializar valores por defecto:
+1. Initialize default values:
    - `number   = 32'h0000_0000`
    - `dots     = 8'b0000_0000`
    - `led_bar  = 8'b0000_0000`
 
-2. Usar `case (mode)` para ajustar el comportamiento según el modo:
+2. Use `case (mode)` to adjust behavior:
 
-   - Modo `2'b00` (ultrasonido):
+   - Mode `2'b00` (ultrasonic):
      - `number   = {16'd0, distance_rel}`
-     - `led_bar  = función_bar(distance_rel)`
+     - `led_bar  = bar_function(distance_rel)`
 
-   - Modo `2'b01` (encoder):
+   - Mode `2'b01` (encoder):
      - `number   = {16'd0, encoder_value}`
-     - `led_bar  = función_bar(encoder_value)`
+     - `led_bar  = bar_function(encoder_value)`
 
-   - Modo `2'b10` (combinado / experimento):
+   - Mode `2'b10` (combined/experiment):
      - `number   = {16'd0, sensor_value}`
-     - `led_bar  = función_bar(sensor_value)`
+     - `led_bar  = bar_function(sensor_value)`
 
-   - Otros casos (`2'b11`, etc.):
+   - Other cases (`2'b11`, etc.):
      - `number   = 32'h0000_0000`
      - `led_bar  = 8'b0000_0000`
 
-   (Aquí “función_bar” representa la lógica que traduce cualquier valor de 16 bits en un patrón de 8 LEDs, según lo descrito en la sección anterior).
+   (“bar_function” refers to the logic that maps any 16-bit value to an 8-LED pattern as described earlier.)
 
-Adicionalmente, los LEDs de la placa pueden servir como ayuda visual, por ejemplo:
+Additionally, the board LEDs may be used as visual help, e.g.:
 
-- `led[1:0]  = mode`  (modo actual).
-- `led[7:2]  = sensor_value[7:2]` o alguna otra parte del valor o de un contador de depuración.
-
----
-
-## Pruebas sugeridas
-
-### 1) Modo ultrasonido
-
-- Colocar la mano u objetos a diferentes distancias frente al HC-SR04.
-- Verificar cómo:
-  - Cambia el número que se muestra en el TM1638.
-  - Cambia la barra de LEDs (por ejemplo: valor bajo con objeto cercano, valor alto con objeto lejano, según el diseño elegido).
-
-### 2) Modo encoder
-
-- Girar el encoder lentamente en ambos sentidos.
-- Comprobar:
-  - Incrementos y decrementos del valor mostrado en el display.
-  - Desplazamiento de la barra de LEDs hacia la derecha o hacia la izquierda.
-
-### 3) Cambios de modo con teclas
-
-- Cambiar `mode` con `key[1:0]`.
-- Confirmar que el sistema cambia de comportamiento sin comportamientos extraños.
-- Probar combinaciones de teclas adicionales para:
-  - Invertir la barra.
-  - Cambiar de escala.
-  - Activar o desactivar modos de depuración.
-
-### 4) Pruebas de límites
-
-- Forzar valores muy altos o muy bajos en `sensor_value`:
-  - Alejando mucho el objeto del sensor ultrasónico.
-  - Girando el encoder muchas vueltas.
-- Verificar que:
-  - La barra de LEDs no se desborda (no aparecen patrones inesperados).
-  - El número mostrado se mantiene coherente (sin valores claramente erróneos por overflow, salvo que forme parte del experimento).
+- `led[1:0]  = mode`  (current mode).
+- `led[7:2]  = sensor_value[7:2]` or some other part of the value or a debug counter.
 
 ---
 
-## Extensiones opcionales
+## Suggested Tests
 
-Algunas ideas para extender la actividad:
+### 1) Ultrasonic Mode
 
-- **Escala ajustable**  
-  Usar bits adicionales de `key` para cambiar la escala de la barra (por ejemplo, ganancias ×1, ×2, ×4).
+- Place your hand or objects at different distances from the HC-SR04.
+- Verify how:
+  - The number on the TM1638 display changes.
+  - The LED bar changes (for example: low value with a nearby object, high value with a distant object, depending on design).
 
-- **Indicadores con puntos decimales**  
-  Usar `dots` del TM1638 para indicar:
-  - El modo actual.
-  - Estados de error o fuera de rango.
-  - Un “latido” visual (punto que parpadea) mientras el sistema está activo.
+### 2) Encoder Mode
 
-- **Umbral de alarma**  
-  Encender el último LED de la barra solo si el valor supera un umbral determinado y, opcionalmente, mostrar también alguna indicación especial en el display (por ejemplo, un patrón fijo en los dígitos superiores).
+- Turn the encoder slowly in both directions.
+- Check:
+  - Increments and decrements on the display.
+  - LED bar shifting left/right.
 
-- **Promediado / filtrado**  
-  Implementar un filtro sencillo (por ejemplo, un promedio móvil) del valor del sensor antes de mostrarlo, para estabilizar la lectura y reducir ruido.
+### 3) Mode Switching with Keys
 
-Con esta actividad se consolida el uso de sensores, módulos de soporte (debounce, encoder, ultrasonido) y el TM1638 como interfaz de visualización, acercándose a una aplicación de medición y monitoreo más completa sobre la FPGA.
+- Change `mode` using `key[1:0]`.
+- Confirm that the system changes behavior without anomalies.
+- Test additional key combinations to:
+  - Invert the bar.
+  - Change scale.
+  - Enable/disable debug modes.
+
+### 4) Limit Tests
+
+- Force very high or low values in `sensor_value`:
+  - Moving the ultrasonic sensor target far away.
+  - Turning the encoder many rotations.
+- Verify:
+  - The LED bar does not overflow (no unexpected patterns).
+  - The displayed number remains coherent (no clearly erroneous overflow values unless part of the experiment).
+
+---
+
+## Optional Extensions
+
+Some ideas to extend the activity:
+
+- **Adjustable scale**  
+  Use additional `key` bits to change the bar scale (e.g., ×1, ×2, ×4).
+
+- **Decimal point indicators**  
+  Use TM1638 `dots` to indicate:
+  - Current mode.
+  - Error or out-of-range states.
+  - A “heartbeat” indicator (blinking dot) while the system is active.
+
+- **Alarm threshold**  
+  Light the last LED only if the value exceeds a threshold, and optionally show a special pattern on the display (e.g., fixed characters in the upper digits).
+
+- **Averaging / filtering**  
+  Implement a simple filter (e.g., moving average) to stabilize the sensor reading and reduce noise.
+
+With this activity, the use of sensors, support modules (debounce, encoder, ultrasonic), and the TM1638 as a visualization interface is consolidated, approaching a more complete measurement and monitoring application on the FPGA.

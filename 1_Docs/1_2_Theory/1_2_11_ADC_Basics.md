@@ -1,145 +1,130 @@
 # ADC basics
 
-Este documento presenta los conceptos generales de un **convertidor analógico–digital (ADC)**,  sin centrarse en un modelo específico.  
+This document presents the general concepts of an **Analog-to-Digital Converter (ADC)** without focusing on a specific model.
 
-El objetivo es entender:
+The goal is to understand:
 
-- Por qué se necesita un ADC.
-- Qué parámetros son importantes.
-- Cómo se relaciona con la FPGA en este repositorio.
-
----
-
-## ¿Por qué se necesita un ADC?
-
-La FPGA trabaja con **señales digitales**:
-
-- Niveles lógicos 0 y 1.
-- Entradas y salidas que representan bits.
-
-Muchos sensores y elementos de entrada producen valores **analógicos**:
-
-- Voltajes continuos (por ejemplo, de un potenciómetro).
-- Señales que no pueden representarse solo con 0 o 1 fijos.
-
-Un **ADC (Analog-to-Digital Converter)** convierte:
-
-- Un **voltaje analógico** dentro de cierto rango.
-- En un **número digital** (por ejemplo, de 0 a 255, de 0 a 1023, etc.).
-
-Ese número digital sí puede ser manejado directamente por la FPGA.
+- Why an ADC is needed  
+- What parameters matter  
+- How it relates to the FPGA in this repository  
 
 ---
 
-## Parámetros clave de un ADC
+## Why do we need an ADC?
 
-1. **Resolución (bits)**  
-   - Cuántos niveles diferentes puede representar:
-     - 8 bits → 256 niveles (0–255).
-     - 10 bits → 1024 niveles (0–1023).
-     - 12 bits → 4096 niveles, etc.
-   - A mayor resolución, más “fina” es la medición.
+The FPGA works with **digital signals**:
 
-2. **Rango de entrada / referencia (Vref)**  
-   - Voltaje mínimo y máximo que el ADC puede medir.
-   - Ejemplo: 0–3.3 V, 0–5 V.
-   - El valor digital 0 corresponde al mínimo del rango; el máximo valor digital corresponde al máximo del rango.
+- Logic levels 0 and 1  
+- Inputs/outputs that represent bits  
 
-3. **Velocidad de muestreo (sample rate)**  
-   - Cuántas mediciones por segundo puede realizar.
-   - Para usos básicos (potenciómetro, sensores lentos) no suele ser un límite crítico.
+Many sensors and input elements produce **analog** values:
 
----
+- Continuous voltages (e.g., potentiometer output)  
+- Signals that cannot be represented by fixed 0/1  
 
-## Interfaz con la FPGA: SPI e I²C
+An **ADC** converts:
 
-Muchos ADC externos se comunican por buses seriales:
+- An **analog voltage** within a certain range  
+- Into a **digital number** (e.g., 0–255, 0–1023, etc.)  
 
-- **SPI (Serial Peripheral Interface)**  
-  - Líneas típicas:
-    - `SCK` (clock).
-    - `MOSI` (datos hacia el ADC).
-    - `MISO` (datos desde el ADC).
-    - `CS` (chip select).
-  - La FPGA actúa como **master**: inicia y controla la comunicación.
-
-- **I²C (Inter-Integrated Circuit)**  
-  - Líneas:
-    - `SCL` (clock).
-    - `SDA` (datos bidireccionales).
-  - La FPGA también actúa como master y selecciona dispositivos por dirección.
-
-En ambos casos, el flujo general es:
-
-1. La FPGA inicia una transacción (activando `CS` o generando un `start`).
-2. Envía comandos/configuración necesarios.
-3. El ADC realiza la conversión.
-4. La FPGA lee los bits de resultado y reconstruye el valor digital.
-
-Más detalles de buses en:
-
-- `1_2_9_Buses_Overview.md`
+This digital value can be handled directly by the FPGA.
 
 ---
 
-## De voltaje a número digital
+## Key ADC parameters
 
-Esquema conceptual:
+1. **Resolution (bits)**  
+   - Number of distinct levels:
+     - 8 bits → 256 levels  
+     - 10 bits → 1024 levels  
+     - 12 bits → 4096 levels  
+   - Higher resolution → finer measurement.
 
-- Voltaje de entrada: `V_in`.
-- Rango del ADC: `0` a `Vref`.
-- Resolución: N bits → `2^N` niveles.
+2. **Input range / reference voltage (Vref)**  
+   - Minimum and maximum measurable voltage.  
+   - Digital 0 corresponds to the minimum; max code corresponds to Vref.
 
-El valor digital ideal (sin considerar errores) es aproximadamente:
-
-- `code ≈ (V_in / Vref) * (2^N - 1)`
-
-Ejemplo:
-
-- ADC de 10 bits (0–1023), Vref = 3.3 V.
-- Si `V_in = 1.65 V` ≈ Vref/2:
-  - `code ≈ 511` (aprox. la mitad de 1023).
-
-Este valor digital se puede:
-
-- Mostrar en LEDs.
-- Usar como entrada a un PWM.
-- Convertir a otra escala (por ejemplo, 0–100%).
+3. **Sample rate**  
+   - How many conversions per second.  
+   - Not critical for slow sensors (potentiometer, basic analog inputs).
 
 ---
 
-## Uso típico en este repositorio
+## Interface with the FPGA: SPI and I²C
 
-En el contexto de este proyecto, se utilizan ADC externos para:
+Many external ADCs communicate via serial buses:
 
-- Leer el valor de un **potenciómetro** (divisor de voltaje).
-- Leer sensores analógicos (si se integran en el futuro).
+### SPI
+- Lines: `SCK`, `MOSI`, `MISO`, `CS`  
+- FPGA acts as **master**
 
-El valor digital obtenido se emplea para:
+### I²C
+- Lines: `SCL`, `SDA`  
+- FPGA is master and selects devices via addresses
 
-- Controlar el brillo de LEDs.
-- Cambiar la posición de un servo.
-- Ajustar parámetros de un sistema (umbrales, velocidades, etc.).
+General flow:
 
-Casos relacionados:
+1. FPGA starts a transaction  
+2. Sends configuration/commands  
+3. ADC performs the conversion  
+4. FPGA reads result bits and reconstructs number  
+
+See also: `1_2_9_Buses_Overview.md`
+
+---
+
+## From voltage to digital number
+
+Concept:
+
+- Input voltage: `V_in`  
+- Range: 0 to `Vref`  
+- Resolution: N bits → `2^N` levels  
+
+Ideal code:
+
+`code ≈ (V_in / Vref) * (2^N - 1)`
+
+Example:
+
+- ADC: 10-bit (0–1023), Vref = 3.3 V  
+- `V_in = 1.65 V` → code ≈ 511  
+
+The resulting value can be used for:
+
+- LED display  
+- PWM control  
+- Percentage scaling  
+
+---
+
+## Typical usage in this repository
+
+External ADCs are used for:
+
+- Reading **potentiometer** values  
+- Reading analog sensors  
+
+Digital value can be used to:
+
+- Control LED brightness (PWM)  
+- Move servos  
+- Adjust thresholds or parameters  
+
+Related:
 
 - `1_2_15_Potentiometer_ADC_Basics.md`  
-  → explica un caso concreto: potenciómetro + ADC.
-- `pot_read_demo` (en Examples/Activities)  
-  → ejemplo práctico de lectura y representación.
+- `pot_read_demo` examples  
 
 ---
 
-## Relación con otros archivos de teoría
+## Related theory files
 
 - `1_2_9_Buses_Overview.md`  
-  → contexto sobre SPI/I²C.
 - `1_2_10_PWM_Basics.md`  
-  → uso del valor digital para controlar un PWM.
 - `1_2_15_Potentiometer_ADC_Basics.md`  
-  → aplicación específica con potenciómetro.
 
-La combinación de estos conceptos permite crear mini-proyectos como:
+These enable mini-projects such as:
 
-- Dimmer de LED controlado con potenciómetro.
-- Ajuste de posición de servo según una entrada analógica.
+- Pot-controlled LED dimmer  
+- Servo control via analog knob  

@@ -1,18 +1,20 @@
-# Tang Nano 9K · Placa principal
+# Tang Nano 9K · Main Board
 
-La **Tang Nano 9K** es la placa FPGA principal utilizada en este repositorio.  
-Aquí se documenta cómo se usa dentro del proyecto y dónde encontrar la información clave para trabajar con ella.
+The **Tang Nano 9K** is the main FPGA board used in this repository.  
+Here we document how it is used within the project and where to find the key information needed to work with it.
+
 ![alt text](Mult/image.png)
+
 ---
 
-## Rol en el repositorio
+## Role in the repository
 
-En este proyecto, la Tang Nano 9K se usa como plataforma base para:
+In this project, the Tang Nano 9K is used as the base platform to:
 
-- Probar ejemplos sencillos (contadores, FSM, PWM, etc.).
-- Desarrollar actividades y laboratorios con sensores y actuadores.
-- Implementar mini-proyectos en la carpeta `6_implementation`.
+- Test simple examples (counters, FSM, PWM, etc.).
+- Develop activities and labs with sensors and actuators.
+- Implement mini-projects in the `6_implementation` folder.
 
-Toda la configuración de pines y notas eléctricas relacionadas con la placa se centralizan en esta carpeta.
+All the pin configuration and electrical notes related to the board are centralized in this folder.
 
 ---

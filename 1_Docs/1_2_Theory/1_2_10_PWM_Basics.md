@@ -1,119 +1,79 @@
 # 1.2.10 PWM basics
 
-Este documento introduce el concepto de **PWM (Pulse Width Modulation)** y cómo se usa en este repositorio para:
+This document introduces **PWM (Pulse Width Modulation)** and how it is used in this repository to:
 
-- Controlar el brillo de LEDs.  
-- Controlar la posición de servomotores (en combinación con temporización específica).  
-- Representar niveles “analógicos” a partir de una señal digital.
-
----
-
-## 1. ¿Qué es PWM?
-
-El **PWM** consiste en:
-
-- Generar una señal digital que solo puede estar en 0 o 1.  
-- Mantener un **periodo fijo** (T).  
-- Variar el **ciclo de trabajo** (**duty cycle**):  
-  porcentaje del tiempo que la señal está en 1 dentro de cada periodo.
-
-Ejemplos de duty cycle:
-
-- 0%  → siempre en 0.  
-- 25% → 25% del tiempo en 1, 75% en 0.  
-- 50% → mitad del tiempo en 1, mitad en 0.  
-- 100% → siempre en 1.
-
-Aunque la señal es digital, el **promedio de energía** puede interpretarse como un valor “analógico” por:
-
-- Un LED (más brillo si el duty es mayor).  
-- Un motor o servo (en ciertos rangos y frecuencias).  
+- Control LED brightness  
+- Control servo position (with specific timing)  
+- Represent “analog-like” levels using digital signals  
 
 ---
 
-## 2. PWM por comparación (counter + compare)
+## 1. What is PWM?
 
-Implementación típica en FPGA:
+PWM consists of:
 
-1. Se utiliza un **contador** que recorre un rango (por ejemplo, 0 a 255).  
-2. Se define un valor de **referencia** (`duty`).  
-3. La salida PWM se coloca en 1 cuando `counter < duty` y en 0 en caso contrario.
+- Generating a digital signal (0 or 1)  
+- Keeping a **fixed period** (T)  
+- Varying the **duty cycle**: the percentage of time the signal stays at 1 within each period  
 
-Ejemplo básico:
+Examples:
 
-```sv
-module pwm_basic (
-    input  logic       clk,
-    input  logic       rst_n,
-    input  logic [7:0] duty,   // 0–255
-    output logic       pwm_out
-);
+- 0% → always 0  
+- 25% → 25% high, 75% low  
+- 50% → equal high/low  
+- 100% → always high  
 
-    logic [7:0] counter;
+Although digital, the **average energy** produces analog effects:
 
-    // Contador libre
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            counter <= 8'd0;
-        else
-            counter <= counter + 1;
-    end
-
-    // Comparación para generar PWM
-    always_comb begin
-        pwm_out = (counter < duty);
-    end
-
-endmodule
-```
-
-En este esquema:
-
-- Si `duty = 0`, `pwm_out` nunca está en 1.  
-- Si `duty = 255`, `pwm_out` está prácticamente siempre en 1.  
-- Valores intermedios producen un duty proporcional.
+- LEDs appear brighter at higher duty  
+- Servos interpret pulse width as position  
 
 ---
 
-## 3. Frecuencia del PWM
+## 2. Counter + compare PWM
 
-El **periodo del PWM** depende de:
+Typical implementation:
 
-- La frecuencia del reloj `clk`.  
-- El tamaño del contador (número de bits).  
+1. A counter runs from 0 to max (e.g., 0–255)  
+2. A **duty** value is set  
+3. Output is high when `counter < duty`, otherwise low  
 
-Si:
+This creates a PWM proportional to `duty`.
+
+---
+
+## 3. PWM frequency
+
+PWM frequency depends on:
+
+- Clock frequency  
+- Counter size  
+
+Example:
 
 - `clk = 27 MHz`  
-- Contador de 8 bits (0–255)
+- 8-bit counter  
 
-entonces, de forma aproximada:
+PWM freq ≈ 27 MHz / 256 ≈ 105 kHz
 
-- Frecuencia PWM ≈ `27 MHz / 256 ≈ 105 kHz`.
+For LEDs:
 
-En la práctica, para LEDs:
-
-- Frecuencias de algunos kHz suelen ser suficientes (evitan parpadeo visible).  
-- Puede combinarse un divisor previo de reloj con el PWM para ajustar mejor la frecuencia.
+- Several kHz is enough to avoid visible flicker  
 
 ---
 
-## 4. Uso de PWM en este repositorio
+## 4. PWM usage in this repository
 
-Casos típicos:
+Typical applications:
 
-- **LED dimmer**:  
-  El valor de `duty` se obtiene de un botón, un encoder o la lectura de un ADC (potenciómetro).
-- **Servo** (combinado con temporización de 20 ms):  
-  El duty controla el ancho de pulso dentro de cada periodo de 20 ms.  
-  El control de servos requiere un PWM con restricciones específicas de tiempo, no solo un duty genérico.
-- **Indicadores de nivel**:  
-  Variación de brillo o patrones de parpadeo según la intensidad medida.
+- **LED dimming** (duty from buttons, encoder, or ADC)  
+- **Servo control** (requires 20 ms frame + specific pulse width)  
+- **Level indicators** (brightness reflects measurement)  
 
-Archivos relacionados:
+Related files:
 
 - `1_2_5_Registers_and_Clock.md`  
 - `1_2_6_Timing_and_Dividers.md`  
-- `1_2_11_ADC_Basics.md` (cuando el duty proviene de una lectura analógica).  
+- `1_2_11_ADC_Basics.md`  
 
-Estos conceptos se combinan en actividades y labs donde se controlan LEDs, servos u otros actuadores a partir de señales digitales generadas en la FPGA.
+These concepts are used throughout activities and labs involving LEDs, servos, and other actuators.

@@ -1,63 +1,60 @@
-# 3.x Priority Encoder 3→2 (codificador con prioridad)
+# 3.x Priority Encoder 3→2 (priority-based encoder)
 
-Este ejemplo muestra un **priority encoder 3→2** implementado de varias formas en SystemVerilog
-y permite observar cómo, cuando hay varias entradas activas, solo se codifica el índice
-de la que tiene **mayor prioridad**.
+This example shows a **3→2 priority encoder** implemented in several ways in SystemVerilog
+and allows you to observe how, when multiple inputs are active, only the index of the one with the **highest priority** is encoded.
 
-En este diseño:
+In this design:
 
-- Hay **3 entradas** `in[2:0]` que vienen de `key[2:0]`.
-- La salida son **2 bits** que codifican el índice de la entrada activa seleccionada.
-- La prioridad está definida como:
+- There are **3 inputs** `in[2:0]` coming from `key[2:0]`.
+- The output is **2 bits** encoding the index of the selected active input.
+- The priority is defined as:
 
-  - Bit 0 → prioridad más alta  
-  - Luego bit 1  
-  - Luego bit 2  
+  - Bit 0 → highest priority  
+  - Then bit 1  
+  - Then bit 2  
 
-Si más de una entrada está en `1` al mismo tiempo, gana la de **mayor prioridad**.
+If more than one input is `1` at the same time, the one with **highest priority** wins.
 
 ---
 
-## Idea general
+## General idea
 
-- Entradas:
-  - `in[0]` ← `key[0]`  (mayor prioridad)
+- Inputs:
+  - `in[0]` ← `key[0]`  (highest priority)
   - `in[1]` ← `key[1]`
-  - `in[2]` ← `key[2]`  (menor prioridad)
+  - `in[2]` ← `key[2]`  (lowest priority)
 
-- Salidas codificadas (2 bits):
+- Encoded outputs (2 bits):
 
-  | Entradas activas (prioridad) | Salida (código) |
-  |------------------------------|------------------|
-  | `in[0] = 1`                  | `00`             |
-  | `in[0] = 0`, `in[1] = 1`     | `01`             |
-  | `in[0] = 0`, `in[1] = 0`, `in[2] = 1` | `10`    |
-  | Ninguna entrada activa       | `00` (por convención) |
+  | Active inputs (priority) | Output (code) |
+  |--------------------------|----------------|
+  | `in[0] = 1`              | `00`           |
+  | `in[0] = 0`, `in[1] = 1` | `01`           |
+  | `in[0] = 0`, `in[1] = 0`, `in[2] = 1` | `10` |
+  | No active inputs         | `00` (by convention) |
 
-- Se implementan 4 versiones internas del mismo priority encoder:
+- Four internal implementations of the priority encoder are included:
 
-  1. Cadena de `if / else if`.
-  2. `casez` con patrones y don’t care.
-  3. Separación en:
-     - Árbitro de prioridad (genera un vector one-hot).
-     - Encoder “normal” sin prioridad sobre ese vector.
-  4. For-loop que recorre el vector de entrada.
+  1. Chain of `if / else if`.
+  2. `casez` with patterns and don’t cares.
+  3. Split into:
+     - Priority arbiter (generates a one-hot vector).
+     - “Normal” encoder without priority over that vector.
+  4. For-loop that scans the input vector.
 
-Todas las implementaciones reciben el mismo vector `in` y generan un código de 2 bits.
+All implementations receive the same vector `in` and produce a 2-bit code.
 
 ---
 
-## Señales y mapeo a LEDs
+## Signals and LED mapping
 
-En el código se usa:
+In the code:
 
-- Entradas:
+- Inputs:
   - `key[2:0]` → `in[2:0]`
 
-- Salidas hacia LEDs:
+- Outputs to LEDs:
 
-  El vector final se arma como:
+  The final vector is assembled as:
 
-  ```systemverilog
   assign led = { enc0, enc1, enc2, enc3 };
-   ```

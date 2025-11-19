@@ -1,13 +1,11 @@
-# 2.1 Boards · Placas base
+# 2.1 Boards · Base Boards
 
-La carpeta `2_1_Boards` reúne la información específica de las **placas FPGA** utilizadas en este repositorio.  
+The `2_1_Boards` folder gathers the specific information of the **FPGA boards** used in this repository.
 
-Su función principal es:
+Its main function is to:
 
-- Documentar las características básicas de cada placa.
-- Explicar cómo **programar** la placa y qué cuidados eléctricos tener.
-- Servir como referencia para Examples, Activities, Labs e Implementation.
+- Document the basic characteristics of each board.
+- Explain how to **program** the board and what electrical precautions to take.
+- Serve as a reference for Examples, Activities, Labs, and Implementation.
 
-Actualmente el repositorio se centra en la **Tang Nano 9K**, pero puede que un futuro se añadan más placas en el futuro.
-
----
+Currently, the repository focuses on the **Tang Nano 9K**, but more boards may be added in the future.

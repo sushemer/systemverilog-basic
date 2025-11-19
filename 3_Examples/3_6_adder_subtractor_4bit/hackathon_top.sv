@@ -1,33 +1,33 @@
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// 3.6: Adder/Subtractor de 3 bits (A ± B) con dos implementaciones.
+// 3.6: 3-bit Adder/Subtractor (A ± B) with two implementations.
 //
-// Idea general:
-// - Entradas (desde los botones KEY[7:0]):
+// General idea:
+// - Inputs (from buttons KEY[7:0]):
 //     A[2:0] = key[2:0]
 //     B[2:0] = key[5:3]
 //     mode   = key[7]   (0 = A + B, 1 = A - B)
-// - Salidas (dos implementaciones):
-//     Implementación 0 (alto nivel usando + y -)
-//     Implementación 1 (único sumador usando complemento a dos)
+// - Outputs (two implementations):
+//     Implementation 0 (high-level using + and -)
+//     Implementation 1 (single adder using two’s complement)
 //
-// Mapeo a LEDs:
-//   Implementación 0 (alto nivel):
-//     led[0] = s0[0]  (bit 0 del resultado)
+// LED mapping:
+//   Implementation 0 (high-level):
+//     led[0] = s0[0]  (result bit 0)
 //     led[1] = s0[1]
 //     led[2] = s0[2]
 //     led[3] = c0     (carry/borrow flag)
 //
-//   Implementación 1 (2’s complement):
+//   Implementation 1 (2’s complement):
 //     led[4] = s1[0]
 //     led[5] = s1[1]
 //     led[6] = s1[2]
 //     led[7] = c1
 //
-// Donde:
-//   - sX[2:0] = resultado de 3 bits (A ± B).
-//   - cX      = bit extra (carry out / no-borrow) de 4 bits de resultado.
+// Where:
+//   - sX[2:0] = 3-bit result (A ± B)
+//   - cX      = extra bit (carry out / no-borrow) from the 4-bit result
 //
-// Nota: al ser de 3 bits, A y B van de 0 a 7 (unsigned).
+// Note: because A and B are 3-bit values, their range is 0–7 (unsigned).
 
 module hackathon_top
 (
@@ -38,23 +38,23 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display 7 segmentos (no usado aquí)
+    // 7-segment display (not used here)
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no usada aquí)
+    // LCD interface (not used here)
     input  logic [8:0] x,
     input  logic [8:0] y,
     output logic [4:0] red,
     output logic [5:0] green,
     output logic [4:0] blue,
 
-    // GPIO (no usados aquí)
+    // GPIO (not used here)
     inout  logic [3:0] gpio
 );
 
     // ------------------------------------------------------------------------
-    // Apagar periféricos que no usamos
+    // Turn off unused peripherals
     // ------------------------------------------------------------------------
     assign abcdefgh = 8'h00;
     assign digit    = 8'h00;
@@ -63,17 +63,17 @@ module hackathon_top
     assign green = 6'h00;
     assign blue  = 5'h00;
 
-    assign gpio  = 4'hz;   // Alta impedancia en GPIO
+    assign gpio  = 4'hz;   // High impedance on GPIO
 
     // ------------------------------------------------------------------------
-    // Entradas del adder/subtractor
+    // Adder/Subtractor inputs
     // ------------------------------------------------------------------------
     //
     // A = key[2:0]
     // B = key[5:3]
-    // mode = key[7]   (0 = suma, 1 = resta A - B)
+    // mode = key[7]   (0 = addition, 1 = subtraction A - B)
     //
-    // key[6] no se usa en este ejemplo.
+    // key[6] is not used in this example.
 
     logic [2:0] A, B;
     logic       mode;
@@ -83,24 +83,21 @@ module hackathon_top
     assign mode = key[7];
 
     // ------------------------------------------------------------------------
-    // Implementación 0: descripción de alto nivel (usa + y -)
+    // Implementation 0: high-level description (using + and -)
     // ------------------------------------------------------------------------
     //
-    // Cuando mode = 0: res0 = A + B
-    // Cuando mode = 1: res0 = A - B
+    // When mode = 0: res0 = A + B
+    // When mode = 1: res0 = A - B
     //
-    // Se trabaja con 4 bits para tener el bit extra de carry/borrow.
+    // We work with 4 bits to have the extra carry/borrow bit.
 
-    logic [3:0] res0;   // [3] = carry/borrow, [2:0] = resultado
+    logic [3:0] res0;
 
     always_comb begin
         if (mode == 1'b0) begin
-            // Suma sin signo
             res0 = {1'b0, A} + {1'b0, B};
         end
         else begin
-            // Resta sin signo: A - B
-            // (La herramienta lo implementará con lógica combinacional adecuada)
             res0 = {1'b0, A} - {1'b0, B};
         end
     end
@@ -112,20 +109,20 @@ module hackathon_top
     assign c0 = res0[3];
 
     // ------------------------------------------------------------------------
-    // Implementación 1: adder-subtractor con complemento a dos
+    // Implementation 1: adder-subtractor with two’s complement
     // ------------------------------------------------------------------------
     //
-    // Fórmula clásica de adder-subtractor:
+    // Classic adder-subtractor formula:
     //
     //   res1 = A + (B XOR M) + M
     //
-    // donde M = mode:
-    //   - M = 0 → res1 = A + B
-    //   - M = 1 → res1 = A + (~B) + 1 = A - B
+    // where M = mode:
+    //   M = 0 → res1 = A + B
+    //   M = 1 → res1 = A + (~B) + 1 = A - B
     //
-    // De nuevo usamos 4 bits para guardar el bit extra.
+    // Again, use 4 bits to store the extra bit.
 
-    wire  [2:0] B_xor = B ^ {3{mode}};  // Si mode=1, invierte B bit a bit
+    wire  [2:0] B_xor = B ^ {3{mode}};
     logic [3:0] res1;
 
     assign res1 = {1'b0, A} + {1'b0, B_xor} + mode;
@@ -137,20 +134,11 @@ module hackathon_top
     assign c1 = res1[3];
 
     // ------------------------------------------------------------------------
-    // Salidas a LEDs
+    // LED outputs
     // ------------------------------------------------------------------------
     //
-    // Implementación 0 (alto nivel) en LEDs bajos:
-    //   led[0] = s0[0]
-    //   led[1] = s0[1]
-    //   led[2] = s0[2]
-    //   led[3] = c0
-    //
-    // Implementación 1 (complemento a dos) en LEDs altos:
-    //   led[4] = s1[0]
-    //   led[5] = s1[1]
-    //   led[6] = s1[2]
-    //   led[7] = c1
+    // Implementation 0 → LEDs 0–3
+    // Implementation 1 → LEDs 4–7
 
     always_comb begin
         led[0] = s0[0];

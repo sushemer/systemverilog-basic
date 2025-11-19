@@ -1,138 +1,84 @@
 # Seven-segment display basics
 
-Este documento explica los conceptos básicos de los **displays de 7 segmentos** y cómo se usan en los ejemplos y labs de este repositorio.
+This document explains the fundamentals of **7-segment displays** and how they are used in examples and labs in this repository.
 
 ---
 
-## Estructura de un display de 7 segmentos
+## Structure of a 7-segment display
 
-Un dígito de 7 segmentos está compuesto por:
+A 7-segment digit contains:
 
-- 7 LEDs organizados en forma de número “8”.
-- Opcionalmente un **punto decimal** (`dp`).
+- 7 LEDs arranged like an “8”
+- Optional **decimal point** (`dp`)
 
-Cada segmento se suele nombrar:
+Segments are named:
 
-- `a, b, c, d, e, f, g`  
-  (y el punto decimal `dp`).
+`a, b, c, d, e, f, g` (and optionally `dp`)
 
-Encendiendo y apagando combinaciones de estos segmentos se pueden formar:
+By turning segments ON/OFF you can display:
 
-- Dígitos del 0 al 9.
-- Algunas letras (A, b, C, d, E, F, etc.).
+- Digits 0–9  
+- Some letters (A, b, C, d, etc.)
 
 ---
 
 ## Common anode vs common cathode
 
-Hay dos tipos principales:
+### Common anode
+- All anodes tied together  
+- To turn ON:  
+  - Common → VCC  
+  - Segment line → LOW (0)
 
-- **Common anode**:
-  - Todos los ánodos de los LEDs se conectan a un punto común.
-  - Para encender un segmento:
-    - Se conecta el **común** a VCC.
-    - Se lleva la línea del segmento a nivel **bajo** (0).
+### Common cathode
+- All cathodes tied together  
+- To turn ON:  
+  - Common → GND  
+  - Segment line → HIGH (1)
 
-- **Common cathode**:
-  - Todos los cátodos se conectan a un punto común (generalmente GND).
-  - Para encender un segmento:
-    - Se lleva el común a GND.
-    - Se lleva la línea del segmento a nivel **alto** (1).
-
-Es importante saber qué tipo de display se está usando, porque:
-
-- Afecta la **lógica de encendido** (inversión o no).
-- Afecta el wiring y las resistencias.
-
-En este repositorio, la lógica concreta (0/1 para encender) se documenta en:
-
-- `2_devices/` → sección de 7 segmentos.
-- Ejemplo `seven_segment_basics` / `seven_segment_letter`, etc.
+Your logic depends on which type is used. Documentation for this repo specifies the exact ON/OFF polarity.
 
 ---
 
-## Mapeo de segmentos
+## Segment mapping
 
-Para mostrar un número o letra, se define un **mapa de segmentos**:
+To display a character, a **segment map** is defined.
 
-- Por ejemplo, para el número “0” en common cathode:
-  - `a, b, c, d, e, f` = encendidos.
-  - `g` = apagado.
+Example for “0” (common-cathode):
 
-En SystemVerilog se puede representar con un bus:
+Segments a, b, c, d, e, f ON, g OFF.
 
-- `seg[6:0]` → `{a, b, c, d, e, f, g}`  
-  (el orden exacto se documenta en el repositorio).
+Often represented as `seg[6:0] = {a,b,c,d,e,f,g}`.
 
-Ejemplo de decodificador simple (idealizado):
-
-```sv
-module seven_seg_decoder (
-    input  logic [3:0] hex,    // valor 0–15
-    output logic [6:0] seg     // segmentos a-g
-);
-    always_comb begin
-        unique case (hex)
-            4'h0: seg = 7'b1111110;
-            4'h1: seg = 7'b0110000;
-            4'h2: seg = 7'b1101101;
-            4'h3: seg = 7'b1111001;
-            4'h4: seg = 7'b0110011;
-            4'h5: seg = 7'b1011011;
-            4'h6: seg = 7'b1011111;
-            4'h7: seg = 7'b1110000;
-            4'h8: seg = 7'b1111111;
-            4'h9: seg = 7'b1111011;
-            default: seg = 7'b0000000;
-        endcase
-    end
-endmodule
-```
-
+Hex-to-segment decoders output the correct pattern for each digit.
 
 ---
 
-## Displays de varios dígitos y multiplexado
+## Multi-digit displays and multiplexing
 
-Muchos módulos utilizan **varios dígitos** de 7 segmentos (por ejemplo, 4 u 8).  
-Para ahorrar pines, se suele usar **multiplexado**:
+Many boards use **multiple digits** (4 or 8). To save pins, multiplexing is used:
 
-- Todas las líneas de segmentos (`a`–`g`, `dp`) se comparten entre los dígitos.
-- Cada dígito tiene una línea de **habilitación** (`digit_enable[n:0]`).
-- El sistema:
-  - Enciende el primer dígito (`digit_enable[0]`) y pone los segmentos del valor deseado.
-  - Luego, muy rápido, apaga ese dígito, enciende el siguiente (`digit_enable[1]`), y actualiza los segmentos.
-  - Repite el proceso para todos los dígitos en bucle.
+- Segment lines are shared  
+- Each digit has an enable line  
+- The controller:
+  - Enables digit 0 + sets segment pattern  
+  - Quickly switches to digit 1 + updates pattern  
+  - Repeats fast enough → appears all digits are lit continuously
 
-Si la frecuencia de multiplexado es suficientemente alta:
-
-- El ojo humano percibe que todos los dígitos están encendidos **al mismo tiempo**.
-- No se nota parpadeo.
-
-En este repositorio, el manejo de multiplexado está encapsulado en módulos como:
-
-- `seven_segment_display.sv`
-- Drivers internos usados por el TM1638.
+Modules like `seven_segment_display.sv` manage multiplexing.
 
 ---
 
-## Relación con otros archivos y labs
+## Related theory & labs
 
-Conceptos relacionados:
+Concepts linked with:
 
-- `1_2_5_Registers_and_Clock.md`  
-  → reloj y registros que controlan el multiplexado.
-- `1_2_6_Timing_and_Dividers.md`  
-  → divisores de frecuencia usados para refrescar los dígitos sin flicker.
-- `1_2_10_PWM_Basics.md`  
-  → en algunos casos, se combina PWM con 7 segmentos para control de brillo.
+- Timing & dividers (`1_2_6`) → avoid flicker  
+- Registers & clock (`1_2_5`)  
+- PWM (`1_2_10`) → brightness control in some cases  
 
-En las actividades y labs:
+Used in activities/labs:
 
-- Se usan displays de 7 segmentos “sueltos” o integrados en módulos como el **TM1638**.
-- Se practican:
-  - Decodificación de valores binarios/hex a segmentos.
-  - Multiplexado de varios dígitos.
-  - Representación de contadores, temporizadores o estados en la pantalla.
-
-Este archivo proporciona la base conceptual para entender esos ejercicios.
+- Basic 7-segment demos  
+- TM1638 multi-digit module  
+- Counters, timers, and sensor readings  

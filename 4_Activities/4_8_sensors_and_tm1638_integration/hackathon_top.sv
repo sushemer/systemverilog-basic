@@ -1,21 +1,24 @@
+# 4.8 – Sensors + TM1638 Integration (Code)
+
+```systemverilog
 // Board configuration: tang_nano_9k_lcd_480_272_tm1638_hackathon
-// Actividad 4.8 – Integración de sensores + TM1638
+// Activity 4.8 – Sensor Integration + TM1638
 //
-// Idea general:
-//   - Leer al menos UN sensor físico (ultrasonido y/o encoder rotatorio KY-040).
-//   - Mostrar el valor numérico en el módulo TM1638 (display de 7 segmentos).
-//   - Representar el valor como una "barra" en los 8 LEDs del TM1638.
-//   - Usar teclas para cambiar de modo / sensor.
+// General idea:
+//   - Read at least ONE physical sensor (ultrasonic and/or rotary encoder KY-040).
+//   - Display the numeric value on the TM1638 module (7-segment display).
+//   - Represent the value as a "bar" on the 8 LEDs of the TM1638.
+//   - Use keys to change mode / sensor.
 //
-// NOTA IMPORTANTE:
-//   Este archivo es PLANTILLA de actividad, NO es la solución final.
-//   Hay secciones marcadas como TODO para que tú las completes.
+// IMPORTANT NOTE:
+//   This file is an ACTIVITY TEMPLATE, NOT the final solution.
+//   There are sections marked as TODO for you to complete.
 //
-//   Requiere módulos ya usados en ejemplos anteriores:
+//   Requires modules used in previous examples:
 //     - ultrasonic_distance_sensor        (HC-SR04)
 //     - sync_and_debounce, sync_and_debounce_one
 //     - rotary_encoder                    (KY-040)
-//     - seven_segment_display             (driver 7 segmentos multipunto)
+//     - seven_segment_display             (multi-digit 7-segment driver)
 
 module hackathon_top
 (
@@ -26,12 +29,12 @@ module hackathon_top
     input  logic [7:0] key,
     output logic [7:0] led,
 
-    // Display de 7 segmentos (TM1638)
+    // 7-segment display (TM1638)
 
     output logic [7:0] abcdefgh,
     output logic [7:0] digit,
 
-    // Interfaz LCD (no es el foco de esta actividad)
+    // LCD interface (not the focus of this activity)
 
     input  logic [8:0] x,
     input  logic [8:0] y,
@@ -40,34 +43,34 @@ module hackathon_top
     output logic [5:0] green,
     output logic [4:0] blue,
 
-    // GPIO para sensores externos (ultrasonido + encoder rotatorio)
+    // GPIO for external sensors (ultrasonic + rotary encoder)
 
     inout  logic [3:0] gpio
 );
 
     // -------------------------------------------------------------------------
-    // 0) Desactivar lo que no usamos (LCD)
+    // 0) Disable unused peripherals (LCD)
     // -------------------------------------------------------------------------
 
     assign red   = '0;
     assign green = '0;
     assign blue  = '0;
 
-    // Podrías reutilizar slow_clock para efectos de parpadeo si quieres.
+    // You could reuse slow_clock for blinking effects if desired.
 
     // -------------------------------------------------------------------------
-    // 1) Sensor ultrasónico HC-SR04 (opcional pero recomendado)
+    // 1) Ultrasonic sensor HC-SR04 (optional but recommended)
     // -------------------------------------------------------------------------
     //
-    // Asignación sugerida en pines:
-    //   gpio[0] -> TRIG (salida hacia el sensor)
-    //   gpio[1] -> ECHO (entrada desde el sensor)
+    // Suggested pin assignment:
+    //   gpio[0] -> TRIG (output to sensor)
+    //   gpio[1] -> ECHO (input from sensor)
     //
-    // El módulo ultrasonic_distance_sensor entrega "relative_distance":
-    // un valor proporcional al tiempo de eco (NO está en cm directamente).
+    // The ultrasonic_distance_sensor module outputs "relative_distance":
+    // a value proportional to the echo time (NOT in cm directly).
     //
-    // Si no tienes el módulo o el sensor, puedes comentar este bloque
-    // y usar solo el encoder rotatorio.
+    // If you do not have this module or sensor, comment this block
+    // and use only the rotary encoder.
 
     wire [15:0] distance_rel;
 
@@ -86,14 +89,14 @@ module hackathon_top
     );
 
     // -------------------------------------------------------------------------
-    // 2) Encoder rotatorio KY-040 en gpio[3:2]
+    // 2) Rotary encoder KY-040 on gpio[3:2]
     // -------------------------------------------------------------------------
     //
-    // Ky-040 pinout típico:
-    //   CLK -> canal A
-    //   DT  -> canal B
+    // Typical KY-040 pinout:
+    //   CLK -> channel A
+    //   DT  -> channel B
     //
-    // Aquí asumimos:
+    // Here we assume:
     //   gpio[3] -> A
     //   gpio[2] -> B
 
@@ -103,11 +106,11 @@ module hackathon_top
     wire enc_a_deb;
     wire enc_b_deb;
 
-    // Sincronizar + eliminar rebotes de los dos canales
+    // Synchronize + debounce both channels
     sync_and_debounce #(.w(2)) i_sync_and_debounce
     (
-        .clk    ( clock                ),
-        .reset  ( reset                ),
+        .clk    ( clock                     ),
+        .reset  ( reset                     ),
         .sw_in  ( { enc_b_raw, enc_a_raw } ),
         .sw_out ( { enc_b_deb, enc_a_deb } )
     );
@@ -124,70 +127,70 @@ module hackathon_top
     );
 
     // -------------------------------------------------------------------------
-    // 3) Selección del valor a mostrar (sensor_value)
+    // 3) Selecting the value to display (sensor_value)
     // -------------------------------------------------------------------------
     //
-    // Queremos un solo bus "sensor_value" que será:
-    //   - la distancia relativa del HC-SR04,
-    //   - o el valor del encoder rotatorio,
-    //   - o alguna combinación, según teclas.
+    // We want a single bus "sensor_value" that will be:
+    //   - the relative distance from the HC-SR04,
+    //   - or the rotary encoder value,
+    //   - or some combination, depending on keys.
     //
-    // Sugerencia (para la solución final):
-    //   key[1:0] como modo:
-    //     00 -> mostrar distancia_rel
-    //     01 -> mostrar encoder_value
-    //     10 -> mostrar distance_rel - encoder_value (por ejemplo)
-    //     11 -> reservado / 0
+    // Suggestion (for the final solution):
+    //   key[1:0] as mode:
+    //     00 -> display distance_rel
+    //     01 -> display encoder_value
+    //     10 -> display distance_rel - encoder_value (example)
+    //     11 -> reserved / 0
     //
-    // Por ahora, dejamos un comportamiento simple para que compile:
+    // For now, we leave simple behavior so it compiles:
     //   -> sensor_value = distance_rel
     //
-    // TODO: Reescribe este bloque para implementar los modos propuestos
-    //       u otros que tú definas en la actividad.
+    // TODO: Rewrite this block to implement the proposed modes
+    //       or others you define in the activity.
 
     logic [15:0] sensor_value;
 
     always_comb
     begin
-        sensor_value = distance_rel;  // TODO: multiplexar según key[1:0]
+        sensor_value = distance_rel;  // TODO: multiplex according to key[1:0]
     end
 
     // -------------------------------------------------------------------------
-    // 4) Mapeo de sensor_value a una barra en LEDs (TM1638)
+    // 4) Mapping sensor_value to a bar on the LEDs (TM1638)
     // -------------------------------------------------------------------------
     //
-    // Idea general:
-    //   - Usar los LEDs como "barra" que crece con el valor del sensor.
-    //   - Por ejemplo, comparar sensor_value contra 8 umbrales
-    //     y encender led[0], led[1], ... según el nivel.
+    // General idea:
+    //   - Use LEDs as a "bar" that grows with the sensor value.
+    //   - For example, compare sensor_value against 8 thresholds
+    //     and turn on led[0], led[1], ... according to the level.
     //
-    // En esta plantilla usamos algo muy simple (bits altos),
-    // solo como placeholder para que compile.
+    // In this template we use something very simple (upper bits)
+    // just as a placeholder so it compiles.
     //
-    // TODO: sustituir esto por un bar graph "bonito" usando niveles.
+    // TODO: replace this with a nicer level bar graph.
 
     logic [7:0] led_bar;
 
     always_comb
     begin
-        led_bar = sensor_value[15:8];  // TODO: reemplazar por lógica de barra por niveles
+        led_bar = sensor_value[15:8];  // TODO: replace with level-bar logic
     end
 
     assign led = led_bar;
 
     // -------------------------------------------------------------------------
-    // 5) Mostrar el valor numérico en el TM1638 (7 segmentos)
+    // 5) Displaying the numeric value on the TM1638 (7-segments)
     // -------------------------------------------------------------------------
     //
-    // Reutilizamos el driver seven_segment_display usado en ejemplos:
-    //   - 8 dígitos (w_digit = 8).
-    //   - number: 32 bits (hex) → multiplexado en 8 dígitos.
+    // We reuse the seven_segment_display driver:
+    //   - 8 digits (w_digit = 8).
+    //   - number: 32 bits (hex) -> multiplexed on 8 digits.
     //
-    // Aquí copiamos sensor_value (16 bits) a un bus de 32 bits.
-    // En la solución puedes hacer:
-    //   - mostrar solo 4 dígitos (ajustando w_digit),
-    //   - o convertir a decimal antes de mostrar,
-    //   - o usar dots como indicadores de estado.
+    // Here we copy sensor_value (16 bits) into a 32-bit bus.
+    // In the solution you may:
+    //   - show only 4 digits (adjust w_digit),
+    //   - convert to decimal before displaying,
+    //   - use dots as status indicators.
 
     localparam int W_DISPLAY_NUMBER = 32;
 
@@ -195,9 +198,8 @@ module hackathon_top
 
     always_comb
     begin
-        number_7seg          = '0;
-        number_7seg[15:0]    = sensor_value;  // 16 bits menos significativos
-        // El resto queda en 0
+        number_7seg       = '0;
+        number_7seg[15:0] = sensor_value;  // lower 16 bits
     end
 
     seven_segment_display #(.w_digit(8)) i_7segment
@@ -205,7 +207,7 @@ module hackathon_top
         .clk      ( clock        ),
         .rst      ( reset        ),
         .number   ( number_7seg  ),
-        .dots     ( 8'b0000_0000 ), // TODO opcional: usar bits como indicadores
+        .dots     ( 8'b0000_0000 ), // TODO optional: use bits as indicators
         .abcdefgh ( abcdefgh     ),
         .digit    ( digit        )
     );

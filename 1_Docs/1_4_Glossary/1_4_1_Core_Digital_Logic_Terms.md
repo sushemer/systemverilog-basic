@@ -1,170 +1,168 @@
 # 1.4.1 Core digital logic terms
 
-Términos básicos de lógica digital y HDL que aparecen con frecuencia en la teoría, ejemplos y labs.
+Basic digital logic and HDL terms that appear frequently in theory, examples, and labs.
 
 ---
 
 ### HDL (Hardware Description Language)
 
-Lenguaje para describir hardware digital (módulos, registros, FSM, etc.) en lugar de escribir instrucciones secuenciales como en un programa de software.  
-En este repositorio se usa principalmente Verilog/SystemVerilog.
+Language to describe digital hardware (modules, registers, FSM, etc.) instead of writing sequential instructions like in software.  
+This repository mainly uses Verilog/SystemVerilog.
 
 ---
 
 ### RTL (Register Transfer Level)
 
-Nivel de descripción donde el diseño se expresa en términos de registros, operaciones sobre datos y transferencias entre registros controladas por reloj.  
-La mayoría de los ejemplos y labs de este repositorio están en estilo RTL.
+Description level where the design is expressed in terms of registers, data operations, and clock-controlled transfers.  
+Most examples and labs in this repository follow RTL style.
 
 ---
 
 ### Module
 
-Unidad básica de diseño en Verilog/SystemVerilog.  
-Define entradas, salidas y la lógica interna que conecta señales y submódulos.  
-En este repositorio, cada ejemplo o bloque suele estar encapsulado en uno o varios `module`.
+Basic unit of design in Verilog/SystemVerilog.  
+Defines inputs, outputs, and internal logic connecting signals and submodules.  
+In this repository, each example or block is usually encapsulated in one or more `module`.
 
 ---
 
 ### Port
 
-Conexión externa de un módulo: `input`, `output` o `inout`.  
-Permite que un módulo reciba señales de otros módulos o del mundo físico (botones, LEDs, etc.).  
-La organización clara de puertos facilita la reutilización e integración de bloques.
+External connection of a module: `input`, `output`, or `inout`.  
+Allows a module to receive signals from other modules or from physical elements (buttons, LEDs, etc.).  
+Clear port organization improves reuse and integration.
 
 ---
 
 ### Signal / net
 
-Nombre genérico para una conexión interna o externa en el diseño (en este repositorio se usan típicamente tipos `logic`).  
-Puede representar un solo bit o un vector de múltiples bits (por ejemplo, `led[7:0]`).
+Generic name for an internal or external connection in the design (typically declared as `logic`).  
+Can represent a single bit or a vector of multiple bits (e.g., `led[7:0]`).
 
 ---
 
 ### Combinational logic
 
-Lógica en la que las salidas dependen solo de las **entradas actuales**, sin memoria interna explícita.  
-Se describe con `assign` o `always_comb`.  
-Ejemplos: compuertas, comparadores, decodificadores, multiplexores.
+Logic where outputs depend only on **current inputs**, with no explicit internal memory.  
+Described using `assign` or `always_comb`.  
+Examples: gates, comparators, decoders, multiplexers.
 
 ---
 
 ### Sequential logic
 
-Lógica en la que las salidas dependen de las entradas actuales **y del estado previo**, almacenado en registros.  
-Se describe con `always_ff @(posedge clk ...)`.  
-Ejemplos: contadores, registros de desplazamiento, FSM.
+Logic where outputs depend on current inputs **and previous state**, stored in registers.  
+Described with `always_ff @(posedge clk ...)`.  
+Examples: counters, shift registers, FSMs.
 
 ---
 
 ### Register
 
-Elemento de memoria que almacena un valor digital entre flancos de reloj.  
-En SystemVerilog se modela con señales actualizadas en bloques `always_ff`.  
-Se usa para guardar estados, contadores, datos intermedios, etc.
+Memory element that stores a digital value between clock edges.  
+Modeled with signals updated in `always_ff` blocks.  
+Used to store states, counters, or intermediate data.
 
 ---
 
 ### Flip-flop (FF)
 
-Bloque básico de memoria secuencial que almacena un bit y se actualiza típicamente en el flanco de reloj.  
-Un registro de N bits se puede considerar como un conjunto de N flip-flops.
+Basic sequential memory block storing one bit, typically updated on a clock edge.  
+A register of N bits may be viewed as N flip-flops.
 
 ---
 
 ### Clock (clk)
 
-Señal periódica que marca el ritmo del sistema digital.  
-En cada flanco activo del reloj se actualizan registros, contadores y FSM.  
-En la Tang Nano 9K se conecta a un pin dedicado y se distribuye internamente.
+Periodic signal that sets the timing of the digital system.  
+Registers, counters, and FSMs update on the active clock edge.  
+On the Tang Nano 9K, it is connected to a dedicated pin and distributed internally.
 
 ---
 
 ### Reset (rst / rst_n)
 
-Señal usada para llevar el diseño a un estado inicial conocido.  
-Puede ser:
-- Activo alto (`rst = 1` → reset).
-- Activo bajo (`rst_n = 0` → reset, muy usado en este repo).  
+Signal used to bring the design to a known initial state.  
+It may be:
+- Active high (`rst = 1`)  
+- Active low (`rst_n = 0`, common in this repo)
 
-Se maneja dentro de bloques secuenciales (`always_ff`) para inicializar registros y FSM.
+Handled inside sequential blocks (`always_ff`) to initialize registers and FSMs.
 
 ---
 
-### Edge (rising / falling edge)
+### Edge (rising / falling)
 
-Cambio puntual en una señal:
+Transition in a signal:
 
-- **Rising edge**: transición de 0 → 1.
-- **Falling edge**: transición de 1 → 0.
+- **Rising edge**: 0 → 1  
+- **Falling edge**: 1 → 0  
 
-Los bloques secuenciales suelen dispararse en el flanco ascendente del reloj (`posedge clk`).  
-En entrada de usuario (botones, ECHO de HC-SR04) se pueden detectar flancos para generar pulsos de un ciclo.
+Sequential logic typically triggers on rising clock edges (`posedge clk`).  
+Used also to detect button presses or sensor events (ECHO from HC-SR04).
 
 ---
 
 ### Counter
 
-Circuito secuencial que incrementa (o decrementa) su valor en cada flanco de reloj, según cierta lógica.  
-Se usa para dividir frecuencias, medir tiempos, recorrer estados, etc.  
-Aparece en ejemplos como `binary_counter` y labs de parpadeo de LED o temporización.
+Sequential circuit that increments or decrements its value on each clock edge.  
+Used for frequency division, timing, state progression, etc.  
+Appears in examples like `binary_counter` and LED blink/timing labs.
 
 ---
 
 ### Divider (clock divider)
 
-Uso de un contador para derivar una señal más lenta a partir de un reloj rápido.  
-Ejemplo: a partir de 27 MHz generar una señal de unos pocos Hz para parpadear un LED o multiplexar displays.  
-Se explica en detalle en `1_2_6_Timing_and_Dividers.md`.
+Use of a counter to derive a slower signal from a fast clock.  
+Example: from 27 MHz generate a few Hz to blink LEDs or multiplex displays.  
+Detailed in `1_2_6_Timing_and_Dividers.md`.
 
 ---
 
 ### Duty cycle
 
-Porcentaje de tiempo que una señal PWM permanece en nivel alto durante un periodo.  
-Se usa para controlar brillo de LEDs o posición de servos.  
-Aparece en los ejemplos y labs relacionados con `pwm_led_dimmer` y `servo_pwm_positions`.
+Percentage of time a PWM signal remains high during a period.  
+Used for LED brightness and servo positioning.
 
 ---
 
 ### FSM (Finite State Machine)
 
-Máquina de estados finitos.  
-Modelo donde el sistema se encuentra en un estado actual y pasa a otros estados según entradas y lógica definida.  
-Se usa para secuencias (semáforos, menús, protocolos básicos, etc.).  
-Se describe usando `typedef enum` y bloques `always_ff` + `always_comb`.
+Machine consisting of states and transitions defined by inputs and logic.  
+Used for sequences (traffic lights, menus, basic protocols, etc.).  
+Described using `typedef enum` + `always_ff` + `always_comb`.
 
 ---
 
 ### State
 
-Uno de los posibles “modos” o “situaciones” en las que puede estar una FSM (por ejemplo, `IDLE`, `MEASURE`, `DISPLAY`).  
-Se representa con un valor de un tipo enumerado (`enum`) y se guarda en un registro.
+One of the possible “modes” or “situations” an FSM can be in (e.g., `IDLE`, `MEASURE`, `DISPLAY`).  
+Represented with enumerated types (`enum`) and stored in a register.
 
 ---
 
 ### Debounce (debouncing)
 
-Técnica para filtrar los rebotes eléctricos de un botón o interruptor, evitando múltiples pulsos falsos.  
-En la FPGA se suele implementar con contadores y comparaciones para exigir estabilidad durante cierto tiempo.
+Technique to filter electrical bounce from buttons or switches, preventing false multiple pulses.  
+Implemented with counters and comparisons ensuring stability.
 
 ---
 
 ### Edge detection
 
-Lógica que transforma una transición (por ejemplo, 0→1) en un pulso de un ciclo de reloj.  
-Se usa para detectar “pulsaciones” o eventos únicos a partir de señales más largas, normalmente ya debounced.
+Logic converting a transition (e.g., 0→1) into a one-clock-cycle pulse.  
+Used to detect button presses or single events.
 
 ---
 
 ### Sample / sampling
 
-Proceso de tomar el valor de una señal en un instante específico (por ejemplo, cada flanco de reloj).  
-En este repositorio aparece al leer botones, señales de ECHO o datos provenientes de buses seriales.
+Reading the value of a signal at a specific moment (e.g., each clock edge).  
+Applied when reading buttons, sensor ECHO, or serial data.
 
 ---
 
 ### Latency
 
-Tiempo que transcurre entre una entrada y la respuesta observable a la salida, medido en ciclos de reloj o unidades de tiempo.  
-En diseños sencillos se suele ignorar, pero es útil entender que algunas operaciones toman varios ciclos (por ejemplo, FSM con varios estados).
+Time between an input and the observable output response, measured in clock cycles or time units.  
+Some operations require multiple cycles (e.g., multi-state FSMs).
