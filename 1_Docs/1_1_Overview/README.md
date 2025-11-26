@@ -54,7 +54,7 @@ At a high level:
   Contains short exercises focused on specific concepts.  
   Documentation helps recall theory while completing `TODO`s.
 
-- `5_labs/`  
+- `5_laboratories/`  
   Groups more complete, integrated practices.  
   Documentation serves as a quick reference for reviewing concepts during design and debugging.
 
