@@ -20,7 +20,7 @@ This document describes how to prepare the environment on **Windows** to work wi
 2. Select the installer corresponding to **Windows**.
 3. Download the `.exe` file.
 
-![alt text](mult/image.png)
+![alt text](Mult/image.png)
 
 ### 1.2 Initial configuration
 
@@ -32,7 +32,7 @@ During installation:
   - Add “Open with Code” to the context menu.
   - Associate text/code files with VSC.
 
-![alt text](mult/image-1.png)
+![alt text](Mult/image-1.png)
 
 ### 1.3 Finish installation
 
@@ -40,7 +40,7 @@ During installation:
 2. Wait for the installation to complete.
 3. Open **Visual Studio Code** to confirm it starts correctly.
 
-![alt text](mult/image-4.png)
+![alt text](Mult/image-4.png)
 
 ---
 
@@ -63,7 +63,7 @@ On Windows, the easiest way to obtain a Unix-style terminal (bash) is to install
   - Add Git to the **system PATH**
     (option “Git from the command line and also from 3rd-party software” or similar).
 
-![alt text](mult/image-10.png)
+![alt text](Mult/image-10.png)
 
 With this you will be able to:
 
@@ -117,7 +117,7 @@ cd systemverilog-basic
 
 ### 3.2 Download as ZIP (without using commands)
 
-![alt text](mult/image-5.png)
+![alt text](Mult/image-5.png)
 
 1. Open in the browser:  
    https://github.com/sushemer/systemverilog-basic
@@ -162,7 +162,7 @@ C:\ProyectosFPGA\systemverilog-basic
 3. Complete the form (you can indicate educational use).
 4. Confirm your account from the email sent by Gowin.
 
-![alt text](mult/(image-6.png))
+![alt text](Mult/(image-6.png))
 
 ### 4.2 Download the education version
 
@@ -171,7 +171,7 @@ C:\ProyectosFPGA\systemverilog-basic
 3. Download the **Education** version for Windows (`.exe` file).
 4. Save the installer in a known folder (for example, `Downloads`).
 
-![alt text](mult/image-7.png)
+![alt text](Mult/image-7.png)
 
 ### 4.3 Install Gowin IDE
 
@@ -191,4 +191,4 @@ C:\ProyectosFPGA\systemverilog-basic
 
 C:\Gowin
 
-![alt text](mult/image-9.png)
+![alt text](Mult/image-9.png)
