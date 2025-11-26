@@ -13,7 +13,7 @@ This document describes how to prepare the environment on **Linux** to work with
 2. Select the package corresponding to your Linux distribution (`.deb`, `.rpm`, etc.).
 3. Download the installer file.
 
-![alt text](mult/image.png)
+![alt text](Mult/image.png)
 
 ### 1.2 Installation
 
@@ -55,7 +55,7 @@ sudo dnf install git
 
 sudo pacman -S git
 
-![alt text](mult/image-3.png)
+![alt text](Mult/image-3.png)
 
 ### 2.2 Verify installation
 
@@ -101,7 +101,7 @@ mv systemverilog-basic-main systemverilog-basic
 
 code systemverilog-basic
 
-![alt text](mult/image-4.png)
+![alt text](Mult/image-4.png)
 
 ---
 
@@ -114,7 +114,7 @@ code systemverilog-basic
 2. Download the **Education** version for Linux.
 3. Save the `.tar.gz` file in your Downloads folder.
 
-![alt text](mult/image-1.png)
+![alt text](Mult/image-1.png)
 
 ### 4.2 Extract the installer
 
@@ -130,7 +130,7 @@ Gowin_V1.x.x_Education_linux/
 rm -rf ~/gowin  
 mv Gowin_V1.x.x_Education_linux ~/gowin
 
-![alt text](mult/image-2.png)
+![alt text](Mult/image-2.png)
 
 ---
 
@@ -162,6 +162,6 @@ gw_sh
 
 gw_ide &
 
-![alt text](mult/image-5.png)
+![alt text](Mult/image-5.png)
 
 If the IDE opens successfully, your Gowin installation on Linux is complete.
