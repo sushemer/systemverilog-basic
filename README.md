@@ -98,7 +98,7 @@ The general organization is as follows (names may vary slightly depending on rep
   - Suggested steps
   - Checklist and minimal required evidence
 
-- **5_Labs/**  
+- **5_Laboratories/**  
   Structured hands-on labs by level (basic, intermediate, advanced),  
   with more complete procedures and, when needed, evaluation rubrics.
 
@@ -106,12 +106,12 @@ The general organization is as follows (names may vary slightly depending on rep
   Integrated mini-projects (e.g., digital clock, ultrasonic-servo radar)  
   combining counters, FSMs, PWM, sensors, and actuators.
 
-- **board_support/** (or equivalent name)  
+- **board/**
   Board support files for multiple FPGA boards.  
   This section originates from **Yuri Panchul**’s *basic-graphics-music* project  
   and is adapted and documented here for the Tang Nano 9K.
 
-- **labs_common/**  
+- **labs/common/**  
   SystemVerilog modules reusable across several labs  
   (e.g., seven-segment display driver).  
   These also originate from the generic blocks in *basic-graphics-music*.
