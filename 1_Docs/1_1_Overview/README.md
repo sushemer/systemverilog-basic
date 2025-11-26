@@ -1,6 +1,6 @@
 # 1.1 Overview · How to use the documentation
 
-This document provides a high-level view of the `1_docs` folder and explains how it connects with the rest of the repository (`2_devices`, `3_examples`, `4_activities`, `5_labs`, `6_implementation`).
+This document provides a high-level view of the `1_docs` folder and explains how it connects with the rest of the repository (`2_devices`, `3_examples`, `4_activities`, `5_laboratories`, `6_implementation`).
 
 Its aim is to answer three questions:
 
