@@ -1,4 +1,4 @@
-# 5. Labs – Guided Practices
+# 5. Laboratories – Guided Practices
 
 Hands-on labs using **Tang Nano 9K + TM1638 + LCD 480×272 + real sensors**.  
 Each lab contains:
